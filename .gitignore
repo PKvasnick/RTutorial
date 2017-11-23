@@ -1,0 +1,9 @@
+
+gitignore.txt
+*.aux
+*.nav
+*.out
+*.pdf
+*.snm
+*.gz
+*.toc

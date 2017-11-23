@@ -1,0 +1,139 @@
+\documentclass[9pt]{beamer}
+\usetheme{Pittsburgh}
+\usepackage[utf8]{inputenc}
+\usepackage[slovak]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\author{Peter Kvasnička}
+\title{Úvod do R}
+%\setbeamercovered{transparent} 
+%\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute{Univerzita Karlova, Praha} 
+\date{Kurz pre 4. ročník BMF \newline Jeseň 2017} 
+\subject{Statistics and data science} 
+
+\beamertemplatenavigationsymbolsempty
+
+\setbeamerfont{page number in head/foot}{size=\large}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+% ================================================================
+\section{Úvod}
+% ================================================================
+\begin{frame}{Čo sa naučíte v tomto kurze}
+	\begin{block}{1. Používať R}
+		Trocha neskromné, nemáme veľa času.
+		\begin{description}
+			\item[Načítať dáta] import z textových súborov a Excelu
+			\item[Preskúmať dáta] kreslenie - \texttt{ggplot2}
+			\item[Upraviť dáta] manipulácia s dátami, súhrny, filtrovanie atď. - \texttt{tidyverse}
+			\item[Analyzovať dáta] lineárny model, ANOVA atď.
+			\item[Validovať analýzu] simulácia, replikácia (bootstrap)
+		\end{description}
+		Nie presne v tomto poradí, budeme sa hýbať v kruhoch.
+	\end{block}
+\end{frame}
+
+\begin{frame}{Čo sa naučíte v tomto kurze}
+	\begin{block}{2. Používať moderný ekosystém pre prácu s dátami}
+		\begin{description}
+			\item[Open source] software, nepotrebujeme nakupovať drahý štatistický software, ani MS Office, všetko čo potrebujeme sa dá stiahnuť z Internetu.
+			\item[Version control] Chceme, aby sa dáta dali zdieľať a boli chránené pred stratou alebo nechcenou zmenou.
+			\item[Rôzne zdroje dát] Chceme pracovať s dátami z viacerých možných zdrojov - textové súbory, Excel, JSON, databázy atď.
+			\item[Zdieľanie dát a analýzy] Chceme, aby si ľudia mohli skontrolovať našu analýzu.
+		\end{description}
+	\end{block}
+\end{frame}
+
+
+% ================================================================
+% Outline
+% ================================================================
+
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+% ================================================================
+\section{Čo potrebujete pre tento kurz}
+% ================================================================
+
+% ----------------------------------------------------------------
+\subsection{Znalosti}
+% ----------------------------------------------------------------
+\begin{frame}{Čo sa očakáva, že budete vedieť}
+	\begin{block}{Základné znalosti z pravdepodobnosti a štatistiky}
+		\begin{itemize}
+			\item Stačí, aby ste sa veľmi nezľakli, keď poviem t-test.
+			\item Máte určitú prax v spracovaní a zobrazovaní dát.
+		\end{itemize}
+	\end{block}
+	\begin{block}{Programovanie}
+		\begin{itemize}
+			\item Očakávam, že máte za sebou kurz programovania, v hocičom.
+			\item Napríklad keď idete písať kód, začnete tým, že si zapnete anglickú klávesnicu.
+			\item A pochytili ste trocha algoritmického myslenia. 
+			\item Budeme sa učiť nový jazyk a používať nové nástroje, takže pôjdeme od nuly.
+		\end{itemize}
+	\end{block}
+	\begin{block}{Angličtina}
+		\begin{itemize}
+			\item Je mi ľúto, ale bez angličtiny budete mať v tomto kurze ťažkosti.
+			\item Predovšetkým si veľmi ťažko budete hľadať pomoc na Internete, a to je prvá vec, ktorú človek robí, keď mu niečo nefunguje alebo nevie, ako niečo urobiť. 
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+% ----------------------------------------------------------------
+\subsection{Laptop}
+% ----------------------------------------------------------------
+\begin{frame}{Ešte potrebujete laptop}
+	\begin{block}{Laptop}
+		\begin{itemize}
+			\item Windows 7 alebo 10, alebo Linux
+			\begin{itemize}
+				\item Windows 10 má WSL - Windows Subsystem for Linux - a umožňuje vám lepšie používať niektoré veci, napríklad \texttt{git}.
+				\item Ale Linux je na to ešte lepší.
+			\end{itemize}
+			\item Nepotrebujete mať extra silný procesor alebo veľa pamäti, aspoň nie pre tento kurz.
+		\end{itemize}
+	\end{block}
+	\begin{block}{Inštalovaný software}
+		\begin{itemize}
+			\item Potrebujete mať nainštalované R a RStudio.
+			\item Zriaďte si účet na GitHub (\texttt{https://www.github.org}) a stiahnite si \emph{GitHub Desktop}. Ak máte Linux, stačí vám nainštalovať git. Toto stačí v priebehu kurzu, svoj GitHub account budete potrebovať na odovzdanie zadaní.
+			\item Návod na inštaláciu nájdete v GitHub repozitári tohoto kurzu, \texttt{https://www.github.com/PKvasnick/RTutorial/}
+			\item Ak by ste mali problémy s inštaláciou, rýchlo sa ozvite.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+
+% ================================================================
+\section{Conclusions}
+% ================================================================
+
+\begin{frame}{Conclusions}
+	\begin{itemize}
+		\item The SVD timing estimation is still not implemented due to SVD re-factoring activities.
+		\item Most of the stuff will be implemented within 10 days.
+		\item The overall functionality depends on the availability of calibration data.
+		\item SVD digitizer urgently needs re-factoring, as it is slow and does signal time-dependence wrong.
+	\end{itemize}
+\end{frame}
+
+\end{document}
