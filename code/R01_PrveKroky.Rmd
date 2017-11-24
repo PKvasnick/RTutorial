@@ -1,0 +1,113 @@
+---
+title: "Prvá ukážka R"
+output: html_notebook
+---
+
+# Ako chutí R
+
+Kým začnete písať R, urobíme niečo jednoduché, aby ste mali predstavu, kade povedú naše ďalšie kroky. 
+
+## R notebook
+Nacházame sa v R notebooku. Notebook pozostáva 
+
+* z blokov textu, ako je tento, s Markdown formátovaním
+
+* z blokov kódu, ohraničených troma *backtickmi*. *Backtick* je opačný apostrof a na anglickej klávesnici sa nachádza na klávese *;* hned pod Esc. *Nie je to apostrof!*
+
+* z blokov výstupu, obsahujúcich textový a grafický výstup kódu z predchádzajúceho poľa. 
+
+Kód v poli vykonáme stlačením __Ctrl-Shift-Enter__ alebo kliknutím na zelený trojuholníček (*Run current chunk*) vpravo hore v poli kódu.
+
+Kliknutím na __Preview__ na hornom paneli okna (alebo stlačením __Ctrl-Shift-K__) sa zobrazí vyrendrovaná html stránka s kódom a všetkými výstupmi.
+
+```{r}
+plot(cars)
+```
+
+## Ukážkové dátové súbory v R
+
+Zjavne sme niečo nakreslili, ale čo je __cars__?
+
+Je to ukážkový dátový súbor, ktorý máte k dispozícii spolu so záklanými balíčkami pri spustení R. 
+
+__Recept__ Keď v R niečo stretnem a neviem čo to je, prvá vec, ktorú skúsim, je 
+
+```{r}
+help(cars)
+```
+
+__Ctrl-Shift-Enter__ a kuk doprava, výsledok sa zobrazí v pravom dolnom okne. Ak nič nevidíte, kliknite na záložku *Help*.
+
+Aha, takže mám výsledky merania brzdnej dráhy v závislosti od počiatočnej rýchlosti vozidla spred 100 rokov. Všimnite si, ako help dokumentuje obsah polí. 
+
+Poďme sa pozrieť, ako vyzerajú naše dáta:
+
+```{r}
+head(cars)
+```
+*head* preto, lebo nechceme všetkých 50 riadkov. 
+
+## R data frame
+
+Vidíme tabuľku, vieme, že má 50 riadkov a 3 stĺpce. 
+
+* Stĺpec úplne vľavo nemá meno a volá sa *index*, slúži na jednoznačné označenie riadkov v tabuľke. 
+* *Riadky* zodpovedajú jednotlivým prípadom, pacientom, vzorkám. 
+* *Stĺpce* zodpovedajú vlastnostiam prípadov, pacientov, vzoriek.
+
+Toto je typický spôsob usporiadania dát pre štatistickú analýzu (nielen v R) a spotrebujeme dosť času, aby sme sa naučili svoje dáta takto usporiadať. 
+
+## Aká to je závislosť?
+
+Tak máme nejaké dáta, a čo to je za závislosť? 
+
+```{r}
+plot(cars)
+```
+
+__Úloha:__: Ako uložíme obrázok do súboru? Spýtajte sa Googlu.
+
+*Tip*: Ak sa notebook začne chovať čudne, vždy pomôže __Session -> Restart R__ alebo niektorá varianta.
+
+Poďme to nakresliť poriadne. 
+
+```{r}
+plot(cars, xlab = "Speed [mph]", ylab = "Stopping distance [ft]", las = 1)
+lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
+title(main="Stopping distance vs. initial speed")
+```
+__Úloha__: Kto netuší čo je *lowess*, čo spraví?
+
+__Recept__: stĺpce dátovej tabuľky sú data$<meno_stlpca>
+
+Vyzerá to ako parabola, tak si to nakreslime v logaritmickej škále:
+
+```{r}
+plot(cars, xlab = "Speed [mph]", ylab = "Stopping distance [ft]", las = 1, log = "xy")
+lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
+title(main="Stopping distance vs. initial speed, log-log scale")
+```
+__Úloha__: Funguje slovenská diakritika? Skúste poslovenečiť popisy osí.
+
+Naša závislosť vyzerá ako priamka, tak skúsme dáta preložiť priamkou. __POZOR__ začína štatistika!
+
+```{r}
+fmL <- lm(log(dist) ~ log(speed), data = cars)
+summary(fmL)
+plot(fmL)
+```
+Máme tu kopu výstupov. 
+
+Z textového výstupu vidíme, že máme celkom dobrý model: \[d = e^{-0.73}v^{1.6}\]
+
+*E3te vidíme, že môžeme písať aj vzorce v TeX-ovej notácii!*
+
+Záverečným kliknutím na __Preview__ (alebo __Ctrl-Shift-K__) si zobrazíme výsledný dokument. 
+
+__Úloha__: Vyhľadajte si na Googli všetko, čomu nerozumiete. Alebo sa spýtajte.
+
+__Úloha__: Čo keby som vo výstupe nechcel R-kód? 
+
+__Úloha__: Viem report vytlačiť do pdf?
+
+
