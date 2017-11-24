@@ -11,6 +11,8 @@ output: html_notebook
 x <- 5.5
 x
 class(x)
+6.5 -> y # To sice vyzera sexy, ale je to len ozdoba.
+y
 ```
 
 ### Priradenie <-
