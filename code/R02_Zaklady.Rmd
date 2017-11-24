@@ -1,0 +1,162 @@
+---
+title: "R basics"
+output: html_notebook
+---
+
+# Základy R
+
+... čo bude trocha nudná, ale nutná časť. Žiadna štatistika, ale dátové typy, príkazy, definície.
+
+```{r}
+x <- 5.5
+x
+class(x)
+```
+
+### Priradenie <-
+
+V R existujú viaceré znaky priradenia. Funguje *=*, *->*, ale aj *<-*, a špeciálny význam majú *<<-* a *->>* (Nechcete vedieť, čo robia). *=* slúži na mapovanie parametrov a v príkaze *case*, takže je slušné pre priradenie používať *<-*, hoci pre ľudí, ktorí programujú aj v inom jazyku, je ťažké občas nenapísať *=*. Vopred sa ospravedlňujem.
+
+### Číselné typy
+
+*numeric* je generické číslo v R. Ale máme aj ďalšie typy:
+
+```{r}
+y <- 5
+class(y)
+y <- as.integer(5)
+class(y)
+is.integer(y)
+```
+Celé číslo musíme ako také definovať. 
+
+### Reťazce
+
+```{r}
+s <- "Peter"
+s == 'Peter'
+class(s)
+substring(s, first=2, last=3)
+s <- sub("ete", "avo", s)
+s
+substring(s, 1:3, 3:5)
+sprintf("%s má %d rokov.", "Peter", 54)
+```
+
+substring je *vektorizovaná* funkcia - pre vektorový argument vráti vektor.
+```{r}
+1:5
+sqrt(1:5)
+vec <- c(1,2,3,4,5,6) # toto je komenar o tom, ze c() vytvara vektor
+vec
+sin(vec)
+```
+Apropos, máme \[\pi\]?
+
+```{r}
+apropos("pi")
+```
+Aha, asi máme.
+```{r}
+help("pi")
+cos(pi)
+```
+Kuk doprava.
+
+### Logicé hodnoty
+
+```{r}
+class(TRUE)
+c(T,T,F,F) == c(T,F,T,F)
+c(T,T,F,F) & c(T,F,T,F)
+c(T,T,F,F) | c(T,F,T,F)
+```
+
+### Vektory
+
+```{r}
+1:3 == c(1,2,3)
+help(seq)
+vec1 <- seq(from = 1, to = 10, by = 3)
+vec1
+vec2 <- seq(from = 1, by = 2, length.out = 5)
+vec2
+vec3 <- seq(from = 1, to = 10, length.out = 4)
+vec3
+vec4 <- seq(from = 0, by = 1, along.with = vec3)
+vec4
+all.equal(vec1, vec3)
+ifelse(vec1>5,"Yes", "No")
+```
+Dvojbodka nám umožňuje pohodlne vytvárať číselné rady. 
+
+### Zoznam (list) 
+
+je vektor s pomenovanými prvkami. 
+
+```{r}
+vec <- 1:4
+names(vec) <- c("jeden", "dva", "tri", "štyri")
+vec
+```
+### Spojením zoznamov dostaneme *data frame*
+
+```{r}
+x <- data.frame(
+  v1 = c(1,2,3,4),
+  v2 = as.integer(c(0,0,1,1)),
+  v3 = c("a","b","a","b")
+)
+x
+x$v1 # stlpec
+x$v2[2] # element
+x[2,"v1"] # element
+x[2,] # riadok
+x$v3 
+is.factor(x$v3)
+nrow(x) # pocet riadkov
+ncol(x) # pocet stlpcov
+```
+
+### Príkazy R
+
+```{r}
+for(i in 1:10) {
+  if (i %% 2 == 0) {
+    print(i)
+  } else {
+    print(paste(i, "je", "neparne"))
+  }
+}
+```
+
+### Funkcie
+
+```{r}
+factorial <- function(n)
+{
+  if (n==0 | n==1)
+    { return(1); }
+  else 
+    { return(n * factorial(n-1)); }
+}
+
+factorial(10)
+```
+__return__ je funkcia!
+
+Použitie funkcie na vektor:
+
+```{r}
+
+my_clip <- function(x, a, b) # orezavacia funkcia
+{
+  return(min(b, max(a,x)))
+}
+
+vec = seq(from = -10, to = 10, by = 1)
+vec <- sapply(vec, my_clip, a = -5, b = 5); # potrebne argumenty pre funkciu napiseme za nu...
+vecx <- seq(from = 0, by = 1, along.with = vec)
+plot(vecx, vec, xlab = "index")
+```
+... nech máme aspoň nejaký graf v tomto nudnom notebooku.
