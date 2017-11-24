@@ -1,0 +1,46 @@
+\documentclass[9pt]{beamer}
+\usetheme{Darmstadt}
+\usepackage[utf8]{inputenc}
+\usepackage[slovak]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\author{Peter Kvasnička}
+\title{Úvod do R}
+%\setbeamercovered{transparent} 
+%\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+\institute{Univerzita Karlova, Praha} 
+\date{Kurz pre 4. ročník BMF \newline Jeseň 2017} 
+\subject{Statistics and data science} 
+
+\beamertemplatenavigationsymbolsempty
+
+\setbeamerfont{page number in head/foot}{size=\large}
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\clearpage \input{RTutorial_Uvod.tex} \clearpage
+\clearpage \input{RTutorial_R.tex} \clearpage
+
+\begin{frame}{Ideme na to...}
+	\begin{itemize}
+		\item Otvorte si v prehliadači stránku \texttt{https://www.github.com/PKvasnick/RTutorial/} a stiahnite si z adresára \texttt{code} všetky súbory \texttt{*.Rmd}.
+		\item Odporúčam vytvoriť si podobnú adresárovú štruktúru ako v mojom repozitári.
+		\item (Úplne najlepšie) Môžete si tiež vytvoriť klon môjho repozitára pomocou GitHub Desktopu.
+		\item Spustite RStudio, \texttt{File->Open...} a nájdite súbor .\texttt{R-Intro.Rmd}
+	\end{itemize}
+\end{frame}
+
+\end{document}

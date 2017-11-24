@@ -1,38 +1,5 @@
-\documentclass[9pt]{beamer}
-\usetheme{Pittsburgh}
-\usepackage[utf8]{inputenc}
-\usepackage[slovak]{babel}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{booktabs}
-
-\usepackage{caption}
-\usepackage{subcaption}
-
-\author{Peter Kvasnička}
-\title{Úvod do R}
-%\setbeamercovered{transparent} 
-%\setbeamertemplate{navigation symbols}{} 
-%\logo{} 
-\institute{Univerzita Karlova, Praha} 
-\date{Kurz pre 4. ročník BMF \newline Jeseň 2017} 
-\subject{Statistics and data science} 
-
-\beamertemplatenavigationsymbolsempty
-
-\setbeamerfont{page number in head/foot}{size=\large}
-\setbeamertemplate{footline}[frame number]
-
-\begin{document}
-
-\begin{frame}
-\titlepage
-\end{frame}
-
 % ================================================================
-\section{Úvod}
+\section{Prehľad}
 % ================================================================
 \begin{frame}{Čo sa naučíte v tomto kurze}
 	\begin{block}{1. Používať R}
@@ -115,25 +82,48 @@
 	\begin{block}{Inštalovaný software}
 		\begin{itemize}
 			\item Potrebujete mať nainštalované R a RStudio.
-			\item Zriaďte si účet na GitHub (\texttt{https://www.github.org}) a stiahnite si \emph{GitHub Desktop}. Ak máte Linux, stačí vám nainštalovať git. Toto stačí v priebehu kurzu, svoj GitHub account budete potrebovať na odovzdanie zadaní.
-			\item Návod na inštaláciu nájdete v GitHub repozitári tohoto kurzu, \texttt{https://www.github.com/PKvasnick/RTutorial/}
+			\item Zriaďte si účet na GitHub (\texttt{https://www.github.org}) a stiahnite si \emph{GitHub Desktop}. Ak máte Linux, stačí vám nainštalovať git. 
+			\begin{itemize}
+				\item Toto stačí v priebehu kurzu, svoj GitHub account budete potrebovať na odovzdanie zadaní.
+				\item Ale nezaškodí získať trocha praxe, takže čím skôr, tým lepšie.
+			\end{itemize}
+			\item Návod na inštaláciu R/RStudio a na zriadenie GitHub konta nájdete v GitHub repozitári tohoto kurzu, \texttt{https://www.github.com/PKvasnick/RTutorial/}
 			\item Ak by ste mali problémy s inštaláciou, rýchlo sa ozvite.
 		\end{itemize}
 	\end{block}
 \end{frame}
 
-
-% ================================================================
-\section{Conclusions}
-% ================================================================
-
-\begin{frame}{Conclusions}
-	\begin{itemize}
-		\item The SVD timing estimation is still not implemented due to SVD re-factoring activities.
-		\item Most of the stuff will be implemented within 10 days.
-		\item The overall functionality depends on the availability of calibration data.
-		\item SVD digitizer urgently needs re-factoring, as it is slow and does signal time-dependence wrong.
-	\end{itemize}
+% ----------------------------------------------------------------
+\subsection{Informácie}
+% ----------------------------------------------------------------
+\begin{frame}{Kde hľadať informácie}
+	\begin{block}{Príručky}
+		Príručiek je veľa, väčšina aktuálnych a moderných je v angličtime.
+		\begin{itemize}
+			\item Na Pinterestovej stránke \texttt{https://sk.pinterest.com/peterkvasnika/my\_r/} nájdete odkazy na niekoľko internetových portálov a PDF dokumentov, ktoré vám môžu pomôcť v začiatkoch.
+			\begin{itemize}
+				\item Niekoľko z nich je slovenčine/češtine.
+			\end{itemize}
+			\item Na portáli CRAN (Comprehensive R-Archive Network - \texttt{https://cran.r-project.org/}) nájdete prehľad dokumentácie k R.
+		\end{itemize}
+	\end{block}
+	\begin{block}{Nápoveď v R a RStudio}
+		\begin{itemize}
+			\item R má svoj vlastný help systém, naučíte sa s ním pracovať.
+			\item RStudio má takisto svoje helpy.
+		\end{itemize}
+	\end{block}
 \end{frame}
 
-\end{document}
+\begin{frame}{Kde hľadať informácie}
+	\begin{block}{Internet}
+		\begin{itemize}
+			\item To čo programátor robí najčastejšie je, že vysvetlí Googlu lámanou angličtinou čo chce urobiť (\texttt{R create dataframe}), alebo priamo do riadku vyhľadávača skopíruje chybovú hlášku. 
+			\item S vysokou pravdepodobnosťou nájdete použiteľnú odpoveď, či už je vaša otázka triviálna alebo zložitá.
+			\begin{itemize}
+				\item Tú odpoveď nájdete najčastejšie na webe StackOverflow, \texttt{https://stackoverflow.com}, s ktorým sa určite spriatelíte.
+			\end{itemize}
+			\item Časom prídete na to, že kúsok fungujúceho kódu býva užitočnejší ako podrobný výklad syntaxe. 
+		\end{itemize}
+	\end{block}
+\end{frame}

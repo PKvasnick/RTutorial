@@ -1,0 +1,97 @@
+% ================================================================
+\section{R}
+% ================================================================
+\begin{frame}{Prečo R?}
+	\begin{block}{Máme predsa ...}
+		\begin{description}
+			\item[Excel] a iné tabuľkové programy
+			\item[SPSS] Statisticu, Minitab a iné komerčné programy poskytujúce analýzu na kľúč
+		\end{description}
+		\alert{Tak prečo mám používať niečo, čo sa treba určitý čas učiť?}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Niekoľko dôvodov}
+	\begin{block}{Excel nie je štatistický program}
+		\begin{itemize}
+			\item Excel je výborný nástroj na vkladanie dát, získavanie a konsolidáciu dát z databáz a na základné úpravy dát
+			\item Ale nie je dobrý na výmenu dát (polo-proprietárny formát - nikdy nevieme, kedy sa zmení)
+			\item Vzorce v bunkách sa ťažko spravujú a neexistuje praktický spôsob, ako nezávisle dokumentovať, čo sa ako počíta.
+			\item Nemáme výstrahu, ak náhodne zmeníme obsah bunky
+			\item Nástroje pre štatistiku sú implementované ledabylo.
+			\item Grafy sú na zaplakanie.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Niekoľko dôvodov}
+	\begin{block}{Robíme stále zložitejšie analýzy}
+		\begin{itemize}
+			\item Chceme skúmať analyzovať zložité a veľké dáta
+			\item Chceme validovať našu analýzu pomocou simulácií a replikácie - potrebujeme analýzy opakovať tisíckrát
+			\item Chceme formulovať a testovať zložité modely (\emph{Data Science})
+		\end{itemize}
+	\end{block}
+	\begin{block}{Chceme zdieľať dáta a analýzu}
+		\begin{itemize}
+			\item Potrebujeme otvorený software a nie drahé štatistické balíky alebo MS Office
+			\item Potrebujeme otvorené formáty dát
+			\item Chceme software, ktorý sa \emph{rýchlo inovuje}
+			\item Chceme software, ktorý je správny
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Preto chceme R!}
+	\begin{block}{R je programovate2né}
+		\begin{itemize}
+			\item R je interpretovaný programovací jazyk
+			\item R podporuje integráciu s inými programovacími jazykmi - môžeme volať funkcie naprogramované v C++, Fortrane ap., čo podstatne kompenzuje pomalosť vlastného interpreta R.
+			\item R spolupracuje s Pythonom, Javou a ďalšími jazykmi, ktoré používajú vývojári v data science
+			\item R má výborné IDE, RStudio, a najnovšie aj Visual Studio!
+		\end{itemize}
+	\end{block}
+	\begin{block}{R má bohaté rozhrania pre dáta}
+		\begin{itemize}
+			\item R umožňuje čítať dáta z veľkého množstva vstupných formátov:
+			\begin{itemize}
+				\item textových súborov
+				\item Excelu
+				\item JSON
+				\item databáz
+				\item Apache Spark-u
+				\item \dots
+			\end{itemize}
+			\item R dokáže dáta, grafy a reporty exportovať do veľkého množstva formátov.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Preto chceme R!}
+	\begin{block}{R je rozšíriteľné}
+		\begin{itemize}
+			\item To, čo robí R skutočne cenným, je ekosystém rozšírení - baličkov (packages)
+			\item Tieto baličky obsahujú všetky štatistické metódy, ktoré kedy budete potrebovať
+			\item Balíčky sídlia na serveri CRAN, a môžete si ich ľahko doinštalovať cez interpret R (\texttt{install.packages(<menobalíčka>}
+			\item Balíčky neustále pribúdajú: Ak niekto opublikuje novú štatistickú metódu, s veľkou pravdepodobnosťou ju hneď implementuje v R.
+		\end{itemize}
+	\end{block}
+	\begin{block}{R je renomované a spoľahlivé}
+		\begin{itemize}
+			\item Pretože R používa veľa ľudí, je dobre otestované a všetky prípadné chyby sú hneď odstránené.
+			\item Ak si svoje dáta analyzujete v R, nikto sa nebude pýtať, či ste správne počítali ANOVu.
+			\item Kód vašej analýzy je univerzálne zrozumiteľný doklad o tom, čo ste robili.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}{Nemá chybu...?}
+	\begin{block}{R má svoje špecifiká a slabé stránky}
+		\begin{itemize}
+			\item R sa pôvodne vyvinulo z funkcionálneho a objektovo-orientovaného jazyka S. Preto niektoré veci pracujú trocha odlišne.
+			\item Pretože R má za sebou dlhú históriu, obsahuje niekoľko súperiacich koncepcií a funkčných rozhraní. Preto niektoré veci možno robiť rôznymi spôsobmi, a naopak niektoré podobné veci musíte robiť odlišne.
+			\item R je pomalé. Treba sa vyhýbať zložitým programovým konštrukciám v R (cyklom \texttt{for} a podobne), a používať čo najviac metafunkcie R (\texttt{apply}), aby sa počítanie robilo v C a Fortrane, a nie v R. 
+			\item Napriek tomuto všetkému sa základy programovania v R možno naučiť pomerne rýchlo a pomerne rýchlo získať výsledky.
+		\end{itemize}
+	\end{block}
+\end{frame}
