@@ -1,0 +1,127 @@
+---
+title: "Vizualizácia v R: 1. časť"
+output: html_notebook
+---
+
+Už sme kreslili grafy príkazmi *plot* a *lines*. To je štandardná funkcionalita R, ale nie je úplne pohodlná na používanie. 
+
+V tejto časti sa zoznámime z prvým z balíkov zo skupiny *tidyverse*: je to kresliaci balík __ggplot2__. 
+
+__ggplot2__ je výnimočný svojou funkcionalitou, kvalitou výstupu a osobitou filozofiou. Ako so všetkým v R, budete si chvíľu vznikať, ale sľubujem, že to čo získate na prvý pokus bude vždy o niekoľko tried lepšie ako prvý pokus o graf v Exceli.
+
+```{r}
+library(tidyverse)
+```
+
+Neznepokojujeme sa výstrahami. *Tidyverse* predefinuje niektoré veci v R, ale to nás nemusí znepokojovať. 
+
+### Dátový súbor __mpg__
+
+Dátový súbor __mpg__ je súčasťou balíka *ggplot2*, teda plným menom __ggplot2::mpg__, keby sme sa obávali konfliktu názvov. Dátový súbor obsahuje merania spotreby automobilov, vykonané americkou *Environment Protection Agency* (EPA) na 234 typoch automobilov v rokoch 1999-2008. 
+
+```{r}
+help(mpg)
+head(mpg)
+```
+
+### Prvý graf: dojazd na jeden galón (hwy) v závislosti od objemu motora
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+Vidím negatívnu závislosť medzi objemom motora a dojazdom. Teda autá s väčším motorom prejd na 1 galón menšiu vzdialenosť ako menšie autá. 
+
+__ggplot()__ vytvorí súradnicový systém a prázdny graf. 
+
+__geom_xxx()__ pridávajú do grafu jednu alebo niekoľko vrstiev objektov. __Geom_point__ pridá vrstvu s bodmi grafu. 
+
+Každá funkcia __geom_xxx__ vyžaduje ako argument priradenie (mapping) vlastností (stĺpcov) dát k vizuálnym (estetickým) prvkom grafu (odtiaľ __aes()__), ako sú polohy bodov,farba, veľkosť a tvar symbolov, farba výplní, čiar a podobne. V našom prípade sme priradili __displ__ x-ovej a __hwy__ y-ovej súradnici bodov na grafe.
+
+Všeobecný predpis je 
+
+__ggplot(data = \<DATA\>) + \<GEOM_FUNKCIA\>(mapping = aes(\<PRIRADENIA\))__
+
+__Úlohy__
+
+1. Spustite __ggplot(mpg)__ bez __geom_xxxx()__. Čo vidíte?
+
+2. Koľko stĺpcov a riadkov má súbor __mtcars__?
+
+3. Aký význam má stĺpec __mpg$drv__?
+
+4. Nakreslite graf __hwy__ v závislosti od __cyl__.
+
+5. Nakreslite graf __class__ v závislosti od __drv__. Je to užitočný graf?
+
+Poďme vyskúšať nejaké zaujímavejšie priradenia.
+
+### Zložitejšie priradenia
+
+V našom grafe mám zobrazené dve vlastnosti áut zo súboru __mpg__: objem motora a vzdialenosť, ktorú auto prejde na 1 galón paliva. Prvky grafu - v našom prípade body - majú ešte ďalšie vlastnosti, napríklad veľkosť, tvar, farbu, ktorým môžeme priradiť ďalšie stĺpce súboru __mpg__ a tak súčasne zobraziť vv grafe viac ako 2 parametre. 
+
+Predstavme si, že nás zaujíma, či sa niektoré triedy áut nevyskytujú v našom grafe v anomálnych polohách. Vezmime stĺpec __class__ a priraďme jej úrovne (pretože to je kvalitatívna premenná) farbe bodov v grafe.
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+```
+
+Vidíme, že ggplot vybral farby pre triedy áut a vytvoril ku grafu aj legendu. 
+
+Tiež vidíme, že 5 zo šiestich áut nad hlavnou krivkou vpravo dole sú športové autá - majú veľký motor, ale sú oveľa ľahšie ako SÚV s podobne veľkým motorom. Pretože to sú *premotorované* autá, vymykajú sa z typickej závislosti.
+
+__Úlohy__ 
+
+1. Skúste priradiť __class__ veľkosti symbolov v grafe (size = class). Funguje? Je to dobrý nápad?
+
+2. Ďalšie estetiky, ktorým môžete priradiť __class__ sú sýtosť (__alpha__) zafarbenia bodov a tvar (__shape__) bodov. Vyskšajte a posúďte.
+
+Vlastnosti grafu môžeme nastaviť aj manuálne. Napríklad môžeme predpísať veľkosť bodov:
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class), size = 3)
+```
+Takto predpísané vlastnosti neurčujú vlastnosti mapovania, iba celkový výzor grafu. Farby predpisujeme ako znakový reťazec ("red"), veľkosť bodov v milimetroch a tvar bodov ako kód tvaru z tabuľky tvarov (napríklad *http://www.sthda.com/english/wiki/ggplot2-point-shapes*).
+
+__Úlohy__
+
+1. Ktoré zo stĺpcov __mpg__ sú spojité, a ktoré kategoriálne? Ako to spoľahlivo zistíme?
+
+2. Ako sa správa priradenie premennej veľkosti, farbe a tvaru (colour, size, shape) pre spojité a kategoriálne premenné? Preskúmajte.
+
+3. Čo sa stane, ak priradíte estetiku niečomu inému ako dátovému stĺpcu, napríklad __color = displ < 5__?
+
+### Čo keď to nefunguje?
+
+Neprepadajte panike. 
+
+* Nemáte v kóde nejaké divné značky od syntax highlightera? 
+
+* Máte chybovú hlášku? Hurá, skúste pochopiť, čo hovorí, alebo ju celú skopírujte do prehliadača a Google raď.
+
+* Nič sa nestalo? Pozrite sa, či ste zle nerozdelili viacriadkový príkaz. R musí chápať, že riadok pokračuje, takže ak je medzi dvoma časťami napríklad __+__, musí byť na konci riadku pred zalomením, a nie na začiatku ďalšieho riadku. 
+
+* Skúste help k funkcii, ktorú používate (__help(geom_point)__ alebo __?geom_point__)
+
+### Panely - __Facets__
+
+Ešte jeden spôsob, ako pridať do grafu ďalšie premenné, je rozdeliť graf do viacerých panelov a v každom zobraziť iba podmnožinu dát. Tento spôsob je vhodný pre kategoriálne dáta.
+
+Ak takto chceme rozdeliť náš graf podľa (jednej, diskrétnej) premennej, použijeme funkciu __facet_wrap__:
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
+  facet_wrap(~ class, nrow = 2)
+```
+Môžeme rozdeľovať aj podľa dvoch premenných, v tomto prípade použijeme funkciu __facet_grid__:
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
+  facet_grid(drv ~ cyl)
+```
+Ak nechcete deliť podľa stĺpcovej alebo riadkovej premennej, použite namiesto nej bodku: __. ~ cyl__
+
