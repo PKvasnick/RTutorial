@@ -6,3 +6,5 @@ gitignore.txt
 *.snm
 *.gz
 *.toc
+code/.Rhistory
+*.html
