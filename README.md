@@ -9,25 +9,30 @@ For the class, you need to install a few things to start.
 ### Install R
 * Go to https://cloud.r-project.org
 * Select the installation package appropriate for your operating system (and package manager)
-* Install __to a directory with names without spaces or discritics__. Some packages wouldn't install in C:\\Program Files, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*.
+* Install. __On Widnows, install to a directory with names without spaces or discritics__. Some packages wouldn't install in *C:\\Program Files*, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*. Use something like *C:\\R* instead.
 
 ### Install RStudio
 * Go to https://www.rstudio.com/products/rstudio/download/
 * Select "Download" for RStudio Desktop
-* Section "Installers for supported platforms", click on RStudio 1.1.383 - Windows Vista/7/8/10
-* Install. I advise to again use a directory other than the default __
+* Section "Installers for supported platforms", click on *RStudio 1.1.383 - Windows Vista/7/8/10*.
+* Install. __On Windows,__ I advise to use the directory you used to install R, or other directory without spaces or diacritics in the path.
+* __On Widnows, allow RStudio through your firewall.__. RStudio package installation guide needs to access Internet, and RStudio needs to launch its own html server to handle previews. None of this will work if your antivirus program's firewall blocks won't let RStudio comms through.
 
-### Install the tidyverse suite in RStudio
+### Install the tidyverse package suite
 The tidyverse suite of R packages provide a set of R features/functionalities that we will use in this tutorial.
-* Open RStudio. If you see any error messages or something looks weird, let me know immediately (peter.kvasnicka@mff.cuni.cz)
-* From the top menu, select __Tools/Install Packages__.
-* This opens the __Install Packages__ dialogue. Enter __tidyverse__ in the __Packages__ field, leave all else as it is, and click __Install__.
-* In the console window, you will see the code that does the job. It should run without errors, if not, let me know.
-* Go to the console window and write __library("tidyverse")__ <ENTER>. You should see some warnings about package conflicts, but that is OK. If you see any error messages, let me know.
+* Open RGui. On Windows, this means locate R in your Start menu or click an R icon on the desktop, if you have one created.
+* At the prompt, write `install.packages("crayon")`. Check that the installation succeeded.
+* Next install the *tideverse* suite itself, `install.packages('tidyverse')`. Again, you should see the word *DONE* somewhere by the end of the listing.
+* To check, write `library(tidyverse)` at the command prompt and press <ENTER>. There should be no errors.
+* Open RStudio. If you don't see the Console right away, double-click at the bottom tab to display it. Again, enter `library(tidyverse)` and press <ENTER>.
+* Let me know if you don't succeed.
+
 
 ## GitHub repository of the RTutorial
 This is the GitHub repository of the tutorial.
 It resides at https://github.com/PKvasnick/RTutorial and you can find all course materials here and download it.
+
+__NOTE:__: The R notebooks in the repository have ISO-8859-2 encoding. *RStudio* will try to use ISO-8859-1 encoding (default Windows), and accented characters will display incorrectly. To change this, re-open the file with __File/Reopen with encoing...__. This ensures that you can use national characters in plots and also `knitr` will work correctly and produce correct PDF files. On the other hand, files with ISO-8859-2 may not display correctly in *GitHub Desktop*, I'm studying this.
 
 ## Your own GitHub repository
 To upload your coursework for review, you will need your own GitHub repository.
