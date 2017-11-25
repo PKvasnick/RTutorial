@@ -7,13 +7,13 @@ U¾ sme kreslili grafy príkazmi *plot* a *lines*. To je ¹tandardná funkcionalita 
 
 V tejto èasti sa zoznámime z prvým z balíkov zo skupiny *tidyverse*: je to kresliaci balík __ggplot2__. 
 
-__ggplot2__ je výnimoèný svojou funkcionalitou, kvalitou výstupu a osobitou filozofiou. Ako so v¹etkým v R, budete si chvíµu vznika», ale sµubujem, ¾e to èo získate na prvý pokus bude v¾dy o niekoµko tried lep¹ie ako prvý pokus o graf v Exceli.
+__ggplot2__ je výnimoèný svojou funkcionalitou, kvalitou výstupu a osobitou filozofiou. Ako so v¹etkým v R, budete si chvíµu zvyka», ale sµubujem, ¾e to, èo získate na prvý pokus, bude v¾dy o niekoµko tried lep¹ie ako prvý pokus o graf v Exceli.
 
 ```{r}
 library(tidyverse)
 ```
 
-Neznepokojujeme sa výstrahami. *Tidyverse* predefinuje niektoré veci v R, ale to nás nemusí znepokojova». 
+Neznepokojujeme sa výstrahami o konfliktoch. *tidyverse* predefinuje niektoré veci v R, ale to nás nemusí znepokojova». 
 
 ### Dátový súbor __mpg__
 
@@ -34,17 +34,17 @@ Vidím negatívnu závislos» medzi objemom motora a dojazdom. Teda autá s väè¹ím mo
 
 __ggplot()__ vytvorí súradnicový systém a prázdny graf. 
 
-__geom_xxx()__ pridávajú do grafu jednu alebo niekoµko vrstiev objektov. __Geom_point__ pridá vrstvu s bodmi grafu. 
+__geom_xxx()__ pridávajú do grafu jednu alebo niekoµko vrstiev objektov. __geom_point__ pridá vrstvu s bodmi grafu. 
 
 Ka¾dá funkcia __geom_xxx__ vy¾aduje ako argument priradenie (mapping) vlastností (ståpcov) dát k vizuálnym (estetickým) prvkom grafu (odtiaµ __aes()__), ako sú polohy bodov,farba, veµkos» a tvar symbolov, farba výplní, èiar a podobne. V na¹om prípade sme priradili __displ__ x-ovej a __hwy__ y-ovej súradnici bodov na grafe.
 
 V¹eobecný predpis je 
 
-__ggplot(data = \<DATA\>) + \<GEOM_FUNKCIA\>(mapping = aes(\<PRIRADENIA\))__
+`ggplot(data = \<DATA\>) + \<GEOM_FUNKCIA\>(mapping = aes(\<PRIRADENIA\))`
 
 __Úlohy__
 
-1. Spustite __ggplot(mpg)__ bez __geom_xxxx()__. Èo vidíte?
+1. Spustite `ggplot(data = mpg)` bez `geom_xxxx()`. Èo vidíte?
 
 2. Koµko ståpcov a riadkov má súbor __mtcars__?
 
@@ -105,9 +105,9 @@ Neprepadajte panike.
 
 * Skúste help k funkcii, ktorú pou¾ívate (__help(geom_point)__ alebo __?geom_point__)
 
-### Panely - __Facets__
+### Fazety - __Facets__
 
-E¹te jeden spôsob, ako prida» do grafu ïal¹ie premenné, je rozdeli» graf do viacerých panelov a v ka¾dom zobrazi» iba podmno¾inu dát. Tento spôsob je vhodný pre kategoriálne dáta.
+E¹te jeden spôsob, ako prida» do grafu ïal¹ie premenné, je rozdeli» graf do viacerých "faziet" a v ka¾dej zobrazi» iba podmno¾inu dát. Pre takéto delenie je vhodné pouu¾iø kategoriálne dáta.
 
 Ak takto chceme rozdeli» ná¹ graf podµa (jednej, diskrétnej) premennej, pou¾ijeme funkciu __facet_wrap__:
 

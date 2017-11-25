@@ -1,113 +1,114 @@
 ---
-title: "PrvÃ¡ ukÃ¡Å¾ka R"
-output: html_notebook
+title: "Prvá uká¾ka R"
+output: html_document
 ---
 
-# Ako chutÃ­ R
+# Ako chutí R
 
-KÃ½m zaÄnete pÃ­saÅ¥ R, urobÃ­me nieÄo jednoduchÃ©, aby ste mali predstavu, kade povedÃº naÅ¡e ÄalÅ¡ie kroky. 
+Kım zaènete písa» R, urobíme nieèo jednoduché, aby ste mali predstavu, kade povedú na¹e ïal¹ie kroky. 
 
 ## R notebook
-NachÃ¡zame sa v R notebooku. Notebook pozostÃ¡va 
+Nacházame sa v R notebooku. Notebook pozostáva 
 
-* z blokov textu, ako je tento, s Markdown formÃ¡tovanÃ­m
+* z blokov textu, ako je tento, s Markdown formátovaním
 
-* z blokov kÃ³du, ohraniÄenÃ½ch troma *backtickmi*. *Backtick* je opaÄnÃ½ apostrof a na anglickej klÃ¡vesnici sa nachÃ¡dza na klÃ¡vese *;* hned pod Esc. *Nie je to apostrof!*
+* z blokov kódu, ohranièenıch troma *backtickmi*. *Backtick* je opaènı apostrof a na anglickej klávesnici sa nachádza na klávese *;* hned pod Esc. *Nie je to apostrof!*
 
-* z blokov vÃ½stupu, obsahujÃºcich textovÃ½ a grafickÃ½ vÃ½stup kÃ³du z predchÃ¡dzajÃºceho poÄ¾a. 
+* z blokov vıstupu, obsahujúcich textovı a grafickı vıstup kódu z predchádzajúceho poµa. 
 
-KÃ³d v poli vykonÃ¡me stlaÄenÃ­m __Ctrl-Shift-Enter__ alebo kliknutÃ­m na zelenÃ½ trojuholnÃ­Äek (*Run current chunk*) vpravo hore v poli kÃ³du.
+Kód v poli vykonáme stlaèením __Ctrl-Shift-Enter__ alebo kliknutím na zelenı trojuholníèek (*Run current chunk*) vpravo hore v poli kódu.
 
-KliknutÃ­m na __Preview__ na hornom paneli okna (alebo stlaÄenÃ­m __Ctrl-Shift-K__) sa zobrazÃ­ vyrendrovanÃ¡ html strÃ¡nka s kÃ³dom a vÅ¡etkÃ½mi vÃ½stupmi.
+Kliknutím na __Preview__ na hornom paneli okna (alebo stlaèením __Ctrl-Shift-K__) sa zobrazí vyrendrovaná html stránka s kódom a v¹etkımi vıstupmi.
 
 ```{r}
 plot(cars)
 ```
 
-## UkÃ¡Å¾kovÃ© dÃ¡tovÃ© sÃºbory v R
+## Uká¾kové dátové súbory v R
 
-Zjavne sme nieÄo nakreslili, ale Äo je __cars__?
+Zjavne sme nieèo nakreslili, ale èo je `cars`?
 
-Je to ukÃ¡Å¾kovÃ½ dÃ¡tovÃ½ sÃºbor, ktorÃ½ mÃ¡te k dispozÃ­cii spolu so zÃ¡klanÃ½mi balÃ­Äkami pri spustenÃ­ R. 
+Je to uká¾kovı dátovı súbor, ktorı máte k dispozícii spolu so záklanımi balíèkami pri spustení R. 
 
-__Recept__ KeÄ v R nieÄo stretnem a neviem Äo to je, prvÃ¡ vec, ktorÃº skÃºsim, je 
+__Recept__ Keï v R nieèo stretnem a neviem èo to je, prvá vec, ktorú skúsim, je `help(cars)`, __Ctrl-Shift-Enter__ a kuk doprava, vısledok sa zobrazí v pravom dolnom okne. Ak niè nevidíte, kliknite na zálo¾ku *Help*.
 
-```{r}
-help(cars)
-```
+Aha, tak¾e mám vısledky merania brzdnej dráhy v závislosti od poèiatoènej rıchlosti vozidla spred 100 rokov. V¹imnite si, ako help dokumentuje obsah polí. 
 
-__Ctrl-Shift-Enter__ a kuk doprava, vÃ½sledok sa zobrazÃ­ v pravom dolnom okne. Ak niÄ nevidÃ­te, kliknite na zÃ¡loÅ¾ku *Help*.
-
-Aha, takÅ¾e mÃ¡m vÃ½sledky merania brzdnej drÃ¡hy v zÃ¡vislosti od poÄiatoÄnej rÃ½chlosti vozidla spred 100 rokov. VÅ¡imnite si, ako help dokumentuje obsah polÃ­. 
-
-PoÄme sa pozrieÅ¥, ako vyzerajÃº naÅ¡e dÃ¡ta:
+Poïme sa pozrie», ako vyzerajú na¹e dáta:
 
 ```{r}
 head(cars)
 ```
-*head* preto, lebo nechceme vÅ¡etkÃ½ch 50 riadkov. 
+`head` preto, lebo nám staèí hlavièka a niekoµko prvıch riadkov. 
 
 ## R data frame
 
-VidÃ­me tabuÄ¾ku, vieme, Å¾e mÃ¡ 50 riadkov a 3 stÄºpce. 
+Vidíme tabuµku, vieme, ¾e má 50 riadkov a 3 ståpce. 
 
-* StÄºpec Ãºplne vÄ¾avo nemÃ¡ meno a volÃ¡ sa *index*, slÃºÅ¾i na jednoznaÄnÃ© oznaÄenie riadkov v tabuÄ¾ke. 
-* *Riadky* zodpovedajÃº jednotlivÃ½m prÃ­padom, pacientom, vzorkÃ¡m. 
-* *StÄºpce* zodpovedajÃº vlastnostiam prÃ­padov, pacientov, vzoriek.
+* Ståpec úplne vµavo nemá meno a volá sa *index*, slú¾i na jednoznaèné oznaèenie riadkov v tabuµke. 
+* *Riadky* zodpovedajú jednotlivım prípadom, pacientom, vzorkám. 
+* *Ståpce* zodpovedajú vlastnostiam prípadov, pacientov, vzoriek.
 
-Toto je typickÃ½ spÃ´sob usporiadania dÃ¡t pre Å¡tatistickÃº analÃ½zu (nielen v R) a spotrebujeme dosÅ¥ Äasu, aby sme sa nauÄili svoje dÃ¡ta takto usporiadaÅ¥. 
+Toto je typickı spôsob usporiadania dát pre ¹tatistickú analızu (nielen v R) a spotrebujeme dos» èasu, aby sme sa nauèili svoje dáta takto usporiada». 
 
-## AkÃ¡ to je zÃ¡vislosÅ¥?
+## Aká to je závislos»?
 
-Tak mÃ¡me nejakÃ© dÃ¡ta, a Äo to je za zÃ¡vislosÅ¥? 
+Tak máme nejaké dáta, a èo to je za závislos»? 
 
 ```{r}
 plot(cars)
 ```
 
-__Ãšloha:__: Ako uloÅ¾Ã­me obrÃ¡zok do sÃºboru? SpÃ½tajte sa Googlu.
+__Úloha:__: Ako ulo¾íme obrázok do súboru? Spıtajte sa Googlu.
 
-*Tip*: Ak sa notebook zaÄne chovaÅ¥ Äudne, vÅ¾dy pomÃ´Å¾e __Session -> Restart R__ alebo niektorÃ¡ varianta.
+*Tip*: Ak sa notebook zaène chova» èudne, v¾dy pomô¾e __Session -> Restart R__, prièom si mô¾ete vybra», èo sa má sta» po re¹tarte.
 
-PoÄme to nakresliÅ¥ poriadne. 
+Poïme to nakresli» poriadne. 
 
 ```{r}
 plot(cars, xlab = "Speed [mph]", ylab = "Stopping distance [ft]", las = 1)
 lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
 title(main="Stopping distance vs. initial speed")
 ```
-__Ãšloha__: Kto netuÅ¡Ã­ Äo je *lowess*, Äo spravÃ­?
+__Úloha__: Kto netu¹í èo je *lowess*, èo spraví?
 
-__Recept__: stÄºpce dÃ¡tovej tabuÄ¾ky sÃº data$<meno_stlpca>
+__Recept__: ståpce dátovej tabuµky sú data$<meno_stlpca>
 
-VyzerÃ¡ to ako parabola, tak si to nakreslime v logaritmickej Å¡kÃ¡le:
+Vyzerá to ako parabola, tak si to nakreslime v logaritmickej ¹kále:
 
 ```{r}
 plot(cars, xlab = "Speed [mph]", ylab = "Stopping distance [ft]", las = 1, log = "xy")
 lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
 title(main="Stopping distance vs. initial speed, log-log scale")
 ```
-__Ãšloha__: Funguje slovenskÃ¡ diakritika? SkÃºste posloveneÄiÅ¥ popisy osÃ­.
+__Úloha__: Funguje slovenská diakritika? Skúste posloveneèi» popisy osí.
 
-NaÅ¡a zÃ¡vislosÅ¥ vyzerÃ¡ ako priamka, tak skÃºsme dÃ¡ta preloÅ¾iÅ¥ priamkou. __POZOR__ zaÄÃ­na Å¡tatistika!
+```{r}
+plot(cars, xlab = "Poèiatoèná rıchlos» [míle / hod]", ylab = "Brzdná dráha [stopy]", las = 1, log = "xy")
+lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
+title(main="Brzdná dráha v závislosti od poèiatoènej rıchlosti, log-log ¹kála")
+```
+
+
+Na¹a závislos» vyzerá ako priamka, tak skúsme dáta prelo¾i» priamkou. __POZOR__ zaèína ¹tatistika!
 
 ```{r}
 fmL <- lm(log(dist) ~ log(speed), data = cars)
 summary(fmL)
 plot(fmL)
 ```
-MÃ¡me tu kopu vÃ½stupov. 
+Máme tu kopu vıstupov. 
 
-Z textovÃ©ho vÃ½stupu vidÃ­me, Å¾e mÃ¡me celkom dobrÃ½ model: \[d = e^{-0.73}v^{1.6}\]
+Z textového vıstupu vidíme, ¾e máme celkom dobrı model: \[d = e^{-0.73}v^{1.6}\]
 
-*E3te vidÃ­me, Å¾e mÃ´Å¾eme pÃ­saÅ¥ aj vzorce v TeX-ovej notÃ¡cii!*
+*E3te vidíme, ¾e mô¾eme písa» aj vzorce v TeX-ovej notácii!*
 
-ZÃ¡vereÄnÃ½m kliknutÃ­m na __Preview__ (alebo __Ctrl-Shift-K__) si zobrazÃ­me vÃ½slednÃ½ dokument. 
+Závereènım kliknutím na __Preview__ (alebo __Ctrl-Shift-K__) si zobrazíme vıslednı dokument. 
 
-__Ãšloha__: VyhÄ¾adajte si na Googli vÅ¡etko, Äomu nerozumiete. Alebo sa spÃ½tajte.
+__Úloha__: Vyhµadajte si na Googli v¹etko, èomu nerozumiete. Alebo sa spıtajte.
 
-__Ãšloha__: ÄŒo keby som vo vÃ½stupe nechcel R-kÃ³d? 
+__Úloha__: Èo keby som vo vıstupe nechcel R-kód? 
 
-__Ãšloha__: Viem report vytlaÄiÅ¥ do pdf?
+__Úloha__: Viem report vytlaèi» do pdf?
 
 
