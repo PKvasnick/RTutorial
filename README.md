@@ -9,13 +9,13 @@ For the class, you need to install a few things to start.
 ### Install R
 * Go to https://cloud.r-project.org
 * Select the installation package appropriate for your operating system (and package manager)
-* Install
+* Install __to a directory with names without spaces or discritics__. Some packages wouldn't install in C:\\Program Files, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*.
 
 ### Install RStudio
 * Go to https://www.rstudio.com/products/rstudio/download/
 * Select "Download" for RStudio Desktop
 * Section "Installers for supported platforms", click on RStudio 1.1.383 - Windows Vista/7/8/10
-* Install
+* Install. I advise to again use a directory other than the default __
 
 ### Install the tidyverse suite in RStudio
 The tidyverse suite of R packages provide a set of R features/functionalities that we will use in this tutorial.
@@ -37,7 +37,7 @@ To upload your coursework for review, you will need your own GitHub repository.
 * Click __Start a project__, make it public, and enter a short description in the __README.md__ file.
 
 Using __GitHub__ is a reasonable way of sharing code and data. The most important feature is that code and data are recorded with their full *_history_*. This is made possible by using a program called __git__, which is the most frequently used *_version control system_*. Version control systems are routinely used by programmers, but are increasingly in use by people in many other areas, such as scientific paper authors.
-__git__ takes care about changes made to your code, data, and documentation, helps you recover from undesired changes, co-operate with other people and share your code and data. 
+__git__ takes care about changes made to your code, data, and documentation, helps you recover from undesired changes, co-operate with other people and share your code and data.
 
 ### Manage your __GitHub__ repository
 __git__ is a Unix program and there is no natural port to Windows. But there are several solutions that allow you to use __git__ on Windows:
