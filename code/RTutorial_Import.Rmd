@@ -1,0 +1,59 @@
+---
+title: "Import dát"
+output: html_document
+author: Peter Kvasnièka
+date: 26 November 2017
+encoding: iso-8859-2
+---
+
+
+Import dát do R
+========================================================
+
+![](..\\pics\\data-science-wrangle.png)
+
+Minule sme sa venovali základom R a vizualizácii.
+
+Dnes sa pokúsime dosta» do R nejaké dáta a upravi» ich do pouÅ¾iteµnej podoby.
+
+Dáta pre R
+========================================================
+
+R doká¾e naèíta» dáta z najrozmanitej¹ích zdrojov.
+
+My sa budeme zaobera» troma:
+- textové súbory
+- MS Excel
+- JSON (JavaScript Object Notation)
+
+
+RT-PCR
+========================================================
+
+Pou¾ijeme dáta z analýzy expresie génov redoxnej ochrany.
+
+Pod expresiou rozumieme rýchlos», s akou sa syntetizuje daný gén. Meriame ju pomocou real-time PCR (tie¾ qPCR, kvantitatívna PCR) ako mno¾stvo mRNA obsahujúcej sekvenciu príslu¹ného génu (alebo jej charakteristickú èas»)
+
+Veµmi struène o RT-PCR (podrobnej¹ie napríklad tu: http://labguide.cz/metody/real-time-pcr/):
+
+* Oznaèíme ¹pecifickými syntetickými markermi sekvenciu pre daný gén.
+
+* Poèas opakujúcich sa teplotných cyklov dochádza k multiplikácii tohoto úseku. 
+
+* Nárast je spoèiatku exponenciálny, potom prechádza do saturácie, ako postupne ubúda substrát pre syntézu nových replík
+
+* Závislos» mno¾stva syntetizovanej DNA od èasu má teda esovitý charakter.
+
+* Dosiahnuté plató nesúvisí s poèiatoèným mno¾stvom ¹tudovanej sekvencie vo vzorke.
+
+* Mierou mno¹tva je cyklus, v ktorom exponenciálny nárast prejde do lineárneho.
+
+![Multiplikácia vzorky v Real-time PCR](..\\pics\\real-time-curve.jpg)
+
+
+Import textových dát
+========================================================
+
+Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
+
+Textové súbory pre gén superoxid-dismutázy 1 (SOD-1) a pre referenèný, *housekeeper* gén GAPDH nájdete v repozitári kurzu, 
