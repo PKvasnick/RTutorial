@@ -26,6 +26,7 @@ Tento problém sa vyskytol u viacerých z vás, a je to niekoľko problémov doh
 * Nič nepokazíte, ak RStudio nainštalujete do rovnakého adresára ako R a nie do *_C:\\Program Files_*. Môžete použiť pôvodný inštalačný súbor, alebo si ho stiahnite znova z https://www.rstudio.com/products/rstudio/download/.
 * Otvorte nastavenia firewallu svojho antivírového programu, a povoľte RStudiu komunikovať so svetom.
   - Môže sa stať, že v zozname nenájdete RStudio, pretože sa ešte nepokúsilo komunkovať navonok. V takom prípade ho buď vyhľadajte v zozname aplikácií na počítači, alebo počkajte, kým RStudio zareve, že vám nevie doinštalovať niektorý balíček.
+  ![Musíte povoliť RStudiu komunikovať cez firewall.](pics/firewall_warning.png)
 * Skontrolujte inštaláciu `tidyverse`: Na príkazový riadok konzoly napíšte  `library(tidyverse)`a stlačte ENTER. Mal by sa zobraiť nevinný výpis bez červených výkrikov.
   - Ak nevidíte konzolu, lebo sa automaticky otvoril nejaký súbor, naľavo na dolnom okraji okna nájdete záložku *_Console_*. Dvakrát kliknúť.
 
