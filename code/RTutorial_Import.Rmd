@@ -1,9 +1,9 @@
 ---
 title: "Import dát"
-output: html_document
-author: Peter Kvasnièka
-date: 26 November 2017
-encoding: iso-8859-2
+output: 
+  html_document: 
+    fig_caption: yes
+    theme: flatly
 ---
 
 
@@ -27,8 +27,7 @@ My sa budeme zaobera» troma:
 - JSON (JavaScript Object Notation)
 
 
-RT-PCR
-========================================================
+### RT-PCR
 
 Pou¾ijeme dáta z analýzy expresie génov redoxnej ochrany.
 
@@ -56,4 +55,87 @@ Import textových dát
 
 Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
 
-Textové súbory pre gén superoxid-dismutázy 1 (SOD-1) a pre referenèný, *housekeeper* gén GAPDH nájdete v repozitári kurzu, 
+Textové súbory pre gén superoxid-dismutázy 1 (SOD-1) a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH) nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
+
+![Dáta v GitHub repozitári kurzu](../pics/github_data.png)
+Dátové súbory si nemusíte s»ahova», mô¾ete ich importova» priamo z GitHubu.
+
+Pou¾ijeme balíky `tidyverse`, tak ako v naposledy.
+
+```{r}
+library(tidyverse)
+```
+
+### Asistované kódovanie
+
+Pre naèítanie súboru vyu¾ijeme nástroj na import dát, ktorý ponúka *RStudio*. Tento nástroj nám toti¾ pomô¾e doladi» parametre pre naèítanie a získa» kód, ktorým sa naèítanie vykoná. 
+
+![Vyberte File/Import data/From Text (readr)](../pics/rstudio_select_import.png)
+
+Otvorí sa nástroj pre import. 
+
+![Nástroj na import dát v RStudiu](../pics/rstudio_inside_import.png)
+
+Zadajme adresu súboru v repozitári na GitHube. Aby sme získali správnu adresu, musíme prejs» na súbor a zvoli» raw zobrazenie:
+
+![Vyberte po¾adovaný dátový súbor a kliknite na Raw vpravo na ¹edej li¹te](../pics/github_select_data_file.jpg)
+
+Teraz skopírujte adresu z adresového riadku prehliadaèa a vlo¾te ju do príslu¹ného poµa v importéri. Stlaète `Update` vpravo od poµa a uvidíte náhµad dát.
+
+![Vidíme náhµad importovaných dát a musíme doladi» nastavenia, aby import prebehol správne.](../pics/rstudio_import_preview.png)
+
+Hneï vidíme, ¾e dáta sa nerozdelili do ståpcov. Je to preto, ¾e máme zle nastavený oddeµovací znak. Nastavte v poli `Delimiter` na `Tab` a v¹etko sa napraví. Takisto potrebujeme zada» názov dát, preto¾e budeme importova» ïal¹iu pre referenciu (GAPDH).
+
+![Úprava nastavení importu](../pics/rstudio_import_adjust.png)
+
+Kým kliknete na `Import`, v¹imnite si, ¾e v poli vpravo dolu máme kód, ktorý sa vykoná. Ten si mô¾eme okopírova» do svojho skriptu a pritom sa pouèi», ako taký príkaz vyzerá.
+
+```{r}
+sod1.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod1_full.dat", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+```
+
+a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp. `?read_delim`, aby ste sa dozvedeli viac.
+
+__Úloha__: Overte, èo robí príkaz `view(svd1.data)`.
+__Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
+
+Znakové polia a faktory
+=============================================================
+
+```{r}
+gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/gapdh_full.dat", 
+    "\t", escape_double = FALSE, trim_ws = TRUE)
+print(gapdh.data)
+```
+
+A teraz tomu vytneme:
+
+```{r}
+sod1.data$Cref <- gapdh.data$C
+sod1.data$LogRat <- log10(sod1.data$C / sod1.data$Cref)
+print(sod1.data)
+ggplot(data = sod1.data) + 
+  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
+  geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
+```
+
+Ups. Asi potrebujeme iné dáta, tieto sú o¹klivé.
+
+Ako vidno, tieto polia vlastne neobsahujú znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách: 
+
+* __terapeutickej skupine__ (èi vzorka pochádza od potkana, ktorý patril do kontrolnej skupiny, alebo do skupiny, ktorej bol podávaný 7-nitroindazol 7-NI, resp. metylester N-L-nitroarginínu, L-NAME). 7-NI aj L-NAME sú inhibítory tvorby oxidu dusnatého (NO) v tkanivách.
+
+* __zvierati__ / vzorke. Oznaèenia sú v skutoènosti oznaèenia na meracej platnièke, ale je dôle¾ité vedie», ktoré merania spolu súvisia.
+
+Inak povedané, musíme R oznámi», ¾e tieto dva ståpce obsahujú dáta, ktoré vyjadrujú nie nezávislú textovú informáciu, ale informáciu o príslu¹nosti riadku do niektorej klasifikaènej skupiny. Inak povedané, musíme tieto riadky premeni» na __faktory__.
+
+```{r}
+sod1.data$Location = as.factor(sod1.data$Location)
+sod1.data$Group = as.factor(sod1.data$Group)
+sod1.data
+```
+```{r}
+sod1.data$Group = relevel(sod1.data$Group, ref = "KONTROLA")
+print(sod1.data$Group)
+```
