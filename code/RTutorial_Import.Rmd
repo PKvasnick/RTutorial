@@ -57,7 +57,19 @@ Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
 
 ![©truktúra superoxid dismutázy 3](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/SOD3_2JLP.png/330px-SOD3_2JLP.png)
 
-Textové súbory pre gén superoxid-dismutázy 3 (SOD-3, extracelulárna, tetramérna) a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH) nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
+Textové dátové súbory pre
+
+* gén superoxid dismutázy 3 (SOD3, extracelulárna tetramérna superoxid dismutáza, https://en.wikipedia.org/wiki/Superoxide_dismutase)
+
+* gén receptoru angiotenzínu II 1. typu (AT1R, https://en.wikipedia.org/wiki/Angiotensin_II_receptor_type_1)
+
+* gén hém oxygenázy 1 (HI-1, https://en.wikipedia.org/wiki/Heme_oxygenase) 
+
+* gén proteínu p22phox, èo je podjednotka NADPH oxidázy (p22, https://en.wikipedia.org/wiki/P22phox)
+
+* a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH, https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase) 
+
+nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
 
 ![Dáta v GitHub repozitári kurzu](../pics/github_data.png)
 Dátové súbory si nemusíte s»ahova», mô¾ete ich importova» priamo z GitHubu.
@@ -122,11 +134,15 @@ ggplot(data = sod3.data) +
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
-Ups. Asi potrebujeme iné dáta, tieto sú o¹klivé.
+Okrem dát pre SOD3 máte v repozitári e¹te dáta pre gény
+
+* AT1R
+
+* HO-1
+
+* P22
 
 Ako vidno, tieto polia vlastne neobsahujú znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách: 
-
-* __terapeutickej skupine__ (èi vzorka pochádza od potkana, ktorý patril do kontrolnej skupiny, alebo do skupiny, ktorej bol podávaný 7-nitroindazol 7-NI, resp. metylester N-L-nitroarginínu, L-NAME). 7-NI aj L-NAME sú inhibítory tvorby oxidu dusnatého (NO) v tkanivách.
 
 * __zvierati__ / vzorke. Oznaèenia sú v skutoènosti oznaèenia na meracej platnièke, ale je dôle¾ité vedie», ktoré merania spolu súvisia.
 
