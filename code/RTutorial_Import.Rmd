@@ -114,7 +114,7 @@ a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp.
 __Úloha__: Overte, èo robí príkaz `view(sod3.data)`.
 __Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
 
-Znakové polia a faktory
+Úprava dát
 =============================================================
 
 ```{r}
@@ -123,37 +123,125 @@ gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/
 print(gapdh.data)
 ```
 
-A teraz tomu vytneme:
+Najskôr musíme dáta normalizova». Sú dve veci, ktoré mô¾ete spravi»:
+
+* "ratio estimator" - vzia» hodnoty pre ka¾dú skupinu v skúmanom géne a referencii, a pou¾i» vz»ahy pre podiel dvoch náhodných premenných (https://en.wikipedia.org/wiki/Ratio_estimator'. To je korektné a presné, ale pomerne »a¾ko sa s tým pracuje pri viacerých génoch.
+
+* pristúpi» k problému ako k regeresii s chybami v nezávislej premennej, a hµada» smernice priamok $$C_{gén}\sim C_{ref}$$ a ich chyby. Rovnaký problém ako predchádzajúci prístup.
+
+* Pou¾i» logaritmus podielu koncentrácie pre gén a pre referenciu. $$\log(C/C_{ref})$$ Dobrá varianta, logaritmus stabilizuje rozdelenie dát a mô¾eme veselo pou¾íva» analýzu rozptylu. Nie tak exaktne presné ako predchádzajúce varianty, ale omnoho praktickej¹ie.
 
 ```{r}
 sod3.data$Cref <- gapdh.data$C
 sod3.data$LogRat <- log10(sod3.data$C / sod3.data$Cref)
 print(sod3.data)
+```
+
+No a teraz si poïme nakresli», èo máme, a hneï sa aj nauèíme zopár nových __geomov__.
+
+```{r}
 ggplot(data = sod3.data) + 
   geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
-Okrem dát pre SOD3 máte v repozitári e¹te dáta pre gény
+Pou¾ili sme dve zobrazenia tých istých dát, ako vidno, staèí na to __+__ a prida» ïal¹iu vrstvu.
 
-* AT1R
+1. `geom_boxplot` nakreslí známe krabicové zobrazenie:
 
-* HO-1
+  - obdå¾nik ukazuje medzikvartilovú vzdialenos» (25% a 75% kvantil)
+  - prieèka ukazuje medián
+  - no¾ièky siahajú od hraníc krabice k bodom vzdialeným menej ako 1,5-násobok medzikvartilovej vzdialenosti 
+  - osobitne sú vynesené hodnoty mimo tento rozsah.
+  
+2. `geom_jitter` náhodne vynesie body do pruhu pre danú skupinu.
 
-* P22
+### Faktory a referenèné úrovne
 
-Ako vidno, tieto polia vlastne neobsahujú znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách: 
+Predchádzajúci graf je síce pekný, ale má vá¾nu chybu. Chceli by sme ma» kontrolu vµavo a nie uprostred. Tá chzba sa uká¾e e¹te výraznej¹ie, keï sa pokúsime urobi» analýzu rozptylu:
+
+```{r}
+sod3.fit <- lm(LogRat ~ Group, data = sod3.data)
+summary(sod3.fit)
+```
+
+Aj tu pochopite2ne chceme ma» kontrolu ako referenènú hladinu, preto¾e inak výsledky nie sú dobre pou¾iteµné.
+
+Pozrime sa na polia `Group` a `Location`. 
+
+```{r}
+print(sod3.data$Location)
+print(sod3.data$Group)
+```
+
+Ako vidno, tieto polia vlastne neobsahujú informatívne znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách: 
 
 * __zvierati__ / vzorke. Oznaèenia sú v skutoènosti oznaèenia na meracej platnièke, ale je dôle¾ité vedie», ktoré merania spolu súvisia.
 
-Inak povedané, musíme R oznámi», ¾e tieto dva ståpce obsahujú dáta, ktoré vyjadrujú nie nezávislú textovú informáciu, ale informáciu o príslu¹nosti riadku do niektorej klasifikaènej skupiny. Inak povedané, musíme tieto riadky premeni» na __faktory__.
+* __terapeutickej skupine__.
+
+Tieto ståpce musíme premeni» na __faktory__.
 
 ```{r}
 sod3.data$Location = as.factor(sod3.data$Location)
 sod3.data$Group = as.factor(sod3.data$Group)
 sod3.data
 ```
+
+A u ståpca `Group` chceme nastavit kontrolu ako referenènú hladinu.
+
 ```{r}
 sod3.data$Group = relevel(sod3.data$Group, ref = "KONTROLA")
 print(sod3.data$Group)
 ```
+
+Teraz si mô¾eme znova nakrelis» graf
+
+```{r}
+ggplot(data = sod3.data) + 
+  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
+  geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
+```
+
+a urobi» analýzu rozptylu:
+
+```{r}
+sod3.fit <- lm(LogRat ~ Group, data = sod3.data)
+summary(sod3.fit)
+```
+
+Ako teraz zistíme, ktoré z rozdielov medzi skupinami sú ¹tatisticky významné? 
+Mo¾ností je niekoµko, my pou¾ijeme systematickú variantu s balíèkom `multcomp`:
+
+```{r}
+ if(!require(multcomp)){install.packages("multcomp")}
+```
+
+Aby sme `R` vysvetlili, aké porovnania chceme urobi», musíme vytvori» *maticu kontrastov*. Pri tom sa zase nauèíme nieèo z R:
+
+```{r}
+Input = ("
+Contrast.Name KONTROLA  7-NI  L-NAME
+ 7-NI_vs_CTRL   -1       1       0
+ L-NAME_vs_CTRL -1       0       1
+ L-NAME_vs_7-NI  0      -1       1
+")
+cmat = as.matrix(read.table(textConnection(Input), header=TRUE, row.names=1))
+cmat
+
+library(multcomp)
+
+G <- glht(sod3.fit, linfct = mcp(Group = cmat))
+
+summary(G, test=adjusted("single-step"))
+```
+
+Ako vám prezradí `help(glht)`, máte k dispozícii niekoµko mo¾ností ako prispôsobi» hladinu významnosti: "none", "single-step", "Shaffer", "Westfall", "free", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr". 
+
+Ktorú zvoli», je bohu¾iaµ mimo rámca tohoto kurzu. Preto¾e my máme iba tri porovnania, staèí nám ¹tandardné nastavenie. Skúste e¹te Shafferov test, a ak dostanete podobné výsledky, bude najskôr v¹etko v poriadku.
+
+__Úloha__ Zopakujte si podobnú analýzu s dátami pre iný gén.
+
+__Úloha__ Nakreslite si závislosti *C* od *C_ref* a vymyslite, ako porovna» smernice. 
+
+__Úloha__ V repozitári nájdete dáta o mamografickej ¹túdii z http://datahub.io/JohnSnowLabs/mammography-data-from-breast-cancer-surveillance-consortium. Vymyslite, èo by sa s nimi dalo urobi». Preskúmajte naèítanie dát cez JSON objekt, ako je popísané na stránke. 
