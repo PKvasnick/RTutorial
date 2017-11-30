@@ -55,7 +55,9 @@ Import textových dát
 
 Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
 
-Textové súbory pre gén superoxid-dismutázy 1 (SOD-1) a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH) nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
+![©truktúra superoxid dismutázy 3](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/SOD3_2JLP.png/330px-SOD3_2JLP.png)
+
+Textové súbory pre gén superoxid-dismutázy 3 (SOD-3, extracelulárna, tetramérna) a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH) nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
 
 ![Dáta v GitHub repozitári kurzu](../pics/github_data.png)
 Dátové súbory si nemusíte s»ahova», mô¾ete ich importova» priamo z GitHubu.
@@ -91,13 +93,13 @@ Hneï vidíme, ¾e dáta sa nerozdelili do ståpcov. Je to preto, ¾e máme zle nastave
 Kým kliknete na `Import`, v¹imnite si, ¾e v poli vpravo dolu máme kód, ktorý sa vykoná. Ten si mô¾eme okopírova» do svojho skriptu a pritom sa pouèi», ako taký príkaz vyzerá.
 
 ```{r}
-sod1.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod1_full.dat", 
+sod3.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod3_full.dat", 
     "\t", escape_double = FALSE, trim_ws = TRUE)
 ```
 
 a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp. `?read_delim`, aby ste sa dozvedeli viac.
 
-__Úloha__: Overte, èo robí príkaz `view(svd1.data)`.
+__Úloha__: Overte, èo robí príkaz `view(sod3.data)`.
 __Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
 
 Znakové polia a faktory
@@ -112,10 +114,10 @@ print(gapdh.data)
 A teraz tomu vytneme:
 
 ```{r}
-sod1.data$Cref <- gapdh.data$C
-sod1.data$LogRat <- log10(sod1.data$C / sod1.data$Cref)
-print(sod1.data)
-ggplot(data = sod1.data) + 
+sod3.data$Cref <- gapdh.data$C
+sod3.data$LogRat <- log10(sod3.data$C / sod3.data$Cref)
+print(sod3.data)
+ggplot(data = sod3.data) + 
   geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
@@ -131,11 +133,11 @@ Ako vidno, tieto polia vlastne neobsahujú znakové re»azce, ale obsahujú informác
 Inak povedané, musíme R oznámi», ¾e tieto dva ståpce obsahujú dáta, ktoré vyjadrujú nie nezávislú textovú informáciu, ale informáciu o príslu¹nosti riadku do niektorej klasifikaènej skupiny. Inak povedané, musíme tieto riadky premeni» na __faktory__.
 
 ```{r}
-sod1.data$Location = as.factor(sod1.data$Location)
-sod1.data$Group = as.factor(sod1.data$Group)
-sod1.data
+sod3.data$Location = as.factor(sod3.data$Location)
+sod3.data$Group = as.factor(sod3.data$Group)
+sod3.data
 ```
 ```{r}
-sod1.data$Group = relevel(sod1.data$Group, ref = "KONTROLA")
-print(sod1.data$Group)
+sod3.data$Group = relevel(sod3.data$Group, ref = "KONTROLA")
+print(sod3.data$Group)
 ```
