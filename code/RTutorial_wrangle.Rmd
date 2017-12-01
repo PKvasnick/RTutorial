@@ -1,0 +1,246 @@
+---
+title: "TidyR"
+output: html_notebook
+---
+
+### Æistenie a úprava dát v R
+
+Text tejto èasti èerpá z kni¾ky *Garrett Grolemund, Hadley Wickham: R for Data Science.*
+Vydavateµstvo O'Reilly, Január 2017, 1. vydanie, http://r4ds.had.co.nz/
+Struèný a ¹ikovný prehlad je aj tu: http://tclavelle.github.io/dplyr-tidyr-tutorial/
+
+__Slovesá balíka *tidyR*__:
+
+- `gather()` a `spread()` prechod medzi ¹irokým a dlhým formátom dát. Konsolidácia riadkov a ståpcov tabuµky.
+- `separate()` a `unite()` delenie hodnôt v ståpci do viacerých ståpcov a spájanie do jedného ståpca.
+- `complete()` zmena implicitných chýbajúcich hodnôt na explicitné.
+
+
+```{r}
+library(tidyverse)
+```
+
+Uká¾eme si 4 tabuµky, ktoré sú súèas»ou balíka `tidyr`, èo je súèas» `tidyverse`. 
+Tabuµky ukazujú tie isté dáta, iba zaka¾dým usporiadané iným spôsobom. 
+Ako rýchlo prezradí `?table1`, dáta sú incidencie tuberkulózy v Afganistane, Brazílii a Èíne v rokoch 1999 a 2000.
+
+```{r}
+table1
+table2
+table3
+table4a
+table4b
+```
+Ktoré z týchto usporiadaní je najvhodnej¹ie? 
+
+Iba jedno z nich mô¾eme pova¾ova» za *èisté (tidy)*, a bude sa nám s ním pracova» najµah¹ie. U¾ sme hovorili, èo povazujeme za dobre usporiadané dáta:
+
+![Èisté dáta](../pics/tidy-1.png)
+
+1. Ka¾dá premenná (vlastnos») má svoj ståpec.
+
+2. Ka¾dé pozorovanie má svoj riadok.
+
+3. Ka¾dá hodnota má svoje pole. 
+
+Ako vidno, z na¹ich ¹tyroch reprezentácií iba tabuµka 1 je èistá. Preèo vlastne potrebujeme èisté dáta?
+
+1. Je výhodné pracova» s jedinou reprezentáciou dát. Potom sa rýchlo nauèíte pou¾íva» nástroje, ktoré s touto reprezentáciou dobre pracujú. Spomínal som, ¾e v R existuje èasto niekoµko sôsobov, ako urobi» jednu vec?
+
+2. R pracuje s vektorizáciou, a pri èistých dátach s premennými v ståpcoch pracuje zvlá¹» efektívne. 
+
+### Ako pracujeme s èistými dátami
+
+Malá uká¾ka, èo mô¾eme robi» s èistými dátami:
+
+1. Vypoèíta» incidenciu (poèet nových prípadov / 10000 obyvateµov)
+
+```{r}
+table1 %>% 
+  mutate(rate = cases / population * 10000)
+```
+
+2. Vypoèíta» poèty prípadov pre jednotlivé roky
+
+```{r}
+table1 %>%
+  count(year, wt = cases)
+```
+
+3. Nakresli» vývoj incidencie v èase
+
+(Toto je len pre efekt. `ggplot2` v skutoènosti nepodporuje `%>%`. Namiesto toho sme pou¾ili identifikátor `.`, ktor7 oznaèuje výslednú hodnotu posledného príkazu.)
+
+```{r}
+library(ggplot2)
+
+table1 %>%
+  mutate(rate = cases / population * 10000) %>%
+  ggplot(data = .) +
+  geom_point(mapping = aes(x = year, y = rate, color = country)) +
+  geom_line(mapping = aes(x = year, y = rate, color = country))
+```
+## Èistenie dát: funkcie *tidyr::gather()* a *tidyr::spread()*
+
+Nie v¾dy dostanete èisté dáta. Dáta sú èasto organizované nie tak, aby sa µahko spracúvali, ale napríklad aby sa µahko vkladali. 
+
+Najèastej¹ie poruchy v dátach sú:
+
+* premenná vo viacerých ståpcoch
+
+* pozorovanie vo viacerých riadkoch
+
+### Zoskupovanie ståpcov
+
+Typická porucha v dátach je, ¾e ståpce obsahujú nie premennú, ale hodnoty jednej premennej. Vezmime si tabuìku 4a. 
+
+```{r}
+print(table4a)
+```
+
+Tu ståpce obsahujú hodnoty pre rok = 1999, resp. rok = 2000.
+Ako zjednoti» hodnoty do jedného ståpca?
+
+Potrebujeme z dvoch ståpcov `1999` a `2000` vytvori» iné dva ståpce:
+
+- ståpec s hodnotami z mien pôvodných ståpcov, teda 1999 alebo 2000, nazveme ho `year`
+- ståpec s pôvodnými hodnotami zo ståpcov `1999` a `2000`, ten nazveme 'cases`.
+
+Tieto údaje musíme odovzda» funkcii `gather()`(v¹imnite si *backticky* okolo 1999 a 2000 - 1999 a 2000 nie sú syntakticky pou¾iteµné názvy ståpcov, tak¾e musíme poveda», ¾e ich myslíme ako indentifikátory a nie èísla.)
+
+```{r}
+table4a %>%
+  gather(`1999`, `2000`, key = 'year', value = 'cases')
+```
+
+Rovvnako mô¾eme uprata» tabuµku 4b:
+
+```{r}
+table4b %>%
+  gather(`1999`, `2000`, key = 'year', value = 'population')
+```
+A teraz chceme samozrejme tabuµky spoji»:
+
+```{r}
+table4a %>%
+  gather(`1999`, `2000`, key = 'year', value = 'cases') -> tidy4a
+table4b %>%
+  gather(`1999`, `2000`, key = 'year', value = 'population') -> tidy4b
+left_join(tidy4a, tidy4b)
+```
+
+### Roz¹írenie riadkov
+
+Roz¹írenie riadkov je opaèná operácia k zdru¾ovaniu ståpcov. Pou¾ívame ju, keï jedno pozorovanie zaberá niekoµko riadkov. 
+
+```{r}
+table2
+```
+Tu máme poèet prípadov a poèet obyvateµov na rôznych riadkoch, hoci sa logicky jedná o jeden záznam (jeden rok, jedna krajina).
+
+Aby sme poruchu vylieèili, musíme zo ståpcov `type` a `count` vytvori» dva nové ståpce `cases` a `population`, do ktorých roztriedime hodnoty zo ståpca `count` pod2a hodnoty v ståpci `type` pre riadky, ktoré majú inak v¹etky hodnoty rovnaké. 
+
+```{r}
+spread(table2, key = type, value = count)
+```
+
+## Rozdeµovanie: *tidyr::separate()* a spájanie 'tidyr::unite()' hodnôt v ståpcoch 
+
+Pozrime sa teraz na tabuµku 3. Tu je e¹te iný problém: hodnoty v jednom ståpci obsahujú dva údaje, a e¹te k tomu vo forme, ktorá znemo¾òuje akékoµvek spracovanie. 
+
+```{r}
+table3
+```
+
+### Rozde2ovanie ståpcov
+
+Potrebujeme rozdeli» hodnoty v ståpci `rate` do dvoch nových ståpcov `count` a `population`.
+
+```{r}
+table3 %>%
+  separate(rate, into = c("cases", "population"), sep = "/", convert = TRUE)
+```
+Úplne µahké. Ale `separate() doká¾e aj iné veci:
+
+```{r}
+table3 %>%
+  separate(year, into = c("century", "year"), sep = 2, convert = TRUE)
+```
+
+### Spájanie ståpcov
+
+Toto je len okrajová vec, skúste si sami na tabuµke 5:
+
+```{r}
+table5 %>%
+  unite(full_year, century, year, sep = "")
+```
+
+## Chýbajúce hodnoty: `na.rm`, `complete()` a `fill()`
+
+Mo¾no sa to nezdá, ale toto je jedna z vecí, pre ktorú je komplikované napísa» dobrý ¹tatistický software. Preto¾e ke´d máte v¹etky dáta, naprogramova» príslu¹né ¹tatistické formuly nie je také »a¾ké. Ale ak máte komplikované dáta, v reálnom ¾ivote sa vám èasto stane, ¾e niektorá hodnota sa stratí alebo zle odmeria. Ale chcete, aby vá¹ ¹tatistický program aj tak vypoèítal aspoò to, èo sa dá. 
+
+Hodnota mô¾e v dátach chýba» dvoma spôsobmi:
+
+- explicitne, teda je zapísaná ako `NA` 
+- implicitne, jednoducho sa v dátach nenachádza.
+
+Ilustrujme si to na jednoduchej tabuµke:
+
+```{r}
+stocks <- tibble(
+  year   = c(2015, 2015, 2015, 2015, 2016, 2016, 2016),
+  qtr    = c(   1,    2,    3,    4,    2,    3,    4),
+  return = c(1.88, 0.59, 0.35,   NA, 0.92, 0.17, 2.66)
+)
+stocks
+```
+Výnos pre 4. kvartál 2015 chýba explicitne, máme hodnotu `NA`. 
+Výnos pre 1. kvartál 2016 chýba implicitne, jednoducho nie je v tabuµke. 
+
+Implicitne chýbajúce hodnoty sa mô¾u sta» explicitne chýbajúcimi, ak zmeníme reprezentáciu dát. Napríklad ak dáme roky do ståpcov:
+
+```{r}
+stocks %>%
+  spread(key = year, value = return)
+```
+### Vynecha» nepotrebné `NA`: `na.rm`
+
+Tieto explicitne chýbajúce hodnoty nemusia by» potrebné v odli¹nej reprezentácii, preto mô¾ema vo funkcii `gather` pou¾i» `na.rm = TRUE`, aby sa explicitne chýbajúce hodnoty odstránili, ak ich netreba:
+
+```{r}
+stocks %>%
+  spread(key = year, value = return) %>%
+  gather(year, return, `2015`:`2016`, na.rm = TRUE)
+```
+
+### Explicitne doplni» `NA`: `complete()`
+
+`complete()` robí opaènú operáciu: mení implicitné chýbajúce hodnoty na explicitné:
+
+```{r}
+stocks %>%
+  complete(year, qtr)
+```
+### Prenos dopredu: `fill()`
+
+Niekedy pri vkladaní dát chýbajúca hodnota znamená, ¾e treba pou¾i» najbli¾¹iu predchádzajúcu zadanú hodnotu v ståpci:
+
+```{r}
+treatment <- tribble(
+  ~ person,           ~ treatment, ~ response,
+  "Derrick Whitmore", 1,           7,
+  NA,                 2,           10,
+  NA,                 3,           9,
+  "Katherine Burke",  1,           4
+)
+```
+
+Aby sme dáta dali do poriadku, potrebujeme správne nahradi» chýbajúce hodnoty. Na to slú¾i funkcia `fill()`:
+
+```{r}
+treatment %>%
+  fill(person)
+```
+
+A je to.

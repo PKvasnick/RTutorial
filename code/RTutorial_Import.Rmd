@@ -1,23 +1,13 @@
 ---
-title: "Import dát"
-output: 
-  html_document: 
-    fig_caption: yes
-    theme: flatly
+title: "Import"
+output:
+  html_document:
+    df_print: paged
 ---
 
+Dnes sa pokúsime dosta» do R nejaké dáta a upravi» ich do pou¾iteµnej podoby.
 
-Import dát do R
-========================================================
-
-![](..\\pics\\data-science-wrangle.png)
-
-Minule sme sa venovali základom R a vizualizácii.
-
-Dnes sa pokúsime dosta» do R nejaké dáta a upravi» ich do pouÅ¾iteµnej podoby.
-
-Dáta pre R
-========================================================
+## Dáta pre R
 
 R doká¾e naèíta» dáta z najrozmanitej¹ích zdrojov.
 
@@ -37,7 +27,7 @@ Veµmi struène o RT-PCR (podrobnej¹ie napríklad tu: http://labguide.cz/metody/rea
 
 * Oznaèíme ¹pecifickými syntetickými markermi sekvenciu pre daný gén.
 
-* Poèas opakujúcich sa teplotných cyklov dochádza k multiplikácii tohoto úseku. 
+* Poèas opakujúcich sa teplotných cyklov dochádza k multiplikácii tohoto úseku.
 
 * Nárast je spoèiatku exponenciálny, potom prechádza do saturácie, ako postupne ubúda substrát pre syntézu nových replík
 
@@ -50,8 +40,7 @@ Veµmi struène o RT-PCR (podrobnej¹ie napríklad tu: http://labguide.cz/metody/rea
 ![Multiplikácia vzorky v Real-time PCR](..\\pics\\real-time-curve.jpg)
 
 
-Import textových dát
-========================================================
+## Import textových dát
 
 Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
 
@@ -63,11 +52,11 @@ Textové dátové súbory pre
 
 * gén receptoru angiotenzínu II 1. typu (AT1R, https://en.wikipedia.org/wiki/Angiotensin_II_receptor_type_1)
 
-* gén hém oxygenázy 1 (HI-1, https://en.wikipedia.org/wiki/Heme_oxygenase) 
+* gén hém oxygenázy 1 (HI-1, https://en.wikipedia.org/wiki/Heme_oxygenase)
 
 * gén proteínu p22phox, èo je podjednotka NADPH oxidázy (p22, https://en.wikipedia.org/wiki/P22phox)
 
-* a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH, https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase) 
+* a pre referenèný, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH, https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase)
 
 nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
 
@@ -82,11 +71,11 @@ library(tidyverse)
 
 ### Asistované kódovanie
 
-Pre naèítanie súboru vyu¾ijeme nástroj na import dát, ktorý ponúka *RStudio*. Tento nástroj nám toti¾ pomô¾e doladi» parametre pre naèítanie a získa» kód, ktorým sa naèítanie vykoná. 
+Pre naèítanie súboru vyu¾ijeme nástroj na import dát, ktorý ponúka *RStudio*. Tento nástroj nám toti¾ pomô¾e doladi» parametre pre naèítanie a získa» kód, ktorým sa naèítanie vykoná.
 
 ![Vyberte File/Import data/From Text (readr)](../pics/rstudio_select_import.png)
 
-Otvorí sa nástroj pre import. 
+Otvorí sa nástroj pre import.
 
 ![Nástroj na import dát v RStudiu](../pics/rstudio_inside_import.png)
 
@@ -105,7 +94,7 @@ Hneï vidíme, ¾e dáta sa nerozdelili do ståpcov. Je to preto, ¾e máme zle nastave
 Kým kliknete na `Import`, v¹imnite si, ¾e v poli vpravo dolu máme kód, ktorý sa vykoná. Ten si mô¾eme okopírova» do svojho skriptu a pritom sa pouèi», ako taký príkaz vyzerá.
 
 ```{r}
-sod3.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod3_full.dat", 
+sod3.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod3_full.dat",
     "\t", escape_double = FALSE, trim_ws = TRUE)
 ```
 
@@ -114,11 +103,10 @@ a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp.
 __Úloha__: Overte, èo robí príkaz `view(sod3.data)`.
 __Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
 
-Úprava dát
-=============================================================
+## Úprava dát
 
 ```{r}
-gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/gapdh_full.dat", 
+gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/gapdh_full.dat",
     "\t", escape_double = FALSE, trim_ws = TRUE)
 print(gapdh.data)
 ```
@@ -140,8 +128,8 @@ print(sod3.data)
 No a teraz si poïme nakresli», èo máme, a hneï sa aj nauèíme zopár nových __geomov__.
 
 ```{r}
-ggplot(data = sod3.data) + 
-  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
+ggplot(data = sod3.data) +
+  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) +
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
@@ -151,9 +139,9 @@ Pou¾ili sme dve zobrazenia tých istých dát, ako vidno, staèí na to __+__ a prida
 
   - obdå¾nik ukazuje medzikvartilovú vzdialenos» (25% a 75% kvantil)
   - prieèka ukazuje medián
-  - no¾ièky siahajú od hraníc krabice k bodom vzdialeným menej ako 1,5-násobok medzikvartilovej vzdialenosti 
+  - no¾ièky siahajú od hraníc krabice k bodom vzdialeným menej ako 1,5-násobok medzikvartilovej vzdialenosti
   - osobitne sú vynesené hodnoty mimo tento rozsah.
-  
+
 2. `geom_jitter` náhodne vynesie body do pruhu pre danú skupinu.
 
 ### Faktory a referenèné úrovne
@@ -167,14 +155,14 @@ summary(sod3.fit)
 
 Aj tu pochopite2ne chceme ma» kontrolu ako referenènú hladinu, preto¾e inak výsledky nie sú dobre pou¾iteµné.
 
-Pozrime sa na polia `Group` a `Location`. 
+Pozrime sa na polia `Group` a `Location`.
 
 ```{r}
 print(sod3.data$Location)
 print(sod3.data$Group)
 ```
 
-Ako vidno, tieto polia vlastne neobsahujú informatívne znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách: 
+Ako vidno, tieto polia vlastne neobsahujú informatívne znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách:
 
 * __zvierati__ / vzorke. Oznaèenia sú v skutoènosti oznaèenia na meracej platnièke, ale je dôle¾ité vedie», ktoré merania spolu súvisia.
 
@@ -198,8 +186,8 @@ print(sod3.data$Group)
 Teraz si mô¾eme znova nakrelis» graf
 
 ```{r}
-ggplot(data = sod3.data) + 
-  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) + 
+ggplot(data = sod3.data) +
+  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) +
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
@@ -210,7 +198,7 @@ sod3.fit <- lm(LogRat ~ Group, data = sod3.data)
 summary(sod3.fit)
 ```
 
-Ako teraz zistíme, ktoré z rozdielov medzi skupinami sú ¹tatisticky významné? 
+Ako teraz zistíme, ktoré z rozdielov medzi skupinami sú ¹tatisticky významné?
 Mo¾ností je niekoµko, my pou¾ijeme systematickú variantu s balíèkom `multcomp`:
 
 ```{r}
@@ -236,12 +224,15 @@ G <- glht(sod3.fit, linfct = mcp(Group = cmat))
 summary(G, test=adjusted("single-step"))
 ```
 
-Ako vám prezradí `help(glht)`, máte k dispozícii niekoµko mo¾ností ako prispôsobi» hladinu významnosti: "none", "single-step", "Shaffer", "Westfall", "free", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr". 
+Ako vám prezradí `help(glht)`, máte k dispozícii niekoµko mo¾ností ako prispôsobi» hladinu významnosti: "none", "single-step", "Shaffer", "Westfall", "free", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr".
 
 Ktorú zvoli», je bohu¾iaµ mimo rámca tohoto kurzu. Preto¾e my máme iba tri porovnania, staèí nám ¹tandardné nastavenie. Skúste e¹te Shafferov test, a ak dostanete podobné výsledky, bude najskôr v¹etko v poriadku.
 
-__Úloha__ Zopakujte si podobnú analýzu s dátami pre iný gén.
+__Úloha__ V repozitári nájdete dáta o mamografickej ¹túdii z http://datahub.io/JohnSnowLabs/mammography-data-from-breast-cancer-surveillance-consortium. Vymyslite, èo by sa s nimi dalo urobi». Preskúmajte naèítanie dát cez JSON objekt, ako je popísané na stránke.
 
-__Úloha__ Nakreslite si závislosti *C* od *C_ref* a vymyslite, ako porovna» smernice. 
 
-__Úloha__ V repozitári nájdete dáta o mamografickej ¹túdii z http://datahub.io/JohnSnowLabs/mammography-data-from-breast-cancer-surveillance-consortium. Vymyslite, èo by sa s nimi dalo urobi». Preskúmajte naèítanie dát cez JSON objekt, ako je popísané na stránke. 
+## Import dát z Excelu
+
+V adresári `data` v repozitári kurzu nájdete súbor `Expresie_dospele.xlsx`.
+
+__Úloha__: Pou¾ite rovnaký postup ako pri textových dátach: Vyu¾ite nástroj pre import dát v Rstudiu na vytvorenie kódu pre import dát z Excelu a pou¾ite ho v notebooku.

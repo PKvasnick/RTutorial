@@ -1,0 +1,277 @@
+---
+title: "dplyr"
+output: html_notebook
+---
+
+## Operácie s tabuµkami v R
+
+Text tejto èasti èerpá z kni¾ky *Garrett Grolemund, Hadley Wickham: R for Data Science.*
+Vydavateµstvo O'Reilly, Január 2017, 1. vydanie, http://r4ds.had.co.nz/
+Struèný a ¹ikovný prehlad je aj tu: http://tclavelle.github.io/dplyr-tidyr-tutorial/
+
+__Slovesá balíka *dplyr*__:
+
+- `filter()` Výber podmno¾iny riadkov z tabuµky na základe logickej podmienky
+- `select()` Výber podmno¾iny ståpcov z tabuµky
+- `arrange()` Zoradenie riadkov podµa hodnôt niektorého ståpca
+- `rename()` Premenovanie ståpca
+- `group_by()` Mení rozsah pôsobenia funkcie z celej tabuµky na skupiny riadkov so spoloènými hodnotami jedného alebo viacerých ståpcov.
+- `mutate()` Vytvorenie nových ståpcov
+- `summarize()` Súhrn tabuµky do jediného riadku hodnôt
+
+V¹etky funkcie majú podobnú signatúru:
+
+- prvý argument je tabuµka (data frame)
+- naledujúce argumenty urèujú, ako sa má tabuµka zmeni», v termínoch názvov premenných (ståpcov).
+- výsledok je tabuµka.
+
+Budeme pou¾íva» balíky `tidyverse`. 
+
+### Balík `nycflights13`
+
+Pre ilustráciu budeme pou¾íva» tabuµku balíka `nycflights13::flights()` (`install.packages('nycfligths13'), ?flights`). Tabuµka obsahuje údaje o v¹etkých 336,776 letoch vychádzajúcich z New York City v roku 2013. Dáta pochádzajú od *US Bureau of Transportation Statistics*.
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+```{r}
+flights
+```
+Toto nie je R `data.frame`, ale `tibble`, trocha od2ahèená a zmodernizovaná verzia tabuµky vytvorený pre `tidyverse`. Rozdiely nás zatiaì nebudú zaujíma».
+
+## `filter()`: Výber podmno¾iny riadkov na základe hodnôt ståpcov
+
+Vyberme si lety z 1. januára:
+
+```{r}
+filter(flights, month == 1, day == 1)
+```
+
+Argumenty sù dátová tabuµka a zoznam *logických* výrazov - preto dvojité `==`!
+
+Keï spustíte tento kód, výsledok je nová tabuµka. `dplyr` nikdy nemení pôvodné dáta, tak¾e ak nechcete zmeny strati», musíte urobi» priradenie.
+
+```{r}
+jan1 <- filter(flights, month == 1, day == 1)
+```
+
+R buï vytlaèí výslednú hodnotu posledného príkazu, alebo ju priradí. Ak chcete oboje, dajte príkaz do zátvoriek. Ak nechcete ani jedno, ukonèite bodkoèiarkou:
+
+```{r}
+(dec25 <- filter(flights, month == 12, day == 25))
+```
+
+Provnania v R: ¹tandardný súbor: `< <= == != >= >`. Èastá chyba na¹astie dáva chybovú hlá¹ku:
+
+```{r}
+filter(flights, month = 1)
+```
+
+Pre èísla s pohyblivou desatinnou èiarkou pou¾ívame namiesto `==` funkciu `near()`:
+
+```{r}
+1/49 * 49 == 1
+sqrt(2) ^ 2 == 2
+near(1/49 * 49, 1)
+near(sqrt(2) ^ 2, 2)
+```
+
+### Logické výrazy
+
+Podmienky, ktoré uvediete ako argumenty funkcie `filter()`, sa kombinujú pomocou logického `and`, èi¾e operátora `&`. Iné kombinácie musíte zada» sami. Logické operátory sú `! not, & and, | or`, plus funcia `xor()`.
+
+Teda lety z novembra a decembra:
+
+```{r}
+filter(flights, month == 11 | month == 12)
+```
+
+alebo, ¹ikovnej¹ie, pomocou `%in%`:
+
+```{r}
+novdec <- filter(flights, month %in% c(11,12))
+```
+
+### Chýbajúce hodnoty
+
+Sú nákazlivé, skoro ka¾dá operácia s `NA` vráti `NA`.
+
+```{r}
+NA > 5
+10 == NA
+NA + 2
+NA / 2
+NA == NA
+x <- NA
+is.na(x)
+```
+`filter()` vracia iba riadky, kde sú v¹etky podmienky `TRUE`, teda nie `FALSE`, ale ani `NA`. Ak chceme riadky s `NA`, treba poveda»:
+
+```{r}
+df <- tibble(x = c(1, NA, 3))
+filter(df, x > 1)
+filter(df, is.na(x) | x > 1)
+```
+## `arrange()` utriedenie dát podµa hodnôt jedného alebo viacerých ståpcov
+
+```{r}
+arrange(flights, year, month, day)
+```
+Najviac me¹kajúce lety:
+
+```{r}
+arrange(flights, desc(arr_delay))
+```
+`NA` v¾dy konèí na konci.
+
+## `select()`: výber ståpcov
+
+Táto funkcia nám ump¾òuje vybra» si podmno¾inu dát, ktorou sa chceme zaobera». Reálne dáta èasto obsahujú obrovský poèet premených. Na¹e dáta iba 19, ale pre objasnenie princípu to staèí:
+
+```{r}
+select(flights, year, month, day)
+select(flights, year:day)
+select(flights, - (year:day))
+```
+## `mutate()`: vytvorenie nových ståpcov
+
+```{r}
+flights_sml <- select(flights, 
+  year:day, 
+  ends_with("delay"), 
+  distance, 
+  air_time
+)
+mutate(flights_sml,
+  gain = arr_delay - dep_delay,
+  speed = distance / air_time * 60
+)
+```
+Mô¾eme sa odkazova» na práve vytvorené premenné:
+
+```{r}
+mutate(flights_sml,
+  gain = arr_delay - dep_delay,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours
+)
+```
+
+### `transmute()`: ponecha» iba nové ståpce
+
+```{r}
+transmute(flights,
+  gain = arr_delay - dep_delay,
+  hours = air_time / 60,
+  gain_per_hour = gain / hours
+)
+```
+
+
+### Operácie v `mutate()`
+
+- Aritmetické operácie: `+ - * / ^`. Vektorizované, recyklácia argumentov, sumárne funkcie `sum(x), mean(x)`.
+- Modulárna aritmetika '%/%` celoèíselné delenie, `%%` modulo.
+
+```{r}
+7 * (20 %/% 7) + 20 %% 7 == 20
+```
+
+- Odkaz na predchádzajúcu a nasledujúcu hodnotu: `lag(x), lead(x)`.
+
+```{r}
+x <- 1:10
+x
+lag(x)
+lead(x)
+```
+
+- Kumulatívne hodnoty: `cumsum(x) cumprod(x) cummean(x) cummin(x) cummax(x)`
+
+```{r}
+x <- 1:10
+x
+cumsum(x)
+cummean(x)
+```
+
+- funkcie pre poradia: `min_rank() percent_rank() cume_dist()`
+
+```{r}
+x <- c(4,10, 3, 1, 5)
+x
+min_rank(x)
+min_rank(desc(x))
+y <- c(0,2,3,4,6)
+cume_dist(y)
+```
+
+## `summarize()`: sumarizácia tabuµky do jedného riadku
+
+```{r}
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+## `group_by()`: rozdeli» tabuµku podµa hodnôt ståpcov
+
+Toto je skutoène silná operácia. Princíp: *rozdeµ - zosumarizuj - skombinuj*.
+
+Priemerné oneskorenia podµa dní
+```{r}
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+## `%>%': "pipe", pepojenie vstupu a výstupu
+
+Ak robíme nieko2ko operácií za sebou, musíme vytvára» mno¾stvo doèasných objektov:
+
+Ako závisí oneskorenie od då¾ky letu?
+
+1.  Zoskupíme lety podµa cieµa
+2.  Zosumarizujeme: poèet letov, priemerná vzdialenos», priemerné me¹kanie
+3.  Odfiltrujeme miesta s malým poètom letov a Honolulu, ktoré má anomálnu vzdialenos».
+
+```{r}
+by_dest <- group_by(flights, dest)
+delay <- summarise(by_dest,
+  count = n(),
+  dist = mean(distance, na.rm = TRUE),
+  delay = mean(arr_delay, na.rm = TRUE)
+)
+delay <- filter(delay, count > 20, dest != "HNL")
+
+ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+```
+
+A teraz to isté s pou¾itím mágie:
+
+```{r}
+delays <- flights %>% 
+  group_by(dest) %>% 
+  summarise(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  filter(count > 20, dest != "HNL")
+```
+
+`x %>% f %>% g` znamená g(f(x)). Je to teda jednoduch¹í zápis a získavame preh2adnej¹í kód.
+
+To ale nie je jediná výhoda: `%>%` nás oslobodzuje od nutnosti vytvára» medzivýsledky, a tak sa namiesto tabuliek vytvárajú funkcionálne objekty a aktuálne operácie sa vykonajú a¾ v poslednej chvíli. Teda v optimálnom prípade sa namiesto niekoµkých cyklov cez dáta vykoná iba jeden.
+
+## Sumarizaèné funkcie
+
+* Miery polohy: `mean(x), median(x)`
+* Logické filtrovanie: `x[x > 10]`
+* Miery rozptylu: `sd(x), IQR(x), mad(x)`
+* Poradia: `rank(x), quantile(x,p), min(x), max(x)`
+* Miery pozície: `first(x), last(x), nth(x, 3)`
+* Poèty: `n(), sum(!is.na(x)), n_distinct(x)`
+
+
