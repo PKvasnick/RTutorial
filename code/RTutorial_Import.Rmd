@@ -98,9 +98,14 @@ sod3.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/m
     "\t", escape_double = FALSE, trim_ws = TRUE)
 ```
 
+```{r}
+View(sod3.data)
+```
+
+
 a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp. `?read_delim`, aby ste sa dozvedeli viac.
 
-__Úloha__: Overte, èo robí príkaz `view(sod3.data)`.
+__Úloha__: Overte, èo robí príkaz `View(sod3.data)`.
 __Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
 
 ## Úprava dát
@@ -202,7 +207,7 @@ Ako teraz zistíme, ktoré z rozdielov medzi skupinami sú ¹tatisticky významné?
 Mo¾ností je niekoµko, my pou¾ijeme systematickú variantu s balíèkom `multcomp`:
 
 ```{r}
- if(!require(multcomp)){install.packages("multcomp")}
+# if(!require(multcomp)){install.packages("multcomp")}
 ```
 
 Aby sme `R` vysvetlili, aké porovnania chceme urobi», musíme vytvori» *maticu kontrastov*. Pri tom sa zase nauèíme nieèo z R:
