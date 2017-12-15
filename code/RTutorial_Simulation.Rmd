@@ -30,7 +30,7 @@ hist(vec, prob=TRUE)
 curve(dnorm(x, mean=mean(vec), sd=sd(vec)), add=TRUE)
 ```
 
-No ale my chceme `ggplot2`:
+No ale my chceme na kreslenie pou¾íva» `ggplot2`!
 
 ```{r}
 library(tidyverse)
@@ -47,7 +47,7 @@ ggplot(df, aes(x = values)) +
 ```
 
 __Úloha__
-1. Vygenerujte 100 náhodných èísel s exponenciálnym rozdelením. (*Inak toto tu ïalej je TeX, funguje v notebooku úplne bez problémov. *)
+1. Vygenerujte 100 náhodných èísel s exponenciálnym rozdelením. (*Inak toto tu ïalej je TeX, funguje v notebooku úplne bez problémov, tak¾e mô¾ete pohodlne písa» vzorce *)
 $$
 P(x) = \frac{1}{\mu} \exp\left(-\frac{x}{\mu}\right)\quad x, \mu > 0
 $$
@@ -136,6 +136,12 @@ A hladina významnosti je jednoducho podiel prípadov, kedy sme na¹li d s absolútn
 
 ```{r}
 df_dist %>% filter(abs(d) > abs(observed_diff)) %>% summarize(p = n()/2000)
+```
+Na to isté mô¾eme pou¾i» balíèek `coin` a u¹etri» si programovanie:
+
+```{r}
+library(coin)
+independence_test(value ~ group, data = simulation)
 ```
 
 
@@ -360,9 +366,17 @@ pair_pfit <- lmp(Length ~ Hand + Individual, data = Data)
 summary(pair_pfit)
 ```
 
-### Balíèek `coin`
+## Balíèek `boot`: Intervaly spoµahlivosti
 
-```{rl}
+```{r}
+library(boot)
+data <- data.frame(LSAT = c(576, 635,558, 578, 666, 580, 555, 661, 651, 605, 653, 575, 545, 572, 594),
+             GPA  = c(3.39,3.3,2.81,3.03,3.44,3.07,3.0,3.43,3.36,3.13,3.12,2.74,2.76,2.88,2.96))
+rho_orig <- corr(data)
+rho_orig
+rho_boot <- boot(data, corr, R = 10000)
+rho_ci <- boot.ci(rho_boot, type = "perc")
+rho_ci
 
 ```
 
