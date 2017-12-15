@@ -1,0 +1,368 @@
+---
+title: "RTutorial: Simulation"
+output: html_notebook
+---
+
+## Úvod
+
+V tomto tutoriáli sa nauèíme simulova» dáta. Simulácia je mocná zbraò, ktorá nám umo¾òuje vyrobi» si vlastnú ¹tatistiku pre na¹e dáta, namiesto toho, aby sme sa sna¾ili svoje dáta nejako znásilni» pre potreby ¹tatistky z príruèky. 
+Metódy, ktoré si uká¾eme, patria do dvoch skupín, hoci sú veµmi podobné:
+- permutaèné testy
+- bootstrap
+Pre tieto metódy existuje v R ¹iroká podpora. Aby sme si ju ukázali, nain¹talujte si prosím balíèky `boot`, 'coin' a `lmPerm`.
+
+![Simulation](../pics/simulation.jpg)
+
+__Upozornenie__
+Niektoré bloky v tomto notebooku sa poèítajú *dlho*. Poèítajte s tým, keï si budete chcie» celý notebook prepoèíta».
+
+## Náhodné dáta
+
+Základné zruènosti:
+1. Vygenerujeme si náhodné dáta
+2. Nakreslíme
+3. Fitneme hustotu pravdepodobnosti.
+
+```{r}
+vec <- rnorm(1000, mean=1, sd=2)
+x <- seq(from = -3, to = 5, length.out = 100)
+hist(vec, prob=TRUE)
+curve(dnorm(x, mean=mean(vec), sd=sd(vec)), add=TRUE)
+```
+
+No ale my chceme `ggplot2`:
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- data.frame(values = vec)
+ggplot(df, aes(x = values)) + 
+  geom_histogram(aes(y =..density..),
+                   breaks = seq(-3, 5, by = 1), 
+                   colour = "black", 
+                   fill = "white") +
+  stat_function(fun = dnorm, args = list(mean = mean(df$values), sd = sd(df$values)))
+```
+
+__Úloha__
+1. Vygenerujte 100 náhodných èísel s exponenciálnym rozdelením. (*Inak toto tu ïalej je TeX, funguje v notebooku úplne bez problémov. *)
+$$
+P(x) = \frac{1}{\mu} \exp\left(-\frac{x}{\mu}\right)\quad x, \mu > 0
+$$
+   - Na pravom paneli kliknite na zálo¾ku Help
+   - Do vyhµadávacieho okienka zadajte "exponential"
+   - Vyberte stats::Exponential a pouète sa...
+2. Nakreslite histogram.
+3. Fitnite exponenciálnym rozdelením. 
+
+## t-test a rozdelenie pravdepodobnosti pre hladinu významnosti
+
+## Jednoduché porovnanie: t-test
+
+Zaèneme tým, ¾e si vygenerujeme syntetické dáta. 
+
+```{r}
+set.seed(12345)
+n = 25
+simulation <- data.frame(group = rbinom(n,1,0.5)) %>%
+  mutate(value = 1 + 1.5*group + rnorm(n,0,3))
+simulation
+ggplot(data = simulation, aes(x = as.factor(group), y = value, color = as.factor(group))) +
+  geom_boxplot() +
+  geom_jitter(width = 0.5)
+```
+
+```{r}
+observed_diff <- diff(by(simulation$value, simulation$group, mean))
+observed_diff
+```
+`diff` robí diferencie prvkov vektora; tu vidíte ¹ikovné pou¾itie pre získanie rozdielu priemerov jediným príkazom. To je veµmi u¾itoèné, preto¾e nám to nesmierne zrýchli výpoèty: ak chceme, aby R poèítalo rýchlo, musíme sa vyhýba» otvoreným cyklom.
+
+```{r}
+diff(c(1,2,3,4,5))
+```
+```{r}
+observed_diff
+```
+
+Je tento rozdiel ¹tatisticky významný? Predstavme si, ¾e nepoznáme t-test, alebo sa nám nezdá vhodné ho pou¾i», a nepoznáme ani neparametrické testy (napríklad Wilcoxonov-Mann-Whitneyho U-test).
+
+Tie veci ale samozrejme poznáme, tak¾e mô¾eme pou¾i» t-test:
+
+```{r}
+t.test(value ~ group, data = simulation)
+```
+alebo fitneme lineárny model, preto¾e to nám dá kopu iných u¾itoèných údajov:
+
+```{r}
+sim_fit <- lm(value ~ group, data = simulation)
+summary(sim_fit)
+plot(sim_fit)
+```
+
+
+alebo Mann-Whitneyho U-test:
+
+```{r}
+wilcox.test(value ~ group, data = simulation)
+```
+My urobíme nieèo iné: 
+Skúsim z dát, ktoré máme, vyrobi» veµké mno¾stvo podobných dát, a z nich spoèíta» rozdelenie testovacej ¹tatistikcy. Konkrétne, pre testovanie rozdielu skupín vyjdeme z predpokladu nulovej hypotézy, ¾e toti¾ dáta v skupinách sú rovnocenné. Tak¾e repliky dát vytvoríme tak, ¾e náhodne zamie¹ame hodnoty v ståpci simulation$group.
+
+Základná funkcia, ktorú potrebujeme, je `sample`, ktorá nám zo vstupného vektora náhodne vyberie po¾adovaný poèet vzoriek, s opakovaním alebo bez. 
+
+```{r}
+sample(c(1,2,3),10,replace = T)
+```
+
+Ïalej potrebujeme funkciu `replicate`, ktorá nám zopakuje výpoèet ¹tatistiky.
+
+```{r}
+replicate(10, mean(sample(c(1,2,3),10, replace = T)))
+```
+
+
+```{r}
+dist <- replicate(2000, diff(by(simulation$value, sample(simulation$group, length(simulation$group), replace = FALSE), mean)))
+df_dist <- data.frame(d = dist)
+ggplot(df_dist, aes(x = d)) +
+  geom_histogram(aes(y = ..density..),
+                 colour = "black",
+                 fill = "white")
+```
+A hladina významnosti je jednoducho podiel prípadov, kedy sme na¹li d s absolútnou hodnotou väè¹ou, ako sme pozorovali v dátach:
+
+```{r}
+df_dist %>% filter(abs(d) > abs(observed_diff)) %>% summarize(p = n()/2000)
+```
+
+
+## Zlo¾itej¹ie dáta: párový test
+
+Merania då¾ky åavej a pravej ruky u 16 jednotlivcov. Chceme porovna» då¾ku µavej a pravej ruky. 
+
+```{r}
+Input = ("
+ Individual  Hand     Length
+ A           Left     17.5
+ B           Left     18.4
+ C           Left     16.2
+ D           Left     14.5
+ E           Left     13.5
+ F           Left     18.9
+ G           Left     19.5
+ H           Left     21.1
+ I           Left     17.8
+ J           Left     16.8
+ K           Left     18.4
+ L           Left     17.3
+ M           Left     18.9
+ N           Left     16.4
+ O           Left     17.5
+ P           Left     15.0
+ A           Right    17.6
+ B           Right    18.5
+ C           Right    15.9
+ D           Right    14.9
+ E           Right    13.7
+ F           Right    18.9
+ G           Right    19.5
+ H           Right    21.5
+ I           Right    18.5
+ J           Right    17.1
+ K           Right    18.9
+ L           Right    17.5
+ M           Right    19.5
+ N           Right    16.5
+ O           Right    17.4
+ P           Right    15.6
+")
+
+Data = read.table(textConnection(Input),header=TRUE)
+
+###  Check the data frame
+
+Data
+
+str(Data)
+
+summary(Data)
+```
+
+
+Najprv skúsme porovna» stredné hodnoty
+
+```{r}
+ggplot(Data, aes(x = Hand, y = Length, color = Hand)) + 
+  geom_boxplot(aes()) + 
+  geom_jitter(width = 0.2)
+```
+Máme dva problémy, s jedným sme sa stretli pred chvíµou a druhý je nový.
+
+1. Takéto porovnanie samozrejme vôbec dobre nefunguje. Má zmysel porovnáva» då¾ku rúk jedného èloveka, ale nie u skupiny µudí. 
+2. Tieto dáta nemajú normálne rozdelenie. 
+
+```{r}
+group_fit <- lm(Length ~ Hand, data = Data)
+summary(group_fit)
+plot(group_fit)
+```
+
+```{r}
+ggplot(Data, aes(sample = Length, group = Hand, colour = Hand)) + 
+  geom_qq() 
+```
+
+Aj tak by sme radi porovnali stredné hodnoty. Èo mô¾eme urobi»?
+
+1. Pou¾i» neparametrický test (Wilcoxon-Mann-Whitney)
+2. Pou¾i» t-test, preto¾e ten je dos» robustný vïaka centrálnej limitnej vete.
+3. Pou¾i» t-test, a vypoèíta» si hladinu významnosti zo simulovaného rozdelenia t- ¹tatistiky. 
+
+__Úloha 1__ Zistite, ako pou¾i» Wilcoxon-Mann-Whitneyho test (`wilcox.test`), a pou¾ite ho.
+__Úloha 2__ Ako z výsledku testu získate hodnotu p?
+
+Poïme skúsi» t-test. Keï sa trocha zabývate v `R`, bez zaváhania pou¾ijete univerzálnu funkciu `lm`, preto¾e vám povie oveµa viac vecí. No dobre, máme aj funkciu na t-test, keï veµmi chcete:
+
+
+```{r}
+group_test <- t.test(Length ~ Hand, data = Data)
+group_test
+orig_t = group_test$statistic
+orig_t
+```
+
+Poïme to porovna» poriadne. Najprv si poriadne nakreslime dáta, tak ako sme to robili v predchádzajúcom zo¹ite. 
+
+```{r}
+Data %>% spread(key = Hand, value = Length, sep = "_") -> Data_w
+Data_w
+```
+
+
+```{r}
+lims <- c(min(Data$Length, na.rm = T), max(Data$Length, na.rm = T)) # z povodnych dat
+wsplot <-
+    ggplot(Data_w, aes(x = Hand_Right, y = Hand_Left)) +
+    geom_point() +
+    geom_abline() +
+    scale_x_continuous("Right", limits = lims) +
+    scale_y_continuous("Left", limits = lims) +
+    theme(aspect.ratio = 1)
+wsplot
+```
+Tak to je tesné porovnanie, z dát je vidno, ¾e µavá ruka je o nieèo krat¹ia, ale nie je to zvlá¹» presvedèivé. 
+
+V reèi lineárneho modelu chceme toto:
+
+```{r}
+pair_fit <- lm(Length ~ Hand + Individual, data = Data)
+summary(pair_fit)
+plot(pair_fit)
+```
+
+Tento riadok je pre nás dôle¾itý:
+```
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|) 
+...
+HandRight    0.23750    0.07004   3.391 0.004034 **
+...
+```
+Mô¾eme pou¾i» aj párový test:
+
+```{r}
+paired_test <- t.test(Data_w$Hand_Right, Data_w$Hand_Left, paired = T)
+orig_t <- paired_test$statistic
+paired_test
+orig_t
+```
+
+Teda rozdiel medzi µavou a pravou rukou je ¹tatisticky významný. Len si nie sme istí, èi majú rozdiely správne rozdelenie, tak sa rad¹ej ubezpeèíme, ¾e to je tak. 
+Urobíme to tak, ¾e si nasimulujeme správne rozdelenie ¹tatistiky t pre na¹e dáta, a z neho vypoèítame správne p.
+Rozdelenie, ktoré hµadáme, je rozdelenie pre *nulovú hypotézu*, teda pre prípad nulového stredného rozdielu medzi då¾kou µavej a pravej ruky u úèastníkov merania.
+
+Za predpokladov nulovej hypotézy sú hodnoty pre µavú a pravú ruku rovnocenné, a teda mô¾eme jednu nahradi» druhou. Tak si vytvoríme dostatoèné mno¾stvo dát pre získanie rozdelenia t-¹tatistiky. Urèite nemô¾eme mie¹a» dáta od rôznych jednotlivcov, to by sme naru¹ili koreláciu medzi då¾kou µavej a pravej ruky u jednotlivcov. 
+
+1. Nasimulujeme si veµa hodnôt t
+
+```{r}
+n_samples = 2000
+
+t_value <- function(d)
+{
+  df <- d %>%
+    mutate(test = runif(nrow(d))) %>% 
+    mutate(Hand_L = ifelse(test<0.5, Hand_Left, Hand_Right),
+           Hand_R = ifelse(test<0.5, Hand_Right, Hand_Left)
+    )
+  test.result <- t.test(df$Hand_R, df$Hand_L, paired = T)
+  return(test.result$statistic)
+}
+
+tvec <- replicate(n_samples, t_value(Data_w))
+
+tdf <- data.frame(value = tvec)
+ggplot(tdf, aes(x = value)) + 
+  geom_histogram(aes(y =..density..),
+                   colour = "black", 
+                   fill = "white")
+```
+2. My sme získali hodnotu `orig_t`, a chceme vedie», akému p zodpovedá. To vypoèítame µahko:
+
+```{r}
+tdf %>% filter(abs(value) > abs(orig_t)) %>% summarise( p = n()/n_samples)
+```
+Tak, a teraz sa u¾ nemusíme stara», aké majú na¹e dáta rozdelenie. Na¹e p-èko platí presne pre na¹e dáta. 
+
+## Interval spo2ahlivosti pre rozdiel
+
+Pre urèenie intervalu spoµahlivosti pre rozdiel då¾ok µavej a pravej ruky potrebujeme nejako varírova» dáta okolo nameraného rozdielu. Urobíme toto: 
+Vezmeme reziduály z lineárneho modelu, náhodne ich premie¹ame a pridáme k predpovediam modelu. Takto mô¾eme generova» repliky dát a zaka¾dým spoèítame veµkos» rozdielu medzi µavou a pravou rukou. 
+
+```{r}
+res <- residuals(pair_fit)
+Data$Prediction <- predict(pair_fit, Data)
+
+get_diff <- function(d)
+{
+  df <- d %>% 
+    select(Individual = Individual, Hand = Hand, Prediction = Prediction) %>%
+    mutate(Length = Prediction + sample(res, size = length(res), replace = T))
+  df_fit <- lm(Length ~ Hand + Individual, data = df)
+  return(df_fit$coefficients[2])
+}
+
+diff_vec[i] <- replicate(n_samples, get_diff(Data))
+
+diff_df <- data.frame(value = diff_vec)
+ggplot(diff_df, aes(x = value)) + 
+  geom_histogram(aes(y =..density..),
+                   colour = "black", 
+                   fill = "white")
+```
+```{r}
+diff_ci = quantile(diff_vec, c(0.025,0.975))
+diff_ci
+```
+## Podpora permutaèných testov a bootstrapu v R
+
+### Balíèek `lmPerm'
+
+Staèí iba namiesto `lm` pou¾i» 'lmp`:
+
+
+```{r}
+library(lmPerm)
+pair_pfit <- lmp(Length ~ Hand + Individual, data = Data)
+summary(pair_pfit)
+```
+
+### Balíèek `coin`
+
+```{rl}
+
+```
+
