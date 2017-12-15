@@ -3,24 +3,26 @@ title: "RTutorial: Simulation"
 output: html_notebook
 ---
 
-## Úvod
+## Ãšvod
 
-V tomto tutoriáli sa nauèíme simulova» dáta. Simulácia je mocná zbraò, ktorá nám umo¾òuje vyrobi» si vlastnú ¹tatistiku pre na¹e dáta, namiesto toho, aby sme sa sna¾ili svoje dáta nejako znásilni» pre potreby ¹tatistky z príruèky. 
-Metódy, ktoré si uká¾eme, patria do dvoch skupín, hoci sú veµmi podobné:
-- permutaèné testy
-- bootstrap
-Pre tieto metódy existuje v R ¹iroká podpora. Aby sme si ju ukázali, nain¹talujte si prosím balíèky `boot`, 'coin' a `lmPerm`.
+V tomto tutoriÃ¡li sa nauÄÃ­me simulovaÅ¥ dÃ¡ta. SimulÃ¡cia je mocnÃ¡ zbraÅˆ, ktorÃ¡ nÃ¡m umoÅ¾Åˆuje vyrobiÅ¥ si vlastnÃº Å¡tatistiku pre naÅ¡e dÃ¡ta, namiesto toho, aby sme sa snaÅ¾ili svoje dÃ¡ta nejako znÃ¡silniÅ¥ pre potreby Å¡tatistky z prÃ­ruÄky. 
+MetÃ³dy, ktorÃ© si ukÃ¡Å¾eme, patria do dvoch skupÃ­n, hoci sÃº veÄ¾mi podobnÃ©:
 
-![Simulation](../pics/simulation.jpg)
+1. permutaÄnÃ© testy
+2. bootstrap
+
+Pre tieto metÃ³dy existuje v R Å¡irokÃ¡ podpora. Aby sme si ju ukÃ¡zali, nainÅ¡talujte si prosÃ­m balÃ­Äky `boot`, `coin` a `lmPerm`.
+
+![SimulÃ¡ÄnÃ© metÃ³dy nÃ¡m umoÅ¾ÅˆujÃº vygenerovaÅ¥ si rozdelenia Å¡tatistÃ­k.](../pics/simulation.jpg)
 
 __Upozornenie__
-Niektoré bloky v tomto notebooku sa poèítajú *dlho*. Poèítajte s tım, keï si budete chcie» celı notebook prepoèíta».
+NiektorÃ© bloky v tomto notebooku sa poÄÃ­tajÃº *dlho*. PoÄÃ­tajte s tÃ½m, keÄ si budete chcieÅ¥ celÃ½ notebook prepoÄÃ­taÅ¥.
 
-## Náhodné dáta
+## NÃ¡hodnÃ© dÃ¡ta
 
-Základné zruènosti:
-1. Vygenerujeme si náhodné dáta
-2. Nakreslíme
+ZÃ¡kladnÃ© zruÄnosti:
+1. Vygenerujeme si nÃ¡hodnÃ© dÃ¡ta
+2. NakreslÃ­me
 3. Fitneme hustotu pravdepodobnosti.
 
 ```{r}
@@ -30,7 +32,7 @@ hist(vec, prob=TRUE)
 curve(dnorm(x, mean=mean(vec), sd=sd(vec)), add=TRUE)
 ```
 
-No ale my chceme na kreslenie pou¾íva» `ggplot2`!
+No ale my chceme na kreslenie pouÅ¾Ã­vaÅ¥ `ggplot2`!
 
 ```{r}
 library(tidyverse)
@@ -46,22 +48,22 @@ ggplot(df, aes(x = values)) +
   stat_function(fun = dnorm, args = list(mean = mean(df$values), sd = sd(df$values)))
 ```
 
-__Úloha__
-1. Vygenerujte 100 náhodnıch èísel s exponenciálnym rozdelením. (*Inak toto tu ïalej je TeX, funguje v notebooku úplne bez problémov, tak¾e mô¾ete pohodlne písa» vzorce *)
+__Ãšloha__
+1. Vygenerujte 100 nÃ¡hodnÃ½ch ÄÃ­sel s exponenciÃ¡lnym rozdelenÃ­m. (*Inak toto tu Äalej je TeX, funguje v notebooku Ãºplne bez problÃ©mov, takÅ¾e mÃ´Å¾ete pohodlne pÃ­saÅ¥ vzorce *)
 $$
 P(x) = \frac{1}{\mu} \exp\left(-\frac{x}{\mu}\right)\quad x, \mu > 0
 $$
-   - Na pravom paneli kliknite na zálo¾ku Help
-   - Do vyhµadávacieho okienka zadajte "exponential"
-   - Vyberte stats::Exponential a pouète sa...
+   - Na pravom paneli kliknite na zÃ¡loÅ¾ku Help
+   - Do vyhÄ¾adÃ¡vacieho okienka zadajte "exponential"
+   - Vyberte stats::Exponential a pouÄte sa...
 2. Nakreslite histogram.
-3. Fitnite exponenciálnym rozdelením. 
+3. Fitnite exponenciÃ¡lnym rozdelenÃ­m. 
 
-## t-test a rozdelenie pravdepodobnosti pre hladinu vıznamnosti
+## t-test a rozdelenie pravdepodobnosti pre hladinu vÃ½znamnosti
 
-## Jednoduché porovnanie: t-test
+## JednoduchÃ© porovnanie: t-test
 
-Zaèneme tım, ¾e si vygenerujeme syntetické dáta. 
+ZaÄneme tÃ½m, Å¾e si vygenerujeme syntetickÃ© dÃ¡ta. 
 
 ```{r}
 set.seed(12345)
@@ -78,7 +80,7 @@ ggplot(data = simulation, aes(x = as.factor(group), y = value, color = as.factor
 observed_diff <- diff(by(simulation$value, simulation$group, mean))
 observed_diff
 ```
-`diff` robí diferencie prvkov vektora; tu vidíte ¹ikovné pou¾itie pre získanie rozdielu priemerov jedinım príkazom. To je veµmi u¾itoèné, preto¾e nám to nesmierne zrıchli vıpoèty: ak chceme, aby R poèítalo rıchlo, musíme sa vyhıba» otvorenım cyklom.
+`diff` robÃ­ diferencie prvkov vektora; tu vidÃ­te Å¡ikovnÃ© pouÅ¾itie pre zÃ­skanie rozdielu priemerov jedinÃ½m prÃ­kazom. To je veÄ¾mi uÅ¾itoÄnÃ©, pretoÅ¾e nÃ¡m to nesmierne zrÃ½chli vÃ½poÄty: ak chceme, aby R poÄÃ­talo rÃ½chlo, musÃ­me sa vyhÃ½baÅ¥ otvorenÃ½m cyklom.
 
 ```{r}
 diff(c(1,2,3,4,5))
@@ -87,14 +89,14 @@ diff(c(1,2,3,4,5))
 observed_diff
 ```
 
-Je tento rozdiel ¹tatisticky vıznamnı? Predstavme si, ¾e nepoznáme t-test, alebo sa nám nezdá vhodné ho pou¾i», a nepoznáme ani neparametrické testy (napríklad Wilcoxonov-Mann-Whitneyho U-test).
+Je tento rozdiel Å¡tatisticky vÃ½znamnÃ½? Predstavme si, Å¾e nepoznÃ¡me t-test, alebo sa nÃ¡m nezdÃ¡ vhodnÃ© ho pouÅ¾iÅ¥, a nepoznÃ¡me ani neparametrickÃ© testy (naprÃ­klad Wilcoxonov-Mann-Whitneyho U-test).
 
-Tie veci ale samozrejme poznáme, tak¾e mô¾eme pou¾i» t-test:
+Tie veci ale samozrejme poznÃ¡me, takÅ¾e mÃ´Å¾eme pouÅ¾iÅ¥ t-test:
 
 ```{r}
 t.test(value ~ group, data = simulation)
 ```
-alebo fitneme lineárny model, preto¾e to nám dá kopu inıch u¾itoènıch údajov:
+alebo fitneme lineÃ¡rny model, pretoÅ¾e to nÃ¡m dÃ¡ kopu inÃ½ch uÅ¾itoÄnÃ½ch Ãºdajov:
 
 ```{r}
 sim_fit <- lm(value ~ group, data = simulation)
@@ -108,16 +110,16 @@ alebo Mann-Whitneyho U-test:
 ```{r}
 wilcox.test(value ~ group, data = simulation)
 ```
-My urobíme nieèo iné: 
-Skúsim z dát, ktoré máme, vyrobi» veµké mno¾stvo podobnıch dát, a z nich spoèíta» rozdelenie testovacej ¹tatistikcy. Konkrétne, pre testovanie rozdielu skupín vyjdeme z predpokladu nulovej hypotézy, ¾e toti¾ dáta v skupinách sú rovnocenné. Tak¾e repliky dát vytvoríme tak, ¾e náhodne zamie¹ame hodnoty v ståpci simulation$group.
+My urobÃ­me nieÄo inÃ©: 
+SkÃºsim z dÃ¡t, ktorÃ© mÃ¡me, vyrobiÅ¥ veÄ¾kÃ© mnoÅ¾stvo podobnÃ½ch dÃ¡t, a z nich spoÄÃ­taÅ¥ rozdelenie testovacej Å¡tatistikcy. KonkrÃ©tne, pre testovanie rozdielu skupÃ­n vyjdeme z predpokladu nulovej hypotÃ©zy, Å¾e totiÅ¾ dÃ¡ta v skupinÃ¡ch sÃº rovnocennÃ©. TakÅ¾e repliky dÃ¡t vytvorÃ­me tak, Å¾e nÃ¡hodne zamieÅ¡ame hodnoty v stÄºpci simulation$group.
 
-Základná funkcia, ktorú potrebujeme, je `sample`, ktorá nám zo vstupného vektora náhodne vyberie po¾adovanı poèet vzoriek, s opakovaním alebo bez. 
+ZÃ¡kladnÃ¡ funkcia, ktorÃº potrebujeme, je `sample`, ktorÃ¡ nÃ¡m zo vstupnÃ©ho vektora nÃ¡hodne vyberie poÅ¾adovanÃ½ poÄet vzoriek, s opakovanÃ­m alebo bez. 
 
 ```{r}
 sample(c(1,2,3),10,replace = T)
 ```
 
-Ïalej potrebujeme funkciu `replicate`, ktorá nám zopakuje vıpoèet ¹tatistiky.
+Äalej potrebujeme funkciu `replicate`, ktorÃ¡ nÃ¡m zopakuje vÃ½poÄet Å¡tatistiky.
 
 ```{r}
 replicate(10, mean(sample(c(1,2,3),10, replace = T)))
@@ -132,12 +134,12 @@ ggplot(df_dist, aes(x = d)) +
                  colour = "black",
                  fill = "white")
 ```
-A hladina vıznamnosti je jednoducho podiel prípadov, kedy sme na¹li d s absolútnou hodnotou väè¹ou, ako sme pozorovali v dátach:
+A hladina vÃ½znamnosti je jednoducho podiel prÃ­padov, kedy sme naÅ¡li d s absolÃºtnou hodnotou vÃ¤ÄÅ¡ou, ako sme pozorovali v dÃ¡tach:
 
 ```{r}
 df_dist %>% filter(abs(d) > abs(observed_diff)) %>% summarize(p = n()/2000)
 ```
-Na to isté mô¾eme pou¾i» balíèek `coin` a u¹etri» si programovanie:
+Na to istÃ© mÃ´Å¾eme pouÅ¾iÅ¥ balÃ­Äek `coin` a uÅ¡etriÅ¥ si programovanie:
 
 ```{r}
 library(coin)
@@ -145,9 +147,9 @@ independence_test(value ~ group, data = simulation)
 ```
 
 
-## Zlo¾itej¹ie dáta: párovı test
+## ZloÅ¾itejÅ¡ie dÃ¡ta: pÃ¡rovÃ½ test
 
-Merania då¾ky åavej a pravej ruky u 16 jednotlivcov. Chceme porovna» då¾ku µavej a pravej ruky. 
+Merania dÄºÅ¾ky Äºavej a pravej ruky u 16 jednotlivcov. Chceme porovnaÅ¥ dÄºÅ¾ku Ä¾avej a pravej ruky. 
 
 ```{r}
 Input = ("
@@ -198,17 +200,17 @@ summary(Data)
 ```
 
 
-Najprv skúsme porovna» stredné hodnoty
+Najprv skÃºsme porovnaÅ¥ strednÃ© hodnoty
 
 ```{r}
 ggplot(Data, aes(x = Hand, y = Length, color = Hand)) + 
   geom_boxplot(aes()) + 
   geom_jitter(width = 0.2)
 ```
-Máme dva problémy, s jednım sme sa stretli pred chvíµou a druhı je novı.
+MÃ¡me dva problÃ©my, s jednÃ½m sme sa stretli pred chvÃ­Ä¾ou a druhÃ½ je novÃ½.
 
-1. Takéto porovnanie samozrejme vôbec dobre nefunguje. Má zmysel porovnáva» då¾ku rúk jedného èloveka, ale nie u skupiny µudí. 
-2. Tieto dáta nemajú normálne rozdelenie. 
+1. TakÃ©to porovnanie samozrejme vÃ´bec dobre nefunguje. MÃ¡ zmysel porovnÃ¡vaÅ¥ dÄºÅ¾ku rÃºk jednÃ©ho Äloveka, ale nie u skupiny Ä¾udÃ­. 
+2. Tieto dÃ¡ta nemajÃº normÃ¡lne rozdelenie. 
 
 ```{r}
 group_fit <- lm(Length ~ Hand, data = Data)
@@ -221,16 +223,16 @@ ggplot(Data, aes(sample = Length, group = Hand, colour = Hand)) +
   geom_qq() 
 ```
 
-Aj tak by sme radi porovnali stredné hodnoty. Èo mô¾eme urobi»?
+Aj tak by sme radi porovnali strednÃ© hodnoty. ÄŒo mÃ´Å¾eme urobiÅ¥?
 
-1. Pou¾i» neparametrickı test (Wilcoxon-Mann-Whitney)
-2. Pou¾i» t-test, preto¾e ten je dos» robustnı vïaka centrálnej limitnej vete.
-3. Pou¾i» t-test, a vypoèíta» si hladinu vıznamnosti zo simulovaného rozdelenia t- ¹tatistiky. 
+1. PouÅ¾iÅ¥ neparametrickÃ½ test (Wilcoxon-Mann-Whitney)
+2. PouÅ¾iÅ¥ t-test, pretoÅ¾e ten je dosÅ¥ robustnÃ½ vÄaka centrÃ¡lnej limitnej vete.
+3. PouÅ¾iÅ¥ t-test, a vypoÄÃ­taÅ¥ si hladinu vÃ½znamnosti zo simulovanÃ©ho rozdelenia t- Å¡tatistiky. 
 
-__Úloha 1__ Zistite, ako pou¾i» Wilcoxon-Mann-Whitneyho test (`wilcox.test`), a pou¾ite ho.
-__Úloha 2__ Ako z vısledku testu získate hodnotu p?
+__Ãšloha 1__ Zistite, ako pouÅ¾iÅ¥ Wilcoxon-Mann-Whitneyho test (`wilcox.test`), a pouÅ¾ite ho.
+__Ãšloha 2__ Ako z vÃ½sledku testu zÃ­skate hodnotu p?
 
-Poïme skúsi» t-test. Keï sa trocha zabıvate v `R`, bez zaváhania pou¾ijete univerzálnu funkciu `lm`, preto¾e vám povie oveµa viac vecí. No dobre, máme aj funkciu na t-test, keï veµmi chcete:
+PoÄme skÃºsiÅ¥ t-test. KeÄ sa trocha zabÃ½vate v `R`, bez zavÃ¡hania pouÅ¾ijete univerzÃ¡lnu funkciu `lm`, pretoÅ¾e vÃ¡m povie oveÄ¾a viac vecÃ­. No dobre, mÃ¡me aj funkciu na t-test, keÄ veÄ¾mi chcete:
 
 
 ```{r}
@@ -240,7 +242,7 @@ orig_t = group_test$statistic
 orig_t
 ```
 
-Poïme to porovna» poriadne. Najprv si poriadne nakreslime dáta, tak ako sme to robili v predchádzajúcom zo¹ite. 
+PoÄme to porovnaÅ¥ poriadne. Najprv si poriadne nakreslime dÃ¡ta, tak ako sme to robili v predchÃ¡dzajÃºcom zoÅ¡ite. 
 
 ```{r}
 Data %>% spread(key = Hand, value = Length, sep = "_") -> Data_w
@@ -259,9 +261,9 @@ wsplot <-
     theme(aspect.ratio = 1)
 wsplot
 ```
-Tak to je tesné porovnanie, z dát je vidno, ¾e µavá ruka je o nieèo krat¹ia, ale nie je to zvlá¹» presvedèivé. 
+Tak to je tesnÃ© porovnanie, z dÃ¡t je vidno, Å¾e Ä¾avÃ¡ ruka je o nieÄo kratÅ¡ia, ale nie je to zvlÃ¡Å¡Å¥ presvedÄivÃ©. 
 
-V reèi lineárneho modelu chceme toto:
+V reÄi lineÃ¡rneho modelu chceme toto:
 
 ```{r}
 pair_fit <- lm(Length ~ Hand + Individual, data = Data)
@@ -269,7 +271,7 @@ summary(pair_fit)
 plot(pair_fit)
 ```
 
-Tento riadok je pre nás dôle¾itı:
+Tento riadok je pre nÃ¡s dÃ´leÅ¾itÃ½:
 ```
 Coefficients:
             Estimate Std. Error t value Pr(>|t|) 
@@ -277,7 +279,7 @@ Coefficients:
 HandRight    0.23750    0.07004   3.391 0.004034 **
 ...
 ```
-Mô¾eme pou¾i» aj párovı test:
+MÃ´Å¾eme pouÅ¾iÅ¥ aj pÃ¡rovÃ½ test:
 
 ```{r}
 paired_test <- t.test(Data_w$Hand_Right, Data_w$Hand_Left, paired = T)
@@ -286,13 +288,13 @@ paired_test
 orig_t
 ```
 
-Teda rozdiel medzi µavou a pravou rukou je ¹tatisticky vıznamnı. Len si nie sme istí, èi majú rozdiely správne rozdelenie, tak sa rad¹ej ubezpeèíme, ¾e to je tak. 
-Urobíme to tak, ¾e si nasimulujeme správne rozdelenie ¹tatistiky t pre na¹e dáta, a z neho vypoèítame správne p.
-Rozdelenie, ktoré hµadáme, je rozdelenie pre *nulovú hypotézu*, teda pre prípad nulového stredného rozdielu medzi då¾kou µavej a pravej ruky u úèastníkov merania.
+Teda rozdiel medzi Ä¾avou a pravou rukou je Å¡tatisticky vÃ½znamnÃ½. Len si nie sme istÃ­, Äi majÃº rozdiely sprÃ¡vne rozdelenie, tak sa radÅ¡ej ubezpeÄÃ­me, Å¾e to je tak. 
+UrobÃ­me to tak, Å¾e si nasimulujeme sprÃ¡vne rozdelenie Å¡tatistiky t pre naÅ¡e dÃ¡ta, a z neho vypoÄÃ­tame sprÃ¡vne p.
+Rozdelenie, ktorÃ© hÄ¾adÃ¡me, je rozdelenie pre *nulovÃº hypotÃ©zu*, teda pre prÃ­pad nulovÃ©ho strednÃ©ho rozdielu medzi dÄºÅ¾kou Ä¾avej a pravej ruky u ÃºÄastnÃ­kov merania.
 
-Za predpokladov nulovej hypotézy sú hodnoty pre µavú a pravú ruku rovnocenné, a teda mô¾eme jednu nahradi» druhou. Tak si vytvoríme dostatoèné mno¾stvo dát pre získanie rozdelenia t-¹tatistiky. Urèite nemô¾eme mie¹a» dáta od rôznych jednotlivcov, to by sme naru¹ili koreláciu medzi då¾kou µavej a pravej ruky u jednotlivcov. 
+Za predpokladov nulovej hypotÃ©zy sÃº hodnoty pre Ä¾avÃº a pravÃº ruku rovnocennÃ©, a teda mÃ´Å¾eme jednu nahradiÅ¥ druhou. Tak si vytvorÃ­me dostatoÄnÃ© mnoÅ¾stvo dÃ¡t pre zÃ­skanie rozdelenia t-Å¡tatistiky. UrÄite nemÃ´Å¾eme mieÅ¡aÅ¥ dÃ¡ta od rÃ´znych jednotlivcov, to by sme naruÅ¡ili korelÃ¡ciu medzi dÄºÅ¾kou Ä¾avej a pravej ruky u jednotlivcov. 
 
-1. Nasimulujeme si veµa hodnôt t
+1. Nasimulujeme si veÄ¾a hodnÃ´t t
 
 ```{r}
 n_samples = 2000
@@ -316,17 +318,17 @@ ggplot(tdf, aes(x = value)) +
                    colour = "black", 
                    fill = "white")
 ```
-2. My sme získali hodnotu `orig_t`, a chceme vedie», akému p zodpovedá. To vypoèítame µahko:
+2. My sme zÃ­skali hodnotu `orig_t`, a chceme vedieÅ¥, akÃ©mu p zodpovedÃ¡. To vypoÄÃ­tame Ä¾ahko:
 
 ```{r}
 tdf %>% filter(abs(value) > abs(orig_t)) %>% summarise( p = n()/n_samples)
 ```
-Tak, a teraz sa u¾ nemusíme stara», aké majú na¹e dáta rozdelenie. Na¹e p-èko platí presne pre na¹e dáta. 
+Tak, a teraz sa uÅ¾ nemusÃ­me staraÅ¥, akÃ© majÃº naÅ¡e dÃ¡ta rozdelenie. NaÅ¡e p-Äko platÃ­ presne pre naÅ¡e dÃ¡ta. 
 
-## Interval spo2ahlivosti pre rozdiel
+## Interval spo2ahlivosti pre rozdiel strednÃ½ch hodnÃ´t
 
-Pre urèenie intervalu spoµahlivosti pre rozdiel då¾ok µavej a pravej ruky potrebujeme nejako varírova» dáta okolo nameraného rozdielu. Urobíme toto: 
-Vezmeme reziduály z lineárneho modelu, náhodne ich premie¹ame a pridáme k predpovediam modelu. Takto mô¾eme generova» repliky dát a zaka¾dım spoèítame veµkos» rozdielu medzi µavou a pravou rukou. 
+Pre urÄenie intervalu spoÄ¾ahlivosti pre rozdiel dÄºÅ¾ok Ä¾avej a pravej ruky potrebujeme nejako varÃ­rovaÅ¥ dÃ¡ta okolo nameranÃ©ho rozdielu. UrobÃ­me toto: 
+Vezmeme reziduÃ¡ly z lineÃ¡rneho modelu, nÃ¡hodne ich premieÅ¡ame a pridÃ¡me k predpovediam modelu. Takto mÃ´Å¾eme generovaÅ¥ repliky dÃ¡t a zakaÅ¾dÃ½m spoÄÃ­tame veÄ¾kosÅ¥ rozdielu medzi Ä¾avou a pravou rukou. 
 
 ```{r}
 res <- residuals(pair_fit)
@@ -341,7 +343,7 @@ get_diff <- function(d)
   return(df_fit$coefficients[2])
 }
 
-diff_vec[i] <- replicate(n_samples, get_diff(Data))
+diff_vec <- replicate(n_samples, get_diff(Data))
 
 diff_df <- data.frame(value = diff_vec)
 ggplot(diff_df, aes(x = value)) + 
@@ -353,11 +355,10 @@ ggplot(diff_df, aes(x = value)) +
 diff_ci = quantile(diff_vec, c(0.025,0.975))
 diff_ci
 ```
-## Podpora permutaènıch testov a bootstrapu v R
 
-### Balíèek `lmPerm'
+## BalÃ­Äek `lmPerm'
 
-Staèí iba namiesto `lm` pou¾i» 'lmp`:
+StaÄÃ­ iba namiesto `lm` pouÅ¾iÅ¥ 'lmp`:
 
 
 ```{r}
@@ -366,7 +367,7 @@ pair_pfit <- lmp(Length ~ Hand + Individual, data = Data)
 summary(pair_pfit)
 ```
 
-## Balíèek `boot`: Intervaly spoµahlivosti
+## BalÃ­Äek `boot`: Intervaly spoÄ¾ahlivosti
 
 ```{r}
 library(boot)
