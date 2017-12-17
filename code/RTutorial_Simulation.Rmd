@@ -59,6 +59,20 @@ $$
 2. Nakreslite histogram.
 3. Fitnite exponenciálnym rozdelením. 
 
+```{r}
+ve <- rexp(100, rate = 1.0)
+dfe <- data.frame(values = ve)
+ggplot(dfe, aes(x = values)) + 
+  geom_histogram(aes(y =..density..),
+                   breaks = seq(0.0, 5.0, by = 0.5), 
+                   colour = "black", 
+                   fill = "white") +
+  stat_function(fun = dexp, args = list(rate = 1.0/mean(df$values)))
+```
+
+
+! Doplniť jednoduchý príklad na bootstrap pre jeden parameter
+
 ## t-test a rozdelenie pravdepodobnosti pre hladinu významnosti
 
 ## Jednoduché porovnanie: t-test

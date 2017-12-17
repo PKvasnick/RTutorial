@@ -1,0 +1,62 @@
+---
+title: "Zadania 2017"
+output: html_notebook
+---
+
+## Pravidlá pre tento rok:
+
+1. Môžete použiť ľubovoľné dáta (zo svojej bakalárky či diplomovky, z Internetu, dáta z R, viď nižšie).
+2. Máte za úlohu niečo podstatné o svojich dátach v R zistiť a prezentovať to. *Prezentovať* znamená, že predložíte R notebook s funkčným kódom, zrozumiteľným komentárom a výrečnou grafikou.
+3. Použite `tidyverse`, teda ggplot na kreslenie obrázkov, dplyr na manipuláciu s dátami a pod.
+4. Vítané sú aplikácie bootstrapu a permutačných testov.
+5. Na kurze sme toho stihli málo, využite príležitosť naučiť sa niečo nové.
+
+## Štandardné dáta z R
+
+Ak nenájdete vhodné dáta, môžete použiť datasety zabudované v balíčkoch R. Prakticky každý balíček má pribalené nejaké dáta, na ktorých sa štandardne demonštruje jeho funkčnosť. Tak napríklad R `base` obsahuje slávny dataset `anscombe`, na ktorom sa môžete do sýstosti vyblázniť. Skúsite `help("anscombe")`, potom 
+```{r}
+anscombe
+```
+
+a správne usúdite, že aby ste dáta elegantne nakreslili, potrebujete ich najprv preorganizovat. Napríklad takto:
+
+```{r}
+library(tidyverse)
+anscombe %>% 
+  gather(label, value) %>% 
+  mutate(i = rep(1:11,8)) %>% 
+  separate(label, into = c("xy","set"), sep = 1) %>% 
+  spread(xy, value) %>% 
+  select(-i) -> my_anscombe
+my_anscombe
+```
+Asi by ste potrebovali poradiť, že musíte zriadiť stĺpec `i`, inak 'spread' nebude fungovať. Ja som potreboval :-)
+
+Teraz už môžeme kresliť:
+
+```{r}
+ggplot(data = my_anscombe, aes(x = x, y = y)) +
+  facet_wrap(~ set) +
+  geom_point() +
+  geom_smooth(method = "lm", fullrange = T)
+```
+
+Nafitované priamky sú rovnaké, vrátane konfidenčných hraníc. Vaša úloha by začala tu: konfidenčné pásy určite nie sú v poriadku, a dôvod je, že pochádzajú z predpokladu o rozdelení chýb hodnôt y, ktoré okrem jedného prípadu neplatia. Takže by bolo elegantné použiť bootstrap reziduálov a ukázať, že chyby koeficientov sú v skutočnosti oveľa väčšie. Ak to ukážete, máte skúšku za sebou. 
+
+### Balíček `datasets`
+
+Zbierku dát obsahuje balíček `datasets`. Pozrite si dokumentáciu a vyberte si vhodné dáta. Nájdete pomerne veľa dát s biologickou alebo fyzikálno-chemickou tématikou.
+
+```{r}
+library(datasets)
+library(help = "datasets")
+```
+
+Ak treba, balíček si doinštalujte. 
+Ku každým dátam existuje help, dokonca s demonštráciou kódu. Kľudne tento kód využite, ale skúste ho prepísať tak, aby ste použili metódy z `tidyverse`.
+
+Ak narazíte na problém a nedarí sa vám nájsť pomoc v helpe R alebo na Internete, nestrácajte čas a ozvite sa, peter.kvasnicka@mff.cuni.cz. Potrebujem ale vidieť váš kód, inak vám s veľkou pravdepodobnosťou nebudem vedieť poradiť. 
+
+## Zápis do indexov
+
+Zápis do indexov sa uskutoční v pondelok 22. januára o 10:00 v miestnosti 328.
