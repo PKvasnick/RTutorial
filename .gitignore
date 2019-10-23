@@ -8,3 +8,5 @@ gitignore.txt
 *.toc
 code/.Rhistory
 *.html
+*.png
+*.pdf

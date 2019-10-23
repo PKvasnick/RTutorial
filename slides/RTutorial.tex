@@ -17,13 +17,18 @@
 %\setbeamertemplate{navigation symbols}{} 
 %\logo{} 
 \institute{Univerzita Karlova, Praha} 
-\date{Kurz pre 4. ročník BMF \newline Jeseň 2018} 
+\date{Kurz pre 4. ročník BMF \newline Jeseň 2019} 
 \subject{Statistics and data science} 
 
 \beamertemplatenavigationsymbolsempty
 
 \setbeamerfont{page number in head/foot}{size=\large}
 \setbeamertemplate{footline}[frame number]
+
+%Fix @ifundefined behaviour / should go away with an update of caption pkg
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
 
 \begin{document}
 
