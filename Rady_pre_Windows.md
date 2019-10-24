@@ -17,7 +17,7 @@ Tento problém sa vyskytol u viacerých z vás, a je to niekoľko problémov doh
 * Inštalujte R, môžete použiť ten istý inštalačný súbor (alebo si ho znova stiahnite z https://cloud.r-project.org), ale __zmeňte odporúčaný adresár pre inštaláciu__, namiesto *C:\\Program Files* použite niečo ako *C:\\R*, čo nemá v názve medzery ani diakritiku. Vďaka tomu by sa vám bez problémov mali nainštalovať balíky `broom` a `hms`, potrebné pre `tidyverse`.
 
 * Kým nainštalujete *_RStudio_*, nainštalujte `tidyverse` priamo v *_R_*:
-  1. Otvorte `RGui`. To je to, čo sa otvorí, keď kliknete na R v *_Start menu_* alebo dvojito kliknete na ikonu na pracovnej ploche, ak ste si ju nechali vytvoriť pri inštalácii.
+  1. Otvorte `RGui`: Tlačidlo `Windows`, začnite písať `RGui`, kým sa neobjaví `R i386 3.6.1` a to spustite. Môžete tiež kliknúť na R v *_Start menu_* alebo dvojito kliknete na ikonu na pracovnej ploche, ak ste si ju nechali vytvoriť pri inštalácii.
   2. Na príkazový riadok napíšte `install.packages("crayon")` a stlačte ENTER. Skontrolujte, že inštalácia prebehla bez problémov.
   3. Ďalej nainštalujte samotný `tidyverse`, `install.packages('tidyverse')` a ENTER. Ak všetko pôjde dobre, o chvíľu obrazovka doroluje a na jednom z posledných riadkov by malo byť `DONE`.
 
@@ -40,7 +40,7 @@ Ak časť vášho problému je, že RStudio nedokázalo nainštalovať niektoré
 * V týchto súboroch som zmenil kódovanie z UTF-8 na ISO-8859-2.
 * Bol by som rád, keby ste sa pokúsili použiť *_GitHub Desktop_*.
   1. Stiahnite si GitHub Desktop a spustite ho.
-  2. Pre stiahnutie súborov tutoriálu si nemusíte vytvárať konto, dajte __Skip this step__ namiesto prihlasovania.
+  2. Pre stiahnutie súborov tutoriálu si nemusíte vytvárať konto, dajte __Skip this step__ namiesto prihlasovania. Neskôr si ale konto určite vytvorte, budete ho potrebovať, aby ste mi mohli sprístupniť vypracované zadanie ku skúške.
   3. Zadajte meno a e-mail. Nikam sa neodošlú, potrebuje ich git aby mohol označiť vaše commity (ktoré sa zatiaľ nechystáte robiť).
   4. Z troch možností vyberte tú úplne vpravo, *_Clone repository_*.
   5. Nie *_GitHub.com_*, ale zase možnosť úplne vpravo, *_URL_*.

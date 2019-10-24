@@ -8,24 +8,45 @@ For the class, you need to install a few things to start.
 
 ### Install R
 * Go to https://cloud.r-project.org
-* Select the installation package appropriate for your operating system (and package manager). Install the newest version of R.
-* Install. __On Widnows, install to a directory with names without spaces or diacritics__. Some packages wouldn't install in *C:\\Program Files*, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*. Use something like *C:\\R* instead.
+* Click on one of _*Download R for ... *_ items appropriate for your operating system.
+* Click _*base*_.
+* Select the installation package appropriate for your operating system (and package manager). Pick the newest version of R.
+* Install R (run the installer). Go with default options, except _installation directory_ on Windows - set installation directory such as *C:\\R\\R-3.6.1* (see below).
+
+#### Note:
+__On Widnows, install to a directory with names without spaces or diacritics__. Some packages wouldn't install in *C:\\Program Files*, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*. Use something like *C:\\R* instead. For more details, see https://www.r-bloggers.com/windows-user-space-issues-with-installing-r-packages/ .
+
+Expect problems, if your Windows username contains spaces or diacritics (such as _*Ján Novák*_).
+
+In case of errors during package installation, browse the error messages for directories that have spaces or diacritics in their names.
 
 ### Install RStudio
 * Go to https://www.rstudio.com/products/rstudio/download/
-* Select "Download now" for __RStudio Desktop / Open source__.
-* Section "Installers for supported platforms", click on *RStudio 1.1.456 - Windows Vista/7/8/10*.
-* Install. __On Windows,__ I advise to use the directory you used to install R, or other directory without spaces or diacritics in the path.
-* __On Widnows, allow RStudio through your firewall.__. RStudio package installation guide needs to access Internet, and RStudio needs to launch its own html server to handle previews. None of this will work if your antivirus program's firewall won't let RStudio comms through.
+* Select "Download" for __RStudio Desktop / Open source license__.
+* Section "Installers for supported platforms", click on *RStudio 1.2.5001 - Windows 10/8/7 (64-bit)*.
+* Install. __On Windows,__ I advise to use the directory you used to install R, such as _*C:\\R*_, or other directory without spaces or diacritics in the path. For example, on my Windows 10 system, I installed R in _*D:\\R\\R-3.6.1*_ and RStudio in _*D:\\R\\RStudio*_.
+* __On Widnows, allow RStudio through your firewall__ when the corresponding pop-up window appears. RStudio package installation guide needs to access Internet, and RStudio needs to launch its own html server to handle help and notebook previews. None of this will work if your antivirus program's firewall won't let RStudio communications through.
 
 ### Install the tidyverse package suite
-The *_tidyverse_* suite of R packages provide a set of R features/functionalities that we will use in this tutorial.
-* Open RGui. On Windows, this means locate R in your Start menu or click an R icon on the desktop, if you have one created.
+R is modular. You can select statistical features you wish to use by installing appropriate packages. At this stage, we are going to install a basic set of packages that we are going to use: The *_tidyverse_* suite of R packages provide a set of R features/functionalities that we will use in this tutorial.
+
+#### Method 1
+* Open RStudio (Press Windows key and start writing "RStudio" until "RStudio app" appears).
+* From RStudio's main menu, select _*Tools/Install packages*_.
+* In the middle text field "Packages (separate multiple with space or comma)" write "crayon tidyverse". Press Enter.
+* _This is the time_ when your firewall may intercept RStudio Internet communication and ask what to do. Allow RStudio through the firewall. It will happen at most once.
+* The installation takes some time. Watch output to make sure no error messages are displayed. If you see errors, try *Method 2*.
+* If everything worked, click into the console window and write `library(tidyverse)` and press Enter. Make sure there are no angry messages.
+
+#### Method 2 (in case Method 1 wouldn't work)
+
+* Open RGui. On Windows, this means press Windows key and start writing "RGui" until "R i386 3.6.1" appears, or locate R in your Start menu or click an R icon on the desktop, if you have one created.
 * At the prompt, write `install.packages("crayon")`. Check that the installation succeeded.
 * Next install the *tidyverse* suite itself, `install.packages('tidyverse')`. Again, you should see the word *DONE* somewhere by the end of the console listing.
 * To check, write `library(tidyverse)` at the command prompt and press `<ENTER>`. There should be no errors.
 * Open *_RStudio_*. If you don't see the Console right away, double-click at the bottom tab to display it. Again, enter `library(tidyverse)` and press `<ENTER>`.
-* Let me (peter.kvasnicka@mff.cuni.cz) know if you don't succeed.
+
+__Let me (peter.kvasnicka@mff.cuni.cz) know if you don't succeed.__
 
 
 ## GitHub repository of the RTutorial
