@@ -38,7 +38,7 @@ R is modular. You can select statistical features you wish to use by installing 
 * The installation takes some time. Watch output to make sure no error messages are displayed. If you see errors, try *Method 2*.
 * If everything worked, click into the console window and write `library(tidyverse)` and press Enter. Make sure there are no angry messages.
 
-#### Method 2 (in case Method 1 wouldn't work)
+#### Method 2 (use in case Method 1 wouldn't work)
 
 * Open RGui. On Windows, this means press Windows key and start writing "RGui" until "R i386 3.6.1" appears, or locate R in your Start menu or click an R icon on the desktop, if you have one created.
 * At the prompt, write `install.packages("crayon")`. Check that the installation succeeded.
