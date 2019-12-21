@@ -38,8 +38,8 @@ Ståpce, ktoré nás zaujímajú, sú `Subject` (identifikácia úèastníka), `angle` (uh
 Pou¾ijeme variantu príkazu `dplyr::mutate`, ktorá nepridáva ståpce k existujúcim, ale zriadi novú tabu2ku a ståpce pridá do nej: `dplyr::transmute`. Okrem toho si uká¾eme, naèo slú¾i obrátené priradenie `->`.
 
 ```{r}
+d %>%
 transmute(
-    d,
     id = Subject,
     angle = angle,
     correct = correct.incorrect,
@@ -205,7 +205,7 @@ ggplot(means_and_errors, aes(x=rt_mean_0, y=rt_mean_50)) +
 __Úloha__. Nepotrebovali sme niè modelova», ale ako by ste z tejto situácie dostali kompaktný záver o predå¾ení reakènej doby? (Skúste prelo¾i» bodmi priamku.)
 
 ```{r}
-fit_rt <- lm(mean_rt_50deg ~ mean_rt_0deg,, data = subject_means_wide)
+fit_rt <- lm(mean_rt_50deg-mean_rt_0deg ~ mean_rt_0deg,, data = subject_means_wide)
 summary(fit_rt)
 plot(fit_rt)
 ```

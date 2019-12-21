@@ -7,6 +7,6 @@ gitignore.txt
 *.gz
 *.toc
 code/.Rhistory
+*.tex
+unnamed*
 *.html
-*.png
-*.pdf

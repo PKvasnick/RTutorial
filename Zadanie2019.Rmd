@@ -1,0 +1,168 @@
+---
+title: "Zadania 2019"
+output:
+  pdf_document: default
+  html_notebook: default
+coding: UTF-8
+---
+
+## Pravidlá:
+
+1. Môžete použiť ľubovoľné dáta (zo svojej bakalárky či diplomovky, z Internetu, dáta z R, niektoré z odporúčaných datasetov, viď nižšie).
+2. Máte za úlohu niečo podstatné o svojich dátach v R zistiť a prezentovať to. *Prezentovať* znamená, že predložíte R notebook s funkčným kódom, zrozumiteľným komentárom a výrečnou grafikou.
+3. Použite `tidyverse`, teda `ggplot2` na kreslenie obrázkov, `tidyr` / `dplyr` na manipuláciu s dátami a pod.
+4. Vítané sú aplikácie bootstrapu a permutačných testov.
+5. Na kurze sme toho stihli málo, využite príležitosť naučiť sa niečo nové.
+6. Pre svoj notebook a dáta si vytvoríte GitHub repozitár, a pošlete mi naň link. Ak sa pokúsite poslať mi nejaké súbory v e-maili, buď budem taký e-mail ignorovať, alebo vám pošlem toto poučenie. Nižšie nájdete podrobný postup, čo máte urobiť. 
+
+
+## Kde nájsť dáta
+
+Zdrojov je viac. Vyhľadajte, čo sa vám páči, alebo použite vlastné dáta. 
+
+
+### Štandardné dáta z R
+
+Ak nenájdete vhodné dáta, môžete použiť datasety zabudované v balíčkoch R. Prakticky každý balíček má pribalené nejaké dáta, na ktorých sa štandardne demonštruje jeho funkčnosť. 
+
+
+#### Príklad: dataset `anscombe`
+
+Tak napríklad R `base` obsahuje slávny dataset `anscombe`, na ktorom sa môžete do sýstosti vyblázniť. Skúsite `help("anscombe")`, potom 
+
+```{r}
+anscombe
+```
+
+a správne usúdite, že aby ste dáta elegantne nakreslili, potrebujete ich najprv preorganizovat. Napríklad takto:
+
+```{r}
+library(tidyverse)
+anscombe %>% 
+  gather(label, value) %>%     # label: názvy stĺpca (x1, x2, ... y4), value: hodnoty 
+  mutate(i = rep(1:11,8)) %>%  # nový stĺpec s poradím hodnôt 
+  separate(label, into = c("xy","set"), sep = 1) %>%    # oddelíme z label 1. znak, čo je 'x' alebo 'y'. 
+  spread(xy, value) %>%        # teraz rozdelíme stĺpec value do dvoch stĺpcov x a y podľa stlpca xy.
+  select(-i) -> my_anscombe    # stĺpec i zahodíme.
+my_anscombe
+```
+Asi by ste potrebovali poradiť, že musíte zriadiť stĺpec `i`, inak 'spread' nebude fungovať. Ja som potreboval :-)
+
+Teraz už môžeme kresliť:
+
+```{r}
+ggplot(data = my_anscombe, aes(x = x, y = y)) +
+  facet_wrap(~ set) +
+  geom_point() +
+  geom_smooth(method = "lm", fullrange = T)
+```
+
+Nafitované priamky sú rovnaké, vrátane konfidenčných hraníc. Vaša úloha by začala tu: konfidenčné pásy určite nie sú v poriadku, pretože pochádzajú z predpokladu o rozdelení chýb hodnôt y, ktoré okrem jedného prípadu neplatia. Takže by bolo elegantné použiť bootstrap reziduálov a ukázať, že chyby koeficientov sú v skutočnosti oveľa väčšie. 
+
+Ak to ukážete, máte skúšku za sebou. 
+
+Ak sa rozumne pohráte s diagnostikou regresie a dokážete vysvetliť, čo je na jednotlivých regresiách zle a ako by sa to dalo napraviť, takisto máte skúšku za sebou.
+
+#### (Koniec príkladu)
+
+
+### Balíček `datasets`
+
+Zbierku dát obsahuje balíček `datasets`. Pozrite si dokumentáciu a vyberte si vhodné dáta. Nájdete pomerne veľa dát s biologickou alebo fyzikálno-chemickou tématikou.
+
+```{r}
+library(datasets)
+library(help = "datasets")
+```
+
+Ak treba, balíček si doinštalujte. 
+Ku každým dátam existuje help, dokonca s demonštráciou kódu. Kľudne tento kód využite, ale skúste ho prepísať tak, aby ste použili metódy z `tidyverse` a hlavne pridali hodnotný vlastný príspevok.
+
+
+### Dáta z iných zdrojov
+
+Dáta dnes nájdete na mnohých miestach, napríklad v novinách.
+
+
+#### Príklad: Kandidáti do parlamentných volieb 2020
+
+Zoznam všetkých kandidátov nájdete tu: https://www.minv.sk/?nr20-kandidati3 . Dáta sú ale v pdf, takže ako prvý krok potrebujete nájsť spôsob, ako z nich vyextrahovať údaje. Môžete napríklad skúsiť Google. 
+
+V repozitári kurzu v podadresári `data/kandidati_2020` nájdete niekoľko vyextrahovaných tabuliek, obsahujúcich dáta, použíté v článku Daniela Kerekesa v Denníku N (https://dennikn.sk/1684137/najviac-pravnikov-ide-za-ps-spolu-ucitelov-a-lekarov-za-kdh-najmenej-titulov-maju-u-kotlebu-volebne-infografiky/?ref=suv - je možné, že článok je pod paywallom). Sú to menšie súbory dát extrahované z kandidátnych listín. U nich budete musieť vyriešiť problém s kódovaním, a ešte vymyslieť nejaký inovatívny pohľad či porovnanie nad rámec toho, čo je v novinách - napríklad zoskupenie strán podľa podobnosti nejakých parametrov. Upozorňujem, že ak chcete ukázať svoje štatistické svaly na testoch hypotéz, potom toto nie sú dáta pre vás. 
+
+#### (Koniec príkladu)
+
+
+### Odkazy
+
+Pridávam zoznam odkazov, kde môžete nájsť zaujímavú látku na skúmanie. Poradie vyzerá čudne, pretože je úplne náhodné:
+
+Štatistické testy ako lineárne modely:
+https://lindeloev.github.io/tests-as-linear/
+
+Simpsonov paradox:
+https://paulvanderlaken.com/2017/09/27/simpsons-paradox-two-hr-examples-with-r-code/
+https://towardsdatascience.com/simpsons-paradox-d2f4d8f08d42
+
+Kvantilové grafy (Q-Q plot):
+https://seankross.com/2016/02/29/A-Q-Q-Plot-Dissection-Kit.html
+
+New York Times: What's going on in this graph? 
+Vyberte si graf a skúste odpovedať na otázky: Čo vidím? Čo by som ešte chcel vedieť? Čo sa tu deje? 
+https://www.nytimes.com/2019/08/27/learning/looking-for-graphs-to-use-in-the-classroom-here-are-34.html
+
+Lavielle: Statistics in Action with R - učebné materiály. Naštudujte teóriu (napríklad viacnásobné porovnania) a uplatnite na dátach z cvičenia alebo ľubovoľných iných. 
+http://sia.webpopix.org/index.html
+
+Moja Pinterestová nástenka My_R obsahuje množstvo odkazov, kľudne si nájdite inšpiráciu.
+https://sk.pinterest.com/peterkvasnika/my_r/
+
+
+### Ja ale fakt neviem, čo si mám vybrať!
+
+Tuho sa zamyslite, či by ste nevedeli využiť nejaké svoje dáta. Je to najužitočnejšie a máte najväčšiu motiváciu sa niečo naučiť.
+
+Nájdite si dáta o niečom, čo vás zaujíma. Trebárs o uhlíkových emisiách, futbalové štatistiky, prieskumy preferencií, čo len chcete, nájsť dáta na Internete je dnes ľahké, stačí sa spýtať Googlu. 
+
+Ak stále neviete, pozrite si zdroje, uvedené vyššie. Osvedčený postup je skombinovať dve témy, napríklad 
+
+* Anscombove dáta a článok o vizualizácii reziuálov z môjho Pinterestu, https://www.r-bloggers.com/visualising-residuals/ 
+
+* článok o zmiešaných modeloch https://www.r-bloggers.com/getting-started-with-mixed-effect-models-in-r/ a niektoré dáta, ktoré si pýtajú dvojfaktorovú ANOVu
+
+* tutoriál o kreslení animovaných grafov `gganimate`, https://gganimate.com/articles/gganimate.html s niektorými komplexnejšími dátami, napríklad datasetom z balíka `gapminder` alebo z datasetu o letoch z/do NYC, ktorým sme sa zaoberali na prednáške. 
+
+Ak si *naozaj* neviete rady, napíšte mi a niečo nájdeme či vymyslíme. 
+
+
+## Git
+
+Prosím pozrite si časť *Github Desktop Workflow* v dokumente *README.md* v koreňovom adresári repozitára tohoto kurzu (https://github.com/PKvasnick/RTutorial)
+
+Jediné, čo musíte urobiť nové, je založiť si vlastný repozitár a primapovať ho k adresáru na vašom počítači. Postup:
+
+1. Choďte na https://github.com a prihláste sa alebo zaregistrujte.
+
+2. V ľavom ráme, zobrazujúcom všetky vaše repozitáre, kliknite na "New". Vyplňte formulár a kliknite na zelené tlačidlo, aby sa vytvoril nový repozitár. 
+
+![Kliknutím na "New" vytvoríte nový repozitár.](pics/New_Github_repo.png)
+
+![Zadajte vlastnosti nového repozitára.](pics/Define_Github_repo.png)
+
+Ospravedlňujem sa za rozutekané obrázky ku kroku 2, ale nechcelo sa mi to už naprávať. 
+
+
+## Nefunguje to!
+
+Ak narazíte na problém a nedarí sa vám nájsť pomoc v helpe R alebo na Internete (stackoverflow.com), nestrácajte čas a ozvite sa, peter.kvasnicka@mff.cuni.cz. Potrebujem ale vidieť váš kód, inak vám s veľkou pravdepodobnosťou nebudem vedieť poradiť. 
+
+
+## Hodnotenie a zápis do indexov
+
+Z tohoto predmetu dostanú všetci "A". Ak nebudem s niektorou prezentáciou spokojný, vrátim ju.
+
+Zápis do indexov sa uskutoční niekedy koncom januára, v pondelok alebo v piatok. Prosím skúste sa zhodnúť na jedinom termíne. V prípade nutnosti stačí, ak po spolužiakovi pošlete index. 
+
+
+
+

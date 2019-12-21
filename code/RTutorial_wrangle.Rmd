@@ -141,7 +141,8 @@ Tu máme poèet prípadov a poèet obyvateµov na rôznych riadkoch, hoci sa logicky j
 Aby sme poruchu vylieèili, musíme zo ståpcov `type` a `count` vytvori» dva nové ståpce `cases` a `population`, do ktorých roztriedime hodnoty zo ståpca `count` pod2a hodnoty v ståpci `type` pre riadky, ktoré majú inak v¹etky hodnoty rovnaké. 
 
 ```{r}
-spread(table2, key = type, value = count)
+table2 %>%
+  spread(key = type, value = count)
 ```
 
 ## Rozdeµovanie: *tidyr::separate()* a spájanie 'tidyr::unite()' hodnôt v ståpcoch 
@@ -237,6 +238,9 @@ treatment <- tribble(
 ```
 
 Aby sme dáta dali do poriadku, potrebujeme správne nahradi» chýbajúce hodnoty. Na to slú¾i funkcia `fill()`:
+```{r}
+treatment
+```
 
 ```{r}
 treatment %>%
