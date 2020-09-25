@@ -48,18 +48,23 @@
 			\item R je interpretovaný programovací jazyk
 			\item R podporuje integráciu s inými programovacími jazykmi - môžeme volať funkcie naprogramované v C++, Fortrane ap., čo podstatne kompenzuje pomalosť vlastného interpreta R.
 			\item R spolupracuje s Pythonom, Javou a ďalšími jazykmi, ktoré používajú vývojári v data science
-			\item R má výborné IDE, RStudio, a najnovšie aj Visual Studio (\alert{zakazujem používať VS} - vyhnete sa škaredým problémom, ak to nebudete skúšať.)
+			\item R má výborné IDE, RStudio, a najnovšie aj Visual Studio Code podporuje R (\alert{zakazujem používať VSCode} - vyhnete sa škaredým problémom, ak to nebudete skúšať.)
+			\item Pre jednoduché aplikácie a výučbu existujú webové aplikácie, v ktorých môžete programovať - napr. Jupyter Notebook / JupyterLab a Google Colab.
 		\end{itemize}
 	\end{block}
+\end{frame}
+
+\begin{frame}{Prečo chceme R}
 	\begin{block}{R má bohaté rozhrania pre dáta}
 		\begin{itemize}
-			\item R umožňuje čítať dáta z veľkého množstva vstupných formátov:
+			\item Umožňuje čítať dáta z veľkého množstva vstupných formátov:
 			\begin{itemize}
 				\item textových súborov
 				\item Excelu
 				\item JSON
 				\item databáz
 				\item Apache Spark-u
+				\item webových stránok
 				\item \dots
 			\end{itemize}
 			\item R dokáže dáta, grafy a reporty exportovať do veľkého množstva formátov.
@@ -71,7 +76,7 @@
 	\begin{block}{R je rozšíriteľné}
 		\begin{itemize}
 			\item To, čo robí R skutočne cenným, je ekosystém rozšírení - baličkov (packages)
-			\item Tieto baličky obsahujú všetky štatistické metódy, ktoré kedy budete potrebovať (dobre, skôr väčšinu \dots)
+			\item Tieto baličky obsahujú všetky štatistické metódy, ktoré kedy môžete potrebovať 
 			\item Balíčky sídlia na serveri CRAN, a môžete si ich ľahko doinštalovať cez interpret R (\texttt{install.packages(<menobalíčka>}
 			\item Balíčky neustále pribúdajú: Ak niekto opublikuje novú štatistickú metódu, s veľkou pravdepodobnosťou ju hneď implementuje v R.
 		\end{itemize}
@@ -79,8 +84,8 @@
 	\begin{block}{R je renomované a spoľahlivé}
 		\begin{itemize}
 			\item Pretože R používa veľa ľudí, je dobre otestované a všetky prípadné chyby sú hneď odstránené.
-			\item Ak si svoje dáta analyzujete v R, nikto sa nebude pýtať, či ste správne počítali ANOVu (čo neznamená, že sa nebude pýtať, či ste ju správne použili)
-			\item Kód vašej analýzy je univerzálne zrozumiteľný doklad o tom, čo ste robili.
+			\item Ak si svoje dáta analyzujete v R, nikto sa nebude pýtať, ako ste počítali ANOVu (čo neznamená, že sa nebude pýtať, či ste ju správne použili)
+			\item Kód vašej analýzy je univerzálne zrozumiteľný záznam o tom, čo ste robili a je opakovateľne použiteľný.
 		\end{itemize}
 	\end{block}
 \end{frame}
@@ -90,7 +95,7 @@
 		\begin{itemize}
 			\item R sa pôvodne vyvinulo z funkcionálneho a objektovo-orientovaného jazyka S. Preto niektoré veci pracujú trocha zvláštne.
 			\item Pretože R má za sebou dlhú históriu, obsahuje niekoľko súperiacich koncepcií a funkčných rozhraní. Preto niektoré veci možno robiť rôznymi spôsobmi, a naopak niektoré podobné veci musíte robiť odlišne.
-			\item R je pomalé. To pocitite iba pri veľkých analýzach.
+			\item R je pomalé. To ale pocitite iba pri skutočne veľkých analýzach. 
 			\begin{itemize}
 				\item Treba sa vyhýbať zložitým programovým konštrukciám v R (cyklom \texttt{for} a podobne), a používať čo najviac metafunkcie R (\texttt{apply}), aby sa počítanie robilo v C a Fortrane, a nie v R. 
 			\end{itemize}
