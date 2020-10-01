@@ -12,7 +12,7 @@ For the class, you need to install a few things to start.
 * Click _*base*_.
 * Select the installation package appropriate for your operating system (and package manager). Currently this is _*Download R 4.0.2 for Windows*_. 
 * Confirm to download and save the installation binary.
-* Install R (run the installer). Go with default options, except _installation directory_ on Windows - set installation directory such as *C:\\R\\R-3.6.1* (see below).
+* Install R (run the installer). Go with default options, except _installation directory_ on Windows - set installation directory such as *C:\\R\\R-4.0.2* (see below).
 
 #### Note:
 __On Widnows, install to a directory with names without spaces or diacritics__. Some packages wouldn't install in *C:\\Program Files*, in particular the packages *_broom_* and *_hms_* needed for *_tidyverse_*. Use something like *C:\\R* instead. For more details, see https://www.r-bloggers.com/windows-user-space-issues-with-installing-r-packages/ .
