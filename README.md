@@ -41,16 +41,18 @@ R is modular. You can select statistical features you wish to use by installing 
 * The installation takes some time. Watch output to make sure no error messages are displayed. If you see errors, try *Method 2*.
 * If everything worked, click into the console window and write `library(tidyverse)` and press Enter. Make sure there are no angry messages. Normal output should look as follows:
 
-`> library(tidyverse)`
-`-- Attaching packages --------------------------- tidyverse 1.3.0 --`
-`v ggplot2 3.3.2     v purrr   0.3.4`
-`v tibble  3.0.3     v dplyr   1.0.2`
-`v tidyr   1.1.2     v stringr 1.4.0`
-`v readr   1.3.1     v forcats 0.5.0`
-`-- Conflicts ------------------------------ tidyverse_conflicts() --`
-`x dplyr::filter() masks stats::filter()`
-`x dplyr::lag()    masks stats::lag()`
-`>` 
+~~~~
+> library(tidyverse)
+-- Attaching packages --------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.2     v purrr   0.3.4
+v tibble  3.0.3     v dplyr   1.0.2
+v tidyr   1.1.2     v stringr 1.4.0
+v readr   1.3.1     v forcats 0.5.0
+-- Conflicts ------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+>
+~~~~
 
 #### Method 2 (use in case Method 1 wouldn't work)
 
@@ -97,6 +99,8 @@ __git__ is a Unix program and there is no natural port to Windows. But there are
 3. You can make changes to your code/data on your laptop. Use any editor or __RStudio__. You will see the changes in the __Changes__ tab in __GitHub Desktop__.
 4. Once you've made a meaningful change, you have to __commit__ it - save it to __git__ history: Enter a message describing the change you made in the __Summary__ and __Description__ fields at bottom left of __GitHub Desktop__ widnow, and click the green __Commit to master__ button.
 5. Your changes are now saved in __git__ history on your drive. You want to have them safely stashed on the cloud, in your __GitHub__ repo, so that other people can see them and they are safe in case something bad happens to your laptop. For that, go to the top menu, __Repository__/__Push__, or just press __Ctrl-P__. You can check in your Internet browser that your changes are on __GitHub__.
+
+To je všetko fasa, ale vie mi niekto do čučemuče vysvetliť, po ľudsky a s mäsom, čo máme za problém?
 
 
 
