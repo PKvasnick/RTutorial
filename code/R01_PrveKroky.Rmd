@@ -192,9 +192,3 @@ __Úloha__: Čo keby som vo výstupe nechcel R-kód?
 
 __Úloha__: Skúste svoj report vyrendrovať do pdf.
 
-
-```{r}
-plot(cars, xlab = "Počiatočná rýchlosť [míle / hod]", ylab = "Brzdná dráha [stopy]", las = 1, log = "xy")
-lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
-title(main="Žväkýš, ťy řitěľouď, log-log škála")
-```

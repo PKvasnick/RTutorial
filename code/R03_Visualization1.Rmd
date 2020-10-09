@@ -1,127 +1,127 @@
 ---
-title: "Vizualizácia v R: 1. èas»"
+title: "VizualizÃ¡cia v R: 1. ÄasÅ¥"
 output: html_notebook
 ---
 
-U¾ sme kreslili grafy príkazmi *plot* a *lines*. To je ¹tandardná funkcionalita R, ale nie je úplne pohodlná na pou¾ívanie. 
+UÅ¾ sme kreslili grafy prÃ­kazmi *plot* a *lines*. To je Å¡tandardnÃ¡ funkcionalita R, ale nie je Ãºplne pohodlnÃ¡ na pouÅ¾Ã­vanie. 
 
-V tejto èasti sa zoznámime z prvım z balíkov zo skupiny *tidyverse*: je to kresliaci balík __ggplot2__. 
+V tejto Äasti sa zoznÃ¡mime z prvÃ½m z balÃ­kov zo skupiny *tidyverse*: je to kresliaci balÃ­k __ggplot2__. 
 
-__ggplot2__ je vınimoènı svojou funkcionalitou, kvalitou vıstupu a osobitou filozofiou. Ako so v¹etkım v R, budete si chvíµu zvyka», ale sµubujem, ¾e to, èo získate na prvı pokus, bude v¾dy o niekoµko tried lep¹ie ako prvı pokus o graf v Exceli.
+__ggplot2__ je vÃ½nimoÄnÃ½ svojou funkcionalitou, kvalitou vÃ½stupu a osobitou filozofiou. Ako so vÅ¡etkÃ½m v R, budete si chvÃ­Ä¾u zvykaÅ¥, ale sÄ¾ubujem, Å¾e to, Äo zÃ­skate na prvÃ½ pokus, bude vÅ¾dy o niekoÄ¾ko tried lepÅ¡ie ako prvÃ½ pokus o graf v Exceli.
 
 ```{r}
 library(tidyverse)
 ```
 
-Neznepokojujeme sa vıstrahami o konfliktoch. *tidyverse* predefinuje niektoré veci v R, ale to nás nemusí znepokojova». 
+Neznepokojujeme sa vÃ½strahami o konfliktoch. *tidyverse* predefinuje niektorÃ© veci v R, ale to nÃ¡s nemusÃ­ znepokojovaÅ¥. 
 
-### Dátovı súbor __mpg__
+### DÃ¡tovÃ½ sÃºbor __mpg__
 
-Dátovı súbor __mpg__ je súèas»ou balíka *ggplot2*, teda plnım menom __ggplot2::mpg__, keby sme sa obávali konfliktu názvov. Dátovı súbor obsahuje merania spotreby automobilov, vykonané americkou *Environment Protection Agency* (EPA) na 234 typoch automobilov v rokoch 1999-2008. 
+DÃ¡tovÃ½ sÃºbor __mpg__ je sÃºÄasÅ¥ou balÃ­ka *ggplot2*, teda plnÃ½m menom __ggplot2::mpg__, keby sme sa obÃ¡vali konfliktu nÃ¡zvov. DÃ¡tovÃ½ sÃºbor obsahuje merania spotreby automobilov, vykonanÃ© americkou *Environment Protection Agency* (EPA) na 234 typoch automobilov v rokoch 1999-2008. 
 
 ```{r}
 help(mpg)
 head(mpg)
 ```
 
-### Prvı graf: dojazd na jeden galón (hwy) v závislosti od objemu motora
+### PrvÃ½ graf: dojazd na jeden galÃ³n (hwy) v zÃ¡vislosti od objemu motora
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
-Vidím negatívnu závislos» medzi objemom motora a dojazdom. Teda autá s väè¹ím motorom prejd na 1 galón men¹iu vzdialenos» ako men¹ie autá. 
+VidÃ­m negatÃ­vnu zÃ¡vislosÅ¥ medzi objemom motora a dojazdom. Teda autÃ¡ s vÃ¤ÄÅ¡Ã­m motorom prejd na 1 galÃ³n menÅ¡iu vzdialenosÅ¥ ako menÅ¡ie autÃ¡. 
 
-__ggplot()__ vytvorí súradnicovı systém a prázdny graf. 
+__ggplot()__ vytvorÃ­ sÃºradnicovÃ½ systÃ©m a prÃ¡zdny graf. 
 
-__geom_xxx()__ pridávajú do grafu jednu alebo niekoµko vrstiev objektov. __geom_point__ pridá vrstvu s bodmi grafu. 
+__geom_xxx()__ pridÃ¡vajÃº do grafu jednu alebo niekoÄ¾ko vrstiev objektov. __geom_point__ pridÃ¡ vrstvu s bodmi grafu. 
 
-Ka¾dá funkcia __geom_xxx__ vy¾aduje ako argument priradenie (mapping) vlastností (ståpcov) dát k vizuálnym (estetickım) prvkom grafu (odtiaµ __aes()__), ako sú polohy bodov,farba, veµkos» a tvar symbolov, farba vıplní, èiar a podobne. V na¹om prípade sme priradili __displ__ x-ovej a __hwy__ y-ovej súradnici bodov na grafe.
+KaÅ¾dÃ¡ funkcia __geom_xxx__ vyÅ¾aduje ako argument priradenie (mapping) vlastnostÃ­ (stÄºpcov) dÃ¡t k vizuÃ¡lnym (estetickÃ½m) prvkom grafu (odtiaÄ¾ __aes()__), ako sÃº polohy bodov,farba, veÄ¾kosÅ¥ a tvar symbolov, farba vÃ½plnÃ­, Äiar a podobne. V naÅ¡om prÃ­pade sme priradili __displ__ x-ovej a __hwy__ y-ovej sÃºradnici bodov na grafe.
 
-V¹eobecnı predpis je 
+VÅ¡eobecnÃ½ predpis je 
 
 `ggplot(data = \<DATA\>) + \<GEOM_FUNKCIA\>(mapping = aes(\<PRIRADENIA\))`
 
-__Úlohy__
+__Ãšlohy__
 
-1. Spustite `ggplot(data = mpg)` bez `geom_xxxx()`. Èo vidíte?
+1. Spustite `ggplot(data = mpg)` bez `geom_xxxx()`. ÄŒo vidÃ­te?
 
-2. Koµko ståpcov a riadkov má súbor __mtcars__?
+2. KoÄ¾ko stÄºpcov a riadkov mÃ¡ sÃºbor __mtcars__?
 
-3. Akı vıznam má ståpec __mpg$drv__?
+3. AkÃ½ vÃ½znam mÃ¡ stÄºpec __mpg$drv__?
 
-4. Nakreslite graf __hwy__ v závislosti od __cyl__.
+4. Nakreslite graf __hwy__ v zÃ¡vislosti od __cyl__.
 
-5. Nakreslite graf __class__ v závislosti od __drv__. Je to u¾itoènı graf?
+5. Nakreslite graf __class__ v zÃ¡vislosti od __drv__. Je to uÅ¾itoÄnÃ½ graf?
 
-Poïme vyskú¹a» nejaké zaujímavej¹ie priradenia.
+PoÄme vyskÃºÅ¡aÅ¥ nejakÃ© zaujÃ­mavejÅ¡ie priradenia.
 
-### Zlo¾itej¹ie priradenia
+### ZloÅ¾itejÅ¡ie priradenia
 
-V na¹om grafe mám zobrazené dve vlastnosti áut zo súboru __mpg__: objem motora a vzdialenos», ktorú auto prejde na 1 galón paliva. Prvky grafu - v na¹om prípade body - majú e¹te ïal¹ie vlastnosti, napríklad veµkos», tvar, farbu, ktorım mô¾eme priradi» ïal¹ie ståpce súboru __mpg__ a tak súèasne zobrazi» vv grafe viac ako 2 parametre. 
+V naÅ¡om grafe mÃ¡m zobrazenÃ© dve vlastnosti Ã¡ut zo sÃºboru __mpg__: objem motora a vzdialenosÅ¥, ktorÃº auto prejde na 1 galÃ³n paliva. Prvky grafu - v naÅ¡om prÃ­pade body - majÃº eÅ¡te ÄalÅ¡ie vlastnosti, naprÃ­klad veÄ¾kosÅ¥, tvar, farbu, ktorÃ½m mÃ´Å¾eme priradiÅ¥ ÄalÅ¡ie stÄºpce sÃºboru __mpg__ a tak sÃºÄasne zobraziÅ¥ vv grafe viac ako 2 parametre. 
 
-Predstavme si, ¾e nás zaujíma, èi sa niektoré triedy áut nevyskytujú v na¹om grafe v anomálnych polohách. Vezmime ståpec __class__ a priraïme jej úrovne (preto¾e to je kvalitatívna premenná) farbe bodov v grafe.
+Predstavme si, Å¾e nÃ¡s zaujÃ­ma, Äi sa niektorÃ© triedy Ã¡ut nevyskytujÃº v naÅ¡om grafe v anomÃ¡lnych polohÃ¡ch. Vezmime stÄºpec __class__ a priraÄme jej Ãºrovne (pretoÅ¾e to je kvalitatÃ­vna premennÃ¡) farbe bodov v grafe.
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class))
 ```
 
-Vidíme, ¾e ggplot vybral farby pre triedy áut a vytvoril ku grafu aj legendu. 
+VidÃ­me, Å¾e ggplot vybral farby pre triedy Ã¡ut a vytvoril ku grafu aj legendu. 
 
-Tie¾ vidíme, ¾e 5 zo ¹iestich áut nad hlavnou krivkou vpravo dole sú ¹portové autá - majú veµkı motor, ale sú oveµa µah¹ie ako SÚV s podobne veµkım motorom. Preto¾e to sú *premotorované* autá, vymykajú sa z typickej závislosti.
+TieÅ¾ vidÃ­me, Å¾e 5 zo Å¡iestich Ã¡ut nad hlavnou krivkou vpravo dole sÃº Å¡portovÃ© autÃ¡ - majÃº veÄ¾kÃ½ motor, ale sÃº oveÄ¾a Ä¾ahÅ¡ie ako SÃšV s podobne veÄ¾kÃ½m motorom. PretoÅ¾e to sÃº *premotorovanÃ©* autÃ¡, vymykajÃº sa z typickej zÃ¡vislosti.
 
-__Úlohy__ 
+__Ãšlohy__ 
 
-1. Skúste priradi» __class__ veµkosti symbolov v grafe (size = class). Funguje? Je to dobrı nápad?
+1. SkÃºste priradiÅ¥ __class__ veÄ¾kosti symbolov v grafe (size = class). Funguje? Je to dobrÃ½ nÃ¡pad?
 
-2. Ïal¹ie estetiky, ktorım mô¾ete priradi» __class__ sú sıtos» (__alpha__) zafarbenia bodov a tvar (__shape__) bodov. Vysk¹ajte a posúïte.
+2. ÄalÅ¡ie estetiky, ktorÃ½m mÃ´Å¾ete priradiÅ¥ __class__ sÃº sÃ½tosÅ¥ (__alpha__) zafarbenia bodov a tvar (__shape__) bodov. VyskÅ¡ajte a posÃºÄte.
 
-Vlastnosti grafu mô¾eme nastavi» aj manuálne. Napríklad mô¾eme predpísa» veµkos» bodov:
+Vlastnosti grafu mÃ´Å¾eme nastaviÅ¥ aj manuÃ¡lne. NaprÃ­klad mÃ´Å¾eme predpÃ­saÅ¥ veÄ¾kosÅ¥ bodov:
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class), size = 3)
 ```
-Takto predpísané vlastnosti neurèujú vlastnosti mapovania, iba celkovı vızor grafu. Farby predpisujeme ako znakovı re»azec ("red"), veµkos» bodov v milimetroch a tvar bodov ako kód tvaru z tabuµky tvarov (napríklad *http://www.sthda.com/english/wiki/ggplot2-point-shapes*).
+Takto predpÃ­sanÃ© vlastnosti neurÄujÃº vlastnosti mapovania, iba celkovÃ½ vÃ½zor grafu. Farby predpisujeme ako znakovÃ½ reÅ¥azec ("red"), veÄ¾kosÅ¥ bodov v milimetroch a tvar bodov ako kÃ³d tvaru z tabuÄ¾ky tvarov (naprÃ­klad *http://www.sthda.com/english/wiki/ggplot2-point-shapes*).
 
-__Úlohy__
+__Ãšlohy__
 
-1. Ktoré zo ståpcov __mpg__ sú spojité, a ktoré kategoriálne? Ako to spoµahlivo zistíme?
+1. KtorÃ© zo stÄºpcov __mpg__ sÃº spojitÃ©, a ktorÃ© kategoriÃ¡lne? Ako to spoÄ¾ahlivo zistÃ­me?
 
-2. Ako sa správa priradenie premennej veµkosti, farbe a tvaru (colour, size, shape) pre spojité a kategoriálne premenné? Preskúmajte.
+2. Ako sa sprÃ¡va priradenie premennej veÄ¾kosti, farbe a tvaru (colour, size, shape) pre spojitÃ© a kategoriÃ¡lne premennÃ©? PreskÃºmajte.
 
-3. Èo sa stane, ak priradíte estetiku nieèomu inému ako dátovému ståpcu, napríklad __color = displ < 5__?
+3. ÄŒo sa stane, ak priradÃ­te estetiku nieÄomu inÃ©mu ako dÃ¡tovÃ©mu stÄºpcu, naprÃ­klad __color = displ < 5__?
 
-### Èo keï to nefunguje?
+### ÄŒo keÄ to nefunguje?
 
 Neprepadajte panike. 
 
-* Nemáte v kóde nejaké divné znaèky od syntax highlightera? 
+* NemÃ¡te v kÃ³de nejakÃ© divnÃ© znaÄky od syntax highlightera? 
 
-* Máte chybovú hlá¹ku? Hurá, skúste pochopi», èo hovorí, alebo ju celú skopírujte do prehliadaèa a Google raï.
+* MÃ¡te chybovÃº hlÃ¡Å¡ku? HurÃ¡, skÃºste pochopiÅ¥, Äo hovorÃ­, alebo ju celÃº skopÃ­rujte do prehliadaÄa a Google raÄ.
 
-* Niè sa nestalo? Pozrite sa, èi ste zle nerozdelili viacriadkovı príkaz. R musí chápa», ¾e riadok pokraèuje, tak¾e ak je medzi dvoma èas»ami napríklad __+__, musí by» na konci riadku pred zalomením, a nie na zaèiatku ïal¹ieho riadku. 
+* NiÄ sa nestalo? Pozrite sa, Äi ste zle nerozdelili viacriadkovÃ½ prÃ­kaz. R musÃ­ chÃ¡paÅ¥, Å¾e riadok pokraÄuje, takÅ¾e ak je medzi dvoma ÄasÅ¥ami naprÃ­klad __+__, musÃ­ byÅ¥ na konci riadku pred zalomenÃ­m, a nie na zaÄiatku ÄalÅ¡ieho riadku. 
 
-* Skúste help k funkcii, ktorú pou¾ívate (__help(geom_point)__ alebo __?geom_point__)
+* SkÃºste help k funkcii, ktorÃº pouÅ¾Ã­vate (__help(geom_point)__ alebo __?geom_point__)
 
 ### Fazety - __Facets__
 
-E¹te jeden spôsob, ako prida» do grafu ïal¹ie premenné, je rozdeli» graf do viacerıch "faziet" a v ka¾dej zobrazi» iba podmno¾inu dát. Pre takéto delenie je vhodné pouu¾iø kategoriálne dáta.
+EÅ¡te jeden spÃ´sob, ako pridaÅ¥ do grafu ÄalÅ¡ie premennÃ©, je rozdeliÅ¥ graf do viacerÃ½ch "faziet" a v kaÅ¾dej zobraziÅ¥ iba podmnoÅ¾inu dÃ¡t. Pre takÃ©to delenie je vhodnÃ© pouuÅ¾iÅ™ kategoriÃ¡lne dÃ¡ta.
 
-Ak takto chceme rozdeli» ná¹ graf podµa (jednej, diskrétnej) premennej, pou¾ijeme funkciu __facet_wrap__:
+Ak takto chceme rozdeliÅ¥ nÃ¡Å¡ graf podÄ¾a (jednej, diskrÃ©tnej) premennej, pouÅ¾ijeme funkciu __facet_wrap__:
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
   facet_wrap(~ class, nrow = 2)
 ```
-Mô¾eme rozdeµova» aj podµa dvoch premennıch, v tomto prípade pou¾ijeme funkciu __facet_grid__:
+MÃ´Å¾eme rozdeÄ¾ovaÅ¥ aj podÄ¾a dvoch premennÃ½ch, v tomto prÃ­pade pouÅ¾ijeme funkciu __facet_grid__:
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
   facet_grid(drv ~ cyl)
 ```
-Ak nechcete deli» podµa ståpcovej alebo riadkovej premennej, pou¾ite namiesto nej bodku: __. ~ cyl__
+Ak nechcete deliÅ¥ podÄ¾a stÄºpcovej alebo riadkovej premennej, pouÅ¾ite namiesto nej bodku: __. ~ cyl__
 

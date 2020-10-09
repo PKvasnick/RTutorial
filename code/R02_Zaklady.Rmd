@@ -3,9 +3,9 @@ title: "R basics"
 output: html_notebook
 ---
 
-# Základy R
+# ZÃ¡klady R
 
-... èo bude trocha nudná, ale nutná èas». ®iadna ¹tatistika, ale dátové typy, príkazy, definície.
+... Äo bude trocha nudnÃ¡, ale nutnÃ¡ ÄasÅ¥. Å½iadna Å¡tatistika, ale dÃ¡tovÃ© typy, prÃ­kazy, definÃ­cie.
 
 ```{r}
 x <- 5.5
@@ -17,11 +17,11 @@ y
 
 ### Priradenie <-
 
-V R existujú viaceré znaky priradenia. Funguje *=*, *->*, ale aj *<-*, a ¹peciálny vıznam majú *<<-* a *->>* (Nechcete vedie», èo robia). *=* slú¾i na mapovanie parametrov a v príkaze *case*, tak¾e je slu¹né pre priradenie pou¾íva» *<-*, hoci pre µudí, ktorí programujú aj v inom jazyku, je »a¾ké obèas nenapísa» *=*. Vopred sa ospravedlòujem.
+V R existujÃº viacerÃ© znaky priradenia. Funguje *=*, *->*, ale aj *<-*, a Å¡peciÃ¡lny vÃ½znam majÃº *<<-* a *->>* (Nechcete vedieÅ¥, Äo robia). *=* slÃºÅ¾i na mapovanie parametrov a v prÃ­kaze *case*, takÅ¾e je sluÅ¡nÃ© pre priradenie pouÅ¾Ã­vaÅ¥ *<-*, hoci pre Ä¾udÃ­, ktorÃ­ programujÃº aj v inom jazyku, je Å¥aÅ¾kÃ© obÄas nenapÃ­saÅ¥ *=*. Vopred sa ospravedlÅˆujem.
 
-### Èíselné typy
+### ÄŒÃ­selnÃ© typy
 
-*numeric* je generické èíslo v R. Ale máme aj ïal¹ie typy:
+*numeric* je generickÃ© ÄÃ­slo v R. Ale mÃ¡me aj ÄalÅ¡ie typy:
 
 ```{r}
 y <- 5
@@ -30,9 +30,9 @@ y <- as.integer(5)
 class(y)
 is.integer(y)
 ```
-Celé èíslo musíme ako také definova». 
+CelÃ© ÄÃ­slo musÃ­me ako takÃ© definovaÅ¥. 
 
-### Re»azce
+### ReÅ¥azce
 
 ```{r}
 s <- "Peter"
@@ -42,10 +42,10 @@ substring(s, first=2, last=3)
 s <- sub("ete", "avo", s)
 s
 substring(s, 1:3, 3:5)
-sprintf("%s má %d rokov.", "Peter", 54)
+sprintf("%s mÃ¡ %d rokov.", "Peter", 54)
 ```
 
-substring je *vektorizovaná* funkcia - pre vektorovı argument vráti vektor.
+substring je *vektorizovanÃ¡* funkcia - pre vektorovÃ½ argument vrÃ¡ti vektor.
 ```{r}
 1:5
 sqrt(1:5)
@@ -53,19 +53,19 @@ vec <- c(1,2,3,4,5,6) # toto je komenar o tom, ze c() vytvara vektor
 vec
 sin(vec)
 ```
-Apropos, máme \[\pi\]?
+Apropos, mÃ¡me \[\pi\]?
 
 ```{r}
 apropos("pi")
 ```
-Aha, asi máme.
+Aha, asi mÃ¡me.
 ```{r}
 help("pi")
 cos(pi)
 ```
 Kuk doprava.
 
-### Logicé hodnoty
+### LogicÃ© hodnoty
 
 ```{r}
 class(TRUE)
@@ -90,18 +90,18 @@ vec4
 all.equal(vec1, vec3)
 ifelse(vec1>5,"Yes", "No")
 ```
-Dvojbodka nám umo¾òuje pohodlne vytvára» èíselné rady. 
+Dvojbodka nÃ¡m umoÅ¾Åˆuje pohodlne vytvÃ¡raÅ¥ ÄÃ­selnÃ© rady. 
 
 ### Zoznam (list) 
 
-je vektor s pomenovanımi prvkami. 
+je vektor s pomenovanÃ½mi prvkami. 
 
 ```{r}
 vec <- 1:4
-names(vec) <- c("jeden", "dva", "tri", "¹tyri")
+names(vec) <- c("jeden", "dva", "tri", "Å¡tyri")
 vec
 ```
-### Spojením zoznamov dostaneme *data frame*
+### SpojenÃ­m zoznamov dostaneme *data frame*
 
 ```{r}
 x <- data.frame(
@@ -120,7 +120,7 @@ nrow(x) # pocet riadkov
 ncol(x) # pocet stlpcov
 ```
 
-### Príkazy R
+### PrÃ­kazy R
 
 ```{r}
 for(i in 1:10) {
@@ -147,7 +147,7 @@ factorial(10)
 ```
 __return__ je funkcia!
 
-Pou¾itie funkcie na vektor:
+PouÅ¾itie funkcie na vektor:
 
 ```{r}
 
@@ -161,4 +161,4 @@ vec <- sapply(vec, my_clip, a = -5, b = 5); # potrebne argumenty pre funkciu nap
 vecx <- seq(from = 0, by = 1, along.with = vec)
 plot(vecx, vec, xlab = "index")
 ```
-... nech máme aspoò nejakı graf v tomto nudnom notebooku.
+... nech mÃ¡me aspoÅˆ nejakÃ½ graf v tomto nudnom notebooku.
