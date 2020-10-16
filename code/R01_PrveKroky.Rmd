@@ -1,6 +1,8 @@
 ---
 title: "Prvá ukážka R"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 # Ako chutí R
@@ -81,7 +83,7 @@ V dokumentácii k RMarkdownu nájdete ďalšie možnosti.
 Poďme sa teda pozrieť, ako vyzerajú dáta `cars`.
 
 ```{r}
-head(cars)
+head(cars, 4)
 ```
 
 `head` zobrazí iba niekoľko prvých riadkov tabuľky. Používame automaticky preto, lebo keby ste mali veľké dáta, mohol by sa váš počítač na dlhú chvíľu zamyslieť, kým by vám na displeji vyroloval 2 gigabajty čísel. Bežne chceme vidieť hlavičku a pár prvých riadkov. 
@@ -115,7 +117,7 @@ __Úloha:__: Ako uložíme obrázok do súboru? (Nápoveď: Spýtajte sa Googlu)
 
 
 ```{r}
-cairo_pdf("CarPlot.pdf")
+png("CarPlot.png")
 plot(cars)
 dev.off()
 ```
@@ -146,7 +148,7 @@ title(main="Stopping distance vs. initial speed, log-log scale")
 __Úloha__: Funguje slovenská diakritika? Skúste poslovenčíť popisy v grafe.
 
 ```{r}
-plot(cars, xlab = "Počiatočná rýchlosť [míle / hod]", ylab = "Brzdná dráha [stopy]", las = 1, log = "xy")
+plot(cars, xlab = "Po\U010Diato\U010Dná rýchlosť [míle / hod]", ylab = "Brzdná dráha [stopy]", las = 1, log = "xy")
 lines(lowess(cars$speed, cars$dist, f = 2/3, iter = 3), col = "red")
 title(main="Brzdná dráha v závislosti od počiatočnej rýchlosti, log-log škála")
 ```

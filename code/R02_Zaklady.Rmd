@@ -58,14 +58,17 @@ Apropos, máme \[\pi\]?
 ```{r}
 apropos("pi")
 ```
+
 Aha, asi máme.
+
 ```{r}
 help("pi")
 cos(pi)
 ```
+
 Kuk doprava.
 
-### Logicé hodnoty
+### Logické hodnoty
 
 ```{r}
 class(TRUE)
@@ -90,6 +93,7 @@ vec4
 all.equal(vec1, vec3)
 ifelse(vec1>5,"Yes", "No")
 ```
+
 Dvojbodka nám umožňuje pohodlne vytvárať číselné rady. 
 
 ### Zoznam (list) 
@@ -101,7 +105,10 @@ vec <- 1:4
 names(vec) <- c("jeden", "dva", "tri", "štyri")
 vec
 ```
-### Spojením zoznamov dostaneme *data frame*
+
+### Data frame
+* Logicky vzniká spojením zoznamov s rovnakými menami položiek. 
+* Fyzicky to je skôr zoznam vektorov.
 
 ```{r}
 x <- data.frame(
