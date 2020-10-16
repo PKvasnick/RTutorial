@@ -5,110 +5,106 @@ output:
     df_print: paged
 ---
 
-Dnes sa pokúsime dosta» do R nejaké dáta a upravi» ich do pou¾iteµnej podoby.
+Dnes sa pokÃºsime dostaÅ¥ do R nejakÃ© dÃ¡ta a upraviÅ¥ ich do pouÅ¾iteÄ¾nej podoby.
 
-## Dáta pre R
+## DÃ¡ta pre R
 
-R doká¾e naèíta» dáta z najrozmanitej¹ích zdrojov.
+R dokÃ¡Å¾e naÄÃ­taÅ¥ dÃ¡ta z najrozmanitejÅ¡Ã­ch zdrojov.
 
-My sa budeme zaobera» troma:
-- textové súbory
+My sa budeme zaoberaÅ¥ troma:
+- textovÃ© sÃºbory
 - MS Excel
 - JSON (JavaScript Object Notation)
 
 
 ### RT-PCR
 
-Pou¾ijeme dáta z analızy expresie génov redoxnej ochrany.
+PouÅ¾ijeme dÃ¡ta z analÃ½zy expresie gÃ©nov redoxnej ochrany.
 
-Pod expresiou rozumieme rıchlos», s akou sa syntetizuje danı gén. Meriame ju pomocou real-time PCR (tie¾ qPCR, kvantitatívna PCR) ako mno¾stvo mRNA obsahujúcej sekvenciu príslu¹ného génu (alebo jej charakteristickú èas»)
+Pod expresiou rozumieme rÃ½chlosÅ¥, s akou sa syntetizuje danÃ½ gÃ©n. Meriame ju pomocou real-time PCR (tieÅ¾ qPCR, kvantitatÃ­vna PCR) ako mnoÅ¾stvo mRNA obsahujÃºcej sekvenciu prÃ­sluÅ¡nÃ©ho gÃ©nu (alebo jej charakteristickÃº ÄasÅ¥)
 
-Veµmi struène o RT-PCR (podrobnej¹ie napríklad tu: http://labguide.cz/metody/real-time-pcr/):
+VeÄ¾mi struÄne o RT-PCR (podrobnejÅ¡ie naprÃ­klad tu: http://labguide.cz/metody/real-time-pcr/):
 
-* Oznaèíme ¹pecifickımi syntetickımi markermi sekvenciu pre danı gén.
+* OznaÄÃ­me Å¡pecifickÃ½mi syntetickÃ½mi markermi sekvenciu pre danÃ½ gÃ©n.
 
-* Poèas opakujúcich sa teplotnıch cyklov dochádza k multiplikácii tohoto úseku.
+* PoÄas opakujÃºcich sa teplotnÃ½ch cyklov dochÃ¡dza k multiplikÃ¡cii tohoto Ãºseku.
 
-* Nárast je spoèiatku exponenciálny, potom prechádza do saturácie, ako postupne ubúda substrát pre syntézu novıch replík
+* NÃ¡rast je spoÄiatku exponenciÃ¡lny, potom prechÃ¡dza do saturÃ¡cie, ako postupne ubÃºda substrÃ¡t pre syntÃ©zu novÃ½ch replÃ­k
 
-* Závislos» mno¾stva syntetizovanej DNA od èasu má teda esovitı charakter.
+* ZÃ¡vislosÅ¥ mnoÅ¾stva syntetizovanej DNA od Äasu mÃ¡ teda esovitÃ½ charakter.
 
-* Dosiahnuté plató nesúvisí s poèiatoènım mno¾stvom ¹tudovanej sekvencie vo vzorke.
+* DosiahnutÃ© platÃ³ nesÃºvisÃ­ s poÄiatoÄnÃ½m mnoÅ¾stvom Å¡tudovanej sekvencie vo vzorke.
 
-* Mierou mno¹tva je cyklus, v ktorom exponenciálny nárast prejde do lineárneho.
+* Mierou mnoÅ¾stva je Äas, meranÃ½ poÄtom cyklov, v ktorom exponenciÃ¡lny nÃ¡rast prejde do lineÃ¡rneho.
 
-![Multiplikácia vzorky v Real-time PCR](..\\pics\\real-time-curve.jpg)
+![MultiplikÃ¡cia vzorky v Real-time PCR](..\\pics\\real-time-curve.jpg)
 
 
-## Import textovıch dát
+## Import textovÃ½ch dÃ¡t
 
-Na dátach z RT-PCR si vyskú¹ame import, a to z textového formátu a z Excelu.
+Na dÃ¡tach z RT-PCR si vyskÃºÅ¡ame import, a to z textovÃ©ho formÃ¡tu a z Excelu.
 
-![©truktúra superoxid dismutázy 3](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/SOD3_2JLP.png/330px-SOD3_2JLP.png)
+![Å truktÃºra superoxid dismutÃ¡zy 3](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/SOD3_2JLP.png/330px-SOD3_2JLP.png)
 
-Textové dátové súbory pre
+TextovÃ© dÃ¡tovÃ© sÃºbory pre
 
-* gén superoxid dismutázy 3 (SOD3, extracelulárna tetramérna superoxid dismutáza, https://en.wikipedia.org/wiki/Superoxide_dismutase)
+* gÃ©n superoxid dismutÃ¡zy 3 (SOD3, extracelulÃ¡rna tetramÃ©rna superoxid dismutÃ¡za, https://en.wikipedia.org/wiki/Superoxide_dismutase)
 
-* gén receptoru angiotenzínu II 1. typu (AT1R, https://en.wikipedia.org/wiki/Angiotensin_II_receptor_type_1)
+* gÃ©n receptoru angiotenzÃ­nu II 1. typu (AT1R, https://en.wikipedia.org/wiki/Angiotensin_II_receptor_type_1)
 
-* gén hém oxygenázy 1 (HI-1, https://en.wikipedia.org/wiki/Heme_oxygenase)
+* gÃ©n hÃ©m oxygenÃ¡zy 1 (HI-1, https://en.wikipedia.org/wiki/Heme_oxygenase)
 
-* gén proteínu p22phox, èo je podjednotka NADPH oxidázy (p22, https://en.wikipedia.org/wiki/P22phox)
+* gÃ©n proteÃ­nu p22phox, Äo je podjednotka NADPH oxidÃ¡zy (p22, https://en.wikipedia.org/wiki/P22phox)
 
-* a pre referenènı, *housekeeper* gén glyceraldehyd-3-fosfát dehydrogenázu (GAPDH, https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase)
+* a pre referenÄnÃ½, *housekeeper* gÃ©n glyceraldehyd-3-fosfÃ¡t dehydrogenÃ¡zu (GAPDH, https://en.wikipedia.org/wiki/Glyceraldehyde_3-phosphate_dehydrogenase)
 
-nájdete v repozitári kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
+nÃ¡jdete v repozitÃ¡ri kurzu, https://github.com/PKvasnick/RTutorial/tree/master/data.
 
-![Dáta v GitHub repozitári kurzu](../pics/github_data.png)
-Dátové súbory si nemusíte s»ahova», mô¾ete ich importova» priamo z GitHubu.
+![DÃ¡ta v GitHub repozitÃ¡ri kurzu](../pics/github_data.png)
+DÃ¡tovÃ© sÃºbory si nemusÃ­te sÅ¥ahovaÅ¥, mÃ´Å¾ete ich importovaÅ¥ priamo z GitHubu.
 
-Pou¾ijeme balíky `tidyverse`, tak ako v naposledy.
+PouÅ¾ijeme balÃ­ky `tidyverse`, tak ako v minulej prednÃ¡Å¡ke.
 
 ```{r}
 library(tidyverse)
 ```
 
-### Asistované kódovanie
+### AsistovanÃ© kÃ³dovanie
 
-Pre naèítanie súboru vyu¾ijeme nástroj na import dát, ktorı ponúka *RStudio*. Tento nástroj nám toti¾ pomô¾e doladi» parametre pre naèítanie a získa» kód, ktorım sa naèítanie vykoná.
+Pre naÄÃ­tanie sÃºboru vyuÅ¾ijeme nÃ¡stroj na import dÃ¡t, ktorÃ½ ponÃºka *RStudio*. Tento nÃ¡stroj nÃ¡m totiÅ¾ pomÃ´Å¾e doladiÅ¥ parametre pre naÄÃ­tanie a zÃ­skaÅ¥ kÃ³d, ktorÃ½m sa naÄÃ­tanie vykonÃ¡.
 
 ![Vyberte File/Import data/From Text (readr)](../pics/rstudio_select_import.png)
 
-Otvorí sa nástroj pre import.
+OtvorÃ­ sa nÃ¡stroj pre import.
 
-![Nástroj na import dát v RStudiu](../pics/rstudio_inside_import.png)
+![NÃ¡stroj na import dÃ¡t v RStudiu](../pics/rstudio_inside_import.png)
 
-Zadajme adresu súboru v repozitári na GitHube. Aby sme získali správnu adresu, musíme prejs» na súbor a zvoli» raw zobrazenie:
+Zadajme adresu sÃºboru v repozitÃ¡ri na GitHube. Aby sme zÃ­skali sprÃ¡vnu adresu, musÃ­me prejsÅ¥ na sÃºbor a zvoliÅ¥ raw zobrazenie:
 
-![Vyberte po¾adovanı dátovı súbor a kliknite na Raw vpravo na ¹edej li¹te](../pics/github_select_data_file.jpg)
+![Vyberte poÅ¾adovanÃ½ dÃ¡tovÃ½ sÃºbor a kliknite na Raw vpravo na Å¡edej liÅ¡te](../pics/github_select_data_file.jpg)
 
-Teraz skopírujte adresu z adresového riadku prehliadaèa a vlo¾te ju do príslu¹ného poµa v importéri. Stlaète `Update` vpravo od poµa a uvidíte náhµad dát.
+Teraz skopÃ­rujte adresu z adresovÃ©ho riadku prehliadaÄa a vloÅ¾te ju do prÃ­sluÅ¡nÃ©ho poÄ¾a v importÃ©ri. StlaÄte `Update` vpravo od poÄ¾a a uvidÃ­te nÃ¡hÄ¾ad dÃ¡t.
 
-![Vidíme náhµad importovanıch dát a musíme doladi» nastavenia, aby import prebehol správne.](../pics/rstudio_import_preview.png)
+![VidÃ­me nÃ¡hÄ¾ad importovanÃ½ch dÃ¡t a musÃ­me doladiÅ¥ nastavenia, aby import prebehol sprÃ¡vne.](../pics/rstudio_import_preview.png)
 
-Hneï vidíme, ¾e dáta sa nerozdelili do ståpcov. Je to preto, ¾e máme zle nastavenı oddeµovací znak. Nastavte v poli `Delimiter` na `Tab` a v¹etko sa napraví. Takisto potrebujeme zada» názov dát, preto¾e budeme importova» ïal¹iu pre referenciu (GAPDH).
+HneÄ vidÃ­me, Å¾e dÃ¡ta sa nerozdelili do stÄºpcov. Je to preto, Å¾e mÃ¡me zle nastavenÃ½ oddeÄ¾ovacÃ­ znak. Nastavte v poli `Delimiter` na `Tab` a vÅ¡etko sa napravÃ­. Takisto potrebujeme zadaÅ¥ nÃ¡zov dÃ¡t, pretoÅ¾e budeme importovaÅ¥ aj dÃ¡ta pre referenciu (GAPDH).
 
-![Úprava nastavení importu](../pics/rstudio_import_adjust.png)
+![Ãšprava nastavenÃ­ importu](../pics/rstudio_import_adjust.png)
 
-Kım kliknete na `Import`, v¹imnite si, ¾e v poli vpravo dolu máme kód, ktorı sa vykoná. Ten si mô¾eme okopírova» do svojho skriptu a pritom sa pouèi», ako takı príkaz vyzerá.
+KÃ½m kliknete na `Import`, vÅ¡imnite si, Å¾e v poli vpravo dolu mÃ¡me kÃ³d, ktorÃ½ sa vykonÃ¡. Ten si mÃ´Å¾eme okopÃ­rovaÅ¥ do svojho skriptu a pritom sa pouÄiÅ¥, ako takÃ½ prÃ­kaz vyzerÃ¡.
 
-```{r}
+```{r message=FALSE}
 sod3.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/sod3_full.dat",
     "\t", escape_double = FALSE, trim_ws = TRUE)
+sod3.data
 ```
 
-```{r}
-View(sod3.data)
-```
+__Ãšloha__: V hlaviÄke bloku sme pouÅ¾ili direktÃ­vu `message=FALSE`, aby sme potlaÄili nepotrebnÃ½ vÃ½pis. Pozrite sa, Äo sa vypÃ­Å¡e. 
+
+__Ãšloha__: Ako snaÅ¾ivÃ­ ÃºÄastnÃ­ci kurzu samozrejme hneÄ spÃºÅ¡Å¥ate `help(read_delim)`, resp. `?read_delim`, aby ste sa dozvedeli viac.
 
 
-a ako sna¾iví úèastníci kurzu samozrejme hneï spú¹»ate `help(read_delim)`, resp. `?read_delim`, aby ste sa dozvedeli viac.
-
-__Úloha__: Overte, èo robí príkaz `View(sod3.data)`.
-__Úloha__: Skontrolujte, ¾e naèítanie prebehlo správne.
-
-## Úprava dát
+## Ãšprava dÃ¡t
 
 ```{r}
 gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/gapdh_full.dat",
@@ -116,21 +112,21 @@ gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/
 print(gapdh.data)
 ```
 
-Najskôr musíme dáta normalizova». Sú dve veci, ktoré mô¾ete spravi»:
+NajskÃ´r musÃ­me dÃ¡ta normalizovaÅ¥. SÃº dve veci, ktorÃ© mÃ´Å¾ete spraviÅ¥:
 
-* "ratio estimator" - vzia» hodnoty pre ka¾dú skupinu v skúmanom géne a referencii, a pou¾i» vz»ahy pre podiel dvoch náhodnıch premennıch (https://en.wikipedia.org/wiki/Ratio_estimator'. To je korektné a presné, ale pomerne »a¾ko sa s tım pracuje pri viacerıch génoch.
+* "ratio estimator" - vziaÅ¥ hodnoty pre kaÅ¾dÃº skupinu v skÃºmanom gÃ©ne a referencii, a pouÅ¾iÅ¥ vzÅ¥ahy pre podiel dvoch nÃ¡hodnÃ½ch premennÃ½ch (https://en.wikipedia.org/wiki/Ratio_estimator'. To je korektnÃ© a presnÃ©, ale pomerne Å¥aÅ¾ko sa s tÃ½m pracuje pri viacerÃ½ch gÃ©noch.
 
-* pristúpi» k problému ako k regeresii s chybami v nezávislej premennej, a hµada» smernice priamok $$C_{gén}\sim C_{ref}$$ a ich chyby. Rovnakı problém ako predchádzajúci prístup.
+* pristÃºpiÅ¥ k problÃ©mu ako k regeresii s chybami v nezÃ¡vislej premennej, a hÄ¾adaÅ¥ smernice priamok $$C_{gÃ©n}\sim C_{ref}$$ a ich chyby. RovnakÃ½ problÃ©m ako predchÃ¡dzajÃºci prÃ­stup.
 
-* Pou¾i» logaritmus podielu koncentrácie pre gén a pre referenciu. $$\log(C/C_{ref})$$ Dobrá varianta, logaritmus stabilizuje rozdelenie dát a mô¾eme veselo pou¾íva» analızu rozptylu. Nie tak exaktne presné ako predchádzajúce varianty, ale omnoho praktickej¹ie.
+* PouÅ¾iÅ¥ logaritmus podielu koncentrÃ¡cie pre gÃ©n a pre referenciu. $$\log(C/C_{ref})$$ DobrÃ¡ varianta, logaritmus stabilizuje rozdelenie dÃ¡t a mÃ´Å¾eme veselo pouÅ¾Ã­vaÅ¥ analÃ½zu rozptylu. Nie tak exaktne presnÃ© ako predchÃ¡dzajÃºce varianty, ale omnoho praktickejÅ¡ie.
 
 ```{r}
 sod3.data$Cref <- gapdh.data$C
 sod3.data$LogRat <- log10(sod3.data$C / sod3.data$Cref)
-print(sod3.data)
+sod3.data
 ```
 
-No a teraz si poïme nakresli», èo máme, a hneï sa aj nauèíme zopár novıch __geomov__.
+No a teraz si poÄme nakresliÅ¥, Äo mÃ¡me, a hneÄ sa aj nauÄÃ­me zopÃ¡r novÃ½ch __geomov__.
 
 ```{r}
 ggplot(data = sod3.data) +
@@ -138,27 +134,27 @@ ggplot(data = sod3.data) +
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
-Pou¾ili sme dve zobrazenia tıch istıch dát, ako vidno, staèí na to __+__ a prida» ïal¹iu vrstvu.
+PouÅ¾ili sme dve zobrazenia tÃ½ch istÃ½ch dÃ¡t, ako vidno, staÄÃ­ na to __+__ a pridaÅ¥ ÄalÅ¡iu vrstvu.
 
-1. `geom_boxplot` nakreslí známe krabicové zobrazenie:
+1. `geom_boxplot` nakreslÃ­ znÃ¡me krabicovÃ© zobrazenie:
 
-  - obdå¾nik ukazuje medzikvartilovú vzdialenos» (25% a 75% kvantil)
-  - prieèka ukazuje medián
-  - no¾ièky siahajú od hraníc krabice k bodom vzdialenım menej ako 1,5-násobok medzikvartilovej vzdialenosti
-  - osobitne sú vynesené hodnoty mimo tento rozsah.
+  - obdÄºÅ¾nik ukazuje medzikvartilovÃº vzdialenosÅ¥ (25% a 75% kvantil)
+  - prieÄka ukazuje mediÃ¡n
+  - noÅ¾iÄky siahajÃº od hranÃ­c krabice k bodom vzdialenÃ½m menej ako 1,5-nÃ¡sobok medzikvartilovej vzdialenosti
+  - osobitne sÃº vynesenÃ© hodnoty mimo tento rozsah.
 
-2. `geom_jitter` náhodne vynesie body do pruhu pre danú skupinu.
+2. `geom_jitter` nÃ¡hodne vynesie body do pruhu pre danÃº skupinu.
 
-### Faktory a referenèné úrovne
+### Faktory a referenÄnÃ© Ãºrovne
 
-Predchádzajúci graf je síce peknı, ale má vá¾nu chybu. Chceli by sme ma» kontrolu vµavo a nie uprostred. Tá chzba sa uká¾e e¹te vıraznej¹ie, keï sa pokúsime urobi» analızu rozptylu:
+PredchÃ¡dzajÃºci graf je sÃ­ce peknÃ½, ale mÃ¡ vÃ¡Å¾nu chybu. Chceli by sme maÅ¥ kontrolu vÄ¾avo a nie uprostred. TÃ¡ chzba sa ukÃ¡Å¾e eÅ¡te vÃ½raznejÅ¡ie, keÄ sa pokÃºsime urobiÅ¥ analÃ½zu rozptylu:
 
 ```{r}
 sod3.fit <- lm(LogRat ~ Group, data = sod3.data)
 summary(sod3.fit)
 ```
 
-Aj tu pochopite2ne chceme ma» kontrolu ako referenènú hladinu, preto¾e inak vısledky nie sú dobre pou¾iteµné.
+Aj tu pochopite2ne chceme maÅ¥ kontrolu ako referenÄnÃº hladinu, pretoÅ¾e inak vÃ½sledky nie sÃº dobre pouÅ¾iteÄ¾nÃ©.
 
 Pozrime sa na polia `Group` a `Location`.
 
@@ -167,13 +163,13 @@ print(sod3.data$Location)
 print(sod3.data$Group)
 ```
 
-Ako vidno, tieto polia vlastne neobsahujú informatívne znakové re»azce, ale obsahujú informáciu o dvoch klasifikáciách:
+Ako vidno, tieto polia vlastne neobsahujÃº informatÃ­vne znakovÃ© reÅ¥azce, ale obsahujÃº informÃ¡ciu o dvoch klasifikÃ¡ciÃ¡ch:
 
-* __zvierati__ / vzorke. Oznaèenia sú v skutoènosti oznaèenia na meracej platnièke, ale je dôle¾ité vedie», ktoré merania spolu súvisia.
+* __zvierati__ / vzorke. OznaÄenia sÃº v skutoÄnosti oznaÄenia na meracej platniÄke, ale je dÃ´leÅ¾itÃ© vedieÅ¥, ktorÃ© merania spolu sÃºvisia.
 
 * __terapeutickej skupine__.
 
-Tieto ståpce musíme premeni» na __faktory__.
+Tieto stÄºpce musÃ­me premeniÅ¥ na __faktory__.
 
 ```{r}
 sod3.data$Location = as.factor(sod3.data$Location)
@@ -181,14 +177,14 @@ sod3.data$Group = as.factor(sod3.data$Group)
 sod3.data
 ```
 
-A u ståpca `Group` chceme nastavit kontrolu ako referenènú hladinu.
+A u stÄºpca `Group` chceme nastavit kontrolu ako referenÄnÃº hladinu.
 
 ```{r}
 sod3.data$Group = relevel(sod3.data$Group, ref = "KONTROLA")
 print(sod3.data$Group)
 ```
 
-Teraz si mô¾eme znova nakrelis» graf
+Teraz si mÃ´Å¾eme znova nakrelisÅ¥ graf
 
 ```{r}
 ggplot(data = sod3.data) +
@@ -196,21 +192,21 @@ ggplot(data = sod3.data) +
   geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
 ```
 
-a urobi» analızu rozptylu:
+a urobiÅ¥ analÃ½zu rozptylu:
 
 ```{r}
 sod3.fit <- lm(LogRat ~ Group, data = sod3.data)
 summary(sod3.fit)
 ```
 
-Ako teraz zistíme, ktoré z rozdielov medzi skupinami sú ¹tatisticky vıznamné?
-Mo¾ností je niekoµko, my pou¾ijeme systematickú variantu s balíèkom `multcomp`:
+Ako teraz zistÃ­me, ktorÃ© z rozdielov medzi skupinami sÃº Å¡tatisticky vÃ½znamnÃ©?
+MoÅ¾nostÃ­ je niekoÄ¾ko, my pouÅ¾ijeme systematickÃº variantu s balÃ­Äkom `multcomp`:
 
 ```{r}
 # if(!require(multcomp)){install.packages("multcomp")}
 ```
 
-Aby sme `R` vysvetlili, aké porovnania chceme urobi», musíme vytvori» *maticu kontrastov*. Pri tom sa zase nauèíme nieèo z R:
+Aby sme `R` vysvetlili, akÃ© porovnania chceme urobiÅ¥, musÃ­me vytvoriÅ¥ *maticu kontrastov*. Pri tom sa zase nauÄÃ­me nieÄo z R:
 
 ```{r}
 Input = ("
@@ -229,15 +225,15 @@ G <- glht(sod3.fit, linfct = mcp(Group = cmat))
 summary(G, test=adjusted("single-step"))
 ```
 
-Ako vám prezradí `help(glht)`, máte k dispozícii niekoµko mo¾ností ako prispôsobi» hladinu vıznamnosti: "none", "single-step", "Shaffer", "Westfall", "free", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr".
+Ako vÃ¡m prezradÃ­ `help(glht)`, mÃ¡te k dispozÃ­cii niekoÄ¾ko moÅ¾nostÃ­ ako prispÃ´sobiÅ¥ hladinu vÃ½znamnosti: "none", "single-step", "Shaffer", "Westfall", "free", "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr".
 
-Ktorú zvoli», je bohu¾iaµ mimo rámca tohoto kurzu. Preto¾e my máme iba tri porovnania, staèí nám ¹tandardné nastavenie. Skúste e¹te Shafferov test, a ak dostanete podobné vısledky, bude najskôr v¹etko v poriadku.
+KtorÃº zvoliÅ¥, je bohuÅ¾iaÄ¾ mimo rÃ¡mca tohoto kurzu. PretoÅ¾e my mÃ¡me iba tri porovnania, staÄÃ­ nÃ¡m Å¡tandardnÃ© nastavenie. SkÃºste eÅ¡te Shafferov test, a ak dostanete podobnÃ© vÃ½sledky, bude najskÃ´r vÅ¡etko v poriadku.
 
-__Úloha__ V repozitári nájdete dáta o mamografickej ¹túdii z http://datahub.io/JohnSnowLabs/mammography-data-from-breast-cancer-surveillance-consortium. Vymyslite, èo by sa s nimi dalo urobi». Preskúmajte naèítanie dát cez JSON objekt, ako je popísané na stránke.
+__Ãšloha__ V repozitÃ¡ri nÃ¡jdete dÃ¡ta o mamografickej Å¡tÃºdii z http://datahub.io/JohnSnowLabs/mammography-data-from-breast-cancer-surveillance-consortium. Vymyslite, Äo by sa s nimi dalo urobiÅ¥. PreskÃºmajte naÄÃ­tanie dÃ¡t cez JSON objekt, ako je popÃ­sanÃ© na strÃ¡nke.
 
 
-## Import dát z Excelu
+## Import dÃ¡t z Excelu
 
-V adresári `data` v repozitári kurzu nájdete súbor `Expresie_dospele.xlsx`.
+V adresÃ¡ri `data` v repozitÃ¡ri kurzu nÃ¡jdete sÃºbor `Expresie_dospele.xlsx`.
 
-__Úloha__: Pou¾ite rovnakı postup ako pri textovıch dátach: Vyu¾ite nástroj pre import dát v Rstudiu na vytvorenie kódu pre import dát z Excelu a pou¾ite ho v notebooku.
+__Ãšloha__: PouÅ¾ite rovnakÃ½ postup ako pri textovÃ½ch dÃ¡tach: VyuÅ¾ite nÃ¡stroj pre import dÃ¡t v Rstudiu na vytvorenie kÃ³du pre import dÃ¡t z Excelu a pouÅ¾ite ho v notebooku.
