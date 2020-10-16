@@ -106,10 +106,10 @@ __Úloha__: Ako snaživí účastníci kurzu samozrejme hneď spúšťate `help(
 
 ## Úprava dát
 
-```{r}
+```{r message=FALSE}
 gapdh.data <- read_delim("https://raw.githubusercontent.com/PKvasnick/RTutorial/master/data/gapdh_full.dat",
     "\t", escape_double = FALSE, trim_ws = TRUE)
-print(gapdh.data)
+gapdh.data
 ```
 
 Najskôr musíme dáta normalizovať. Sú dve veci, ktoré môžete spraviť:

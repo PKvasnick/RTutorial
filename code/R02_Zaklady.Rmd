@@ -169,3 +169,5 @@ vecx <- seq(from = 0, by = 1, along.with = vec)
 plot(vecx, vec, xlab = "index")
 ```
 ... nech máme aspoň nejaký graf v tomto nudnom notebooku.
+
+
