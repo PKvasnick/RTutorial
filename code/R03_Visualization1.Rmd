@@ -28,7 +28,8 @@ head(mpg)
 
 ```{r}
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = displ, y = hwy))
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  theme_bw()
 ```
 Vidím negatívnu závislosť medzi objemom motora a dojazdom. Teda autá s väčším motorom prejd na 1 galón menšiu vzdialenosť ako menšie autá. 
 
@@ -42,6 +43,8 @@ Všeobecný predpis je
 
 `ggplot(data = \<DATA\>) + \<GEOM_FUNKCIA\>(mapping = aes(\<PRIRADENIA\))`
 
+Ešte máme v príkaze časť __theme_bw()__. To je spôsob, ako kolektívne zmeniť vzhľad grafu. __ggplot2__ má niekoľko [preddefinovaných tém](https://ggplot2.tidyverse.org/reference/ggtheme.html). Vyskúšajte si ich.
+
 __Úlohy__
 
 1. Spustite `ggplot(data = mpg)` bez `geom_xxxx()`. Čo vidíte?
@@ -54,6 +57,8 @@ __Úlohy__
 
 5. Nakreslite graf __class__ v závislosti od __drv__. Je to užitočný graf?
 
+6. Nakreslite graf bez __theme_bw()__.
+
 Poďme vyskúšať nejaké zaujímavejšie priradenia.
 
 ### Zložitejšie priradenia
@@ -64,12 +69,23 @@ Predstavme si, že nás zaujíma, či sa niektoré triedy áut nevyskytujú v na
 
 ```{r}
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = displ, y = hwy, colour = class))
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
+  theme_bw()
 ```
 
 Vidíme, že ggplot vybral farby pre triedy áut a vytvoril ku grafu aj legendu. 
 
 Tiež vidíme, že 5 zo šiestich áut nad hlavnou krivkou vpravo dole sú športové autá - majú veľký motor, ale sú oveľa ľahšie ako SÚV s podobne veľkým motorom. Pretože to sú *premotorované* autá, vymykajú sa z typickej závislosti.
+
+Na jednej z budúcich prednášok sa budeme zaoberať tým, ako sa rýchlo pozrieť, čo sú to za autá. Takto vyzerá ukážka mágie z budúcnosti:
+
+```{r}
+mpg %>% 
+  select(model, displ, cyl, class, hwy) %>%
+  filter(class == "2seater")
+```
+Teraz nejdem vysvetľovať, ako to funguje, ale zo samého kódu je jasné, čo robí. Vyskúšajte si to pre ďalšie typy áut či iné premenné.
+
 
 __Úlohy__ 
 
@@ -81,7 +97,8 @@ Vlastnosti grafu môžeme nastaviť aj manuálne. Napríklad môžeme predpísa�
 
 ```{r}
 ggplot(data = mpg) +
-  geom_point(mapping = aes(x = displ, y = hwy, colour = class), size = 3)
+  geom_point(mapping = aes(x = displ, y = hwy, colour = class), size = 3) +
+  theme_bw()
 ```
 Takto predpísané vlastnosti neurčujú vlastnosti mapovania, iba celkový výzor grafu. Farby predpisujeme ako znakový reťazec ("red"), veľkosť bodov v milimetroch a tvar bodov ako kód tvaru z tabuľky tvarov (napríklad *http://www.sthda.com/english/wiki/ggplot2-point-shapes*).
 
@@ -99,6 +116,8 @@ Neprepadajte panike.
 
 * Nemáte v kóde nejaké divné značky od syntax highlightera? 
 
+* Skúste začať pridávať jednotlivé veci do príkazu postupne, aby ste zistili, ktorá časť spôsobuje chybu. 
+
 * Máte chybovú hlášku? Hurá, skúste pochopiť, čo hovorí, alebo ju celú skopírujte do prehliadača a Google raď.
 
 * Nič sa nestalo? Pozrite sa, či ste zle nerozdelili viacriadkový príkaz. R musí chápať, že riadok pokračuje, takže ak je medzi dvoma časťami napríklad __+__, musí byť na konci riadku pred zalomením, a nie na začiatku ďalšieho riadku. 
@@ -107,21 +126,24 @@ Neprepadajte panike.
 
 ### Fazety - __Facets__
 
-Ešte jeden spôsob, ako pridať do grafu ďalšie premenné, je rozdeliť graf do viacerých "faziet" a v každej zobraziť iba podmnožinu dát. Pre takéto delenie je vhodné pouužiř kategoriálne dáta.
+Ešte jeden spôsob, ako pridať do grafu ďalšie premenné, je rozdeliť graf do viacerých "faziet" a v každej zobraziť iba podmnožinu dát. Pre takéto delenie má zmysel pouužiť kategoriálne dáta.
 
 Ak takto chceme rozdeliť náš graf podľa (jednej, diskrétnej) premennej, použijeme funkciu __facet_wrap__:
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
-  facet_wrap(~ class, nrow = 2)
+  facet_wrap(~ class, nrow = 2) + 
+  theme_bw()
 ```
 Môžeme rozdeľovať aj podľa dvoch premenných, v tomto prípade použijeme funkciu __facet_grid__:
 
 ```{r}
 ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy, colour = class)) +
-  facet_grid(drv ~ cyl)
+  facet_grid(drv ~ cyl) +
+  theme_bw()
 ```
 Ak nechcete deliť podľa stĺpcovej alebo riadkovej premennej, použite namiesto nej bodku: __. ~ cyl__
 
+Ako vidno, takto môžeme zobraziť vzťah dvoch nominálnych (spojitých) premenných v závislosti od troch kategoriálnych premenných. 
