@@ -3,33 +3,33 @@ title: "dplyr"
 output: html_notebook
 ---
 
-## Operácie s tabuµkami v R
+## OperÃ¡cie s tabuÄ¾kami v R
 
-Text tejto èasti èerpá z kni¾ky *Garrett Grolemund, Hadley Wickham: R for Data Science.*
-Vydavateµstvo O'Reilly, Január 2017, 1. vydanie, http://r4ds.had.co.nz/
-Struènı a ¹ikovnı prehlad je aj tu: http://tclavelle.github.io/dplyr-tidyr-tutorial/
+Text tejto Äasti ÄerpÃ¡ z kniÅ¾ky *Garrett Grolemund, Hadley Wickham: R for Data Science.*
+VydavateÄ¾stvo O'Reilly, JanuÃ¡r 2017, 1. vydanie, http://r4ds.had.co.nz/
+StruÄnÃ½ a Å¡ikovnÃ½ prehlad je aj tu: http://tclavelle.github.io/dplyr-tidyr-tutorial/
 
-__Slovesá balíka *dplyr*__:
+__SlovesÃ¡ balÃ­ka *dplyr*__:
 
-- `filter()` Vıber podmno¾iny riadkov z tabuµky na základe logickej podmienky
-- `select()` Vıber podmno¾iny ståpcov z tabuµky
-- `arrange()` Zoradenie riadkov podµa hodnôt niektorého ståpca
-- `rename()` Premenovanie ståpca
-- `group_by()` Mení rozsah pôsobenia funkcie z celej tabuµky na skupiny riadkov so spoloènımi hodnotami jedného alebo viacerıch ståpcov.
-- `mutate()` Vytvorenie novıch ståpcov
-- `summarize()` Súhrn tabuµky do jediného riadku hodnôt
+- `filter()` VÃ½ber podmnoÅ¾iny riadkov z tabuÄ¾ky na zÃ¡klade logickej podmienky
+- `select()` VÃ½ber podmnoÅ¾iny stÄºpcov z tabuÄ¾ky
+- `arrange()` Zoradenie riadkov podÄ¾a hodnÃ´t niektorÃ©ho stÄºpca
+- `rename()` Premenovanie stÄºpca
+- `group_by()` MenÃ­ rozsah pÃ´sobenia funkcie z celej tabuÄ¾ky na skupiny riadkov so spoloÄnÃ½mi hodnotami jednÃ©ho alebo viacerÃ½ch stÄºpcov.
+- `mutate()` Vytvorenie novÃ½ch stÄºpcov
+- `summarize()` SÃºhrn tabuÄ¾ky do jedinÃ©ho riadku hodnÃ´t
 
-V¹etky funkcie majú podobnú signatúru:
+VÅ¡etky funkcie majÃº podobnÃº signatÃºru:
 
-- prvı argument je tabuµka (data frame)
-- naledujúce argumenty urèujú, ako sa má tabuµka zmeni», v termínoch názvov premennıch (ståpcov).
-- vısledok je tabuµka.
+- prvÃ½ argument je tabuÄ¾ka (data frame)
+- naledujÃºce argumenty urÄujÃº, ako sa mÃ¡ tabuÄ¾ka zmeniÅ¥, v termÃ­noch nÃ¡zvov premennÃ½ch (stÄºpcov).
+- vÃ½sledok je tabuÄ¾ka.
 
-Budeme pou¾íva» balíky `tidyverse`. 
+Budeme pouÅ¾Ã­vaÅ¥ balÃ­ky `tidyverse`. 
 
-### Balík `nycflights13`
+### BalÃ­k `nycflights13`
 
-Pre ilustráciu budeme pou¾íva» tabuµku balíka `nycflights13::flights()` (`install.packages('nycfligths13'), ?flights`). Tabuµka obsahuje údaje o v¹etkıch 336,776 letoch vychádzajúcich z New York City v roku 2013. Dáta pochádzajú od *US Bureau of Transportation Statistics*.
+Pre ilustrÃ¡ciu budeme pouÅ¾Ã­vaÅ¥ tabuÄ¾ku balÃ­ka `nycflights13::flights()` (`install.packages('nycfligths13'), ?flights`). TabuÄ¾ka obsahuje Ãºdaje o vÅ¡etkÃ½ch 336,776 letoch vychÃ¡dzajÃºcich z New York City v roku 2013. DÃ¡ta pochÃ¡dzajÃº od *US Bureau of Transportation Statistics*.
 
 ```{r}
 library(tidyverse)
@@ -39,37 +39,37 @@ library(nycflights13)
 ```{r}
 flights
 ```
-Toto nie je R `data.frame`, ale `tibble`, trocha od2ahèená a zmodernizovaná verzia tabuµky vytvorenı pre `tidyverse`. Rozdiely nás zatiaì nebudú zaujíma».
+Toto nie je R `data.frame`, ale `tibble`, trocha od2ahÄenÃ¡ a zmodernizovanÃ¡ verzia tabuÄ¾ky vytvorenÃ½ pre `tidyverse`. Rozdiely nÃ¡s zatiaÄ› nebudÃº zaujÃ­maÅ¥.
 
-## `filter()`: Vıber podmno¾iny riadkov na základe hodnôt ståpcov
+## `filter()`: VÃ½ber podmnoÅ¾iny riadkov na zÃ¡klade hodnÃ´t stÄºpcov
 
-Vyberme si lety z 1. januára:
+Vyberme si lety z 1. januÃ¡ra:
 
 ```{r}
 filter(flights, month == 1, day == 1)
 ```
 
-Argumenty sù dátová tabuµka a zoznam *logickıch* vırazov - preto dvojité `==`!
+Argumenty sÅ¯ dÃ¡tovÃ¡ tabuÄ¾ka a zoznam *logickÃ½ch* vÃ½razov - preto dvojitÃ© `==`!
 
-Keï spustíte tento kód, vısledok je nová tabuµka. `dplyr` nikdy nemení pôvodné dáta, tak¾e ak nechcete zmeny strati», musíte urobi» priradenie.
+KeÄ spustÃ­te tento kÃ³d, vÃ½sledok je novÃ¡ tabuÄ¾ka. `dplyr` nikdy nemenÃ­ pÃ´vodnÃ© dÃ¡ta, takÅ¾e ak nechcete zmeny stratiÅ¥, musÃ­te urobiÅ¥ priradenie.
 
 ```{r}
 jan1 <- filter(flights, month == 1, day == 1)
 ```
 
-R buï vytlaèí vıslednú hodnotu posledného príkazu, alebo ju priradí. Ak chcete oboje, dajte príkaz do zátvoriek. Ak nechcete ani jedno, ukonèite bodkoèiarkou:
+R buÄ vytlaÄÃ­ vÃ½slednÃº hodnotu poslednÃ©ho prÃ­kazu, alebo ju priradÃ­. Ak chcete oboje, dajte prÃ­kaz do zÃ¡tvoriek. Ak nechcete ani jedno, ukonÄite bodkoÄiarkou:
 
 ```{r}
 (dec25 <- filter(flights, month == 12, day == 25))
 ```
 
-Provnania v R: ¹tandardnı súbor: `< <= == != >= >`. Èastá chyba na¹astie dáva chybovú hlá¹ku:
+Provnania v R: Å¡tandardnÃ½ sÃºbor: `< <= == != >= >`. ÄŒastÃ¡ chyba naÅ¡astie dÃ¡va chybovÃº hlÃ¡Å¡ku:
 
 ```{r}
 filter(flights, month = 1)
 ```
 
-Pre èísla s pohyblivou desatinnou èiarkou pou¾ívame namiesto `==` funkciu `near()`:
+Pre ÄÃ­sla s pohyblivou desatinnou Äiarkou pouÅ¾Ã­vame namiesto `==` funkciu `near()`:
 
 ```{r}
 1/49 * 49 == 1
@@ -78,9 +78,9 @@ near(1/49 * 49, 1)
 near(sqrt(2) ^ 2, 2)
 ```
 
-### Logické vırazy
+### LogickÃ© vÃ½razy
 
-Podmienky, ktoré uvediete ako argumenty funkcie `filter()`, sa kombinujú pomocou logického `and`, èi¾e operátora `&`. Iné kombinácie musíte zada» sami. Logické operátory sú `! not, & and, | or`, plus funcia `xor()`.
+Podmienky, ktorÃ© uvediete ako argumenty funkcie `filter()`, sa kombinujÃº pomocou logickÃ©ho `and`, ÄiÅ¾e operÃ¡tora `&`. InÃ© kombinÃ¡cie musÃ­te zadaÅ¥ sami. LogickÃ© operÃ¡tory sÃº `! not, & and, | or`, plus funcia `xor()`.
 
 Teda lety z novembra a decembra:
 
@@ -88,15 +88,15 @@ Teda lety z novembra a decembra:
 filter(flights, month == 11 | month == 12)
 ```
 
-alebo, ¹ikovnej¹ie, pomocou `%in%`:
+alebo, Å¡ikovnejÅ¡ie, pomocou `%in%`:
 
 ```{r}
 novdec <- filter(flights, month %in% c(11,12))
 ```
 
-### Chıbajúce hodnoty
+### ChÃ½bajÃºce hodnoty
 
-Sú nákazlivé, skoro ka¾dá operácia s `NA` vráti `NA`.
+SÃº nÃ¡kazlivÃ©, skoro kaÅ¾dÃ¡ operÃ¡cia s `NA` vrÃ¡ti `NA`.
 
 ```{r}
 NA > 5
@@ -107,35 +107,35 @@ NA == NA
 x <- NA
 is.na(x)
 ```
-`filter()` vracia iba riadky, kde sú v¹etky podmienky `TRUE`, teda nie `FALSE`, ale ani `NA`. Ak chceme riadky s `NA`, treba poveda»:
+`filter()` vracia iba riadky, kde sÃº vÅ¡etky podmienky `TRUE`, teda nie `FALSE`, ale ani `NA`. Ak chceme riadky s `NA`, treba povedaÅ¥:
 
 ```{r}
 df <- tibble(x = c(1, NA, 3))
 filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
 ```
-## `arrange()` utriedenie dát podµa hodnôt jedného alebo viacerıch ståpcov
+## `arrange()` utriedenie dÃ¡t podÄ¾a hodnÃ´t jednÃ©ho alebo viacerÃ½ch stÄºpcov
 
 ```{r}
 arrange(flights, year, month, day)
 ```
-Najviac me¹kajúce lety:
+Najviac meÅ¡kajÃºce lety:
 
 ```{r}
 arrange(flights, desc(arr_delay))
 ```
-`NA` v¾dy konèí na konci.
+`NA` vÅ¾dy konÄÃ­ na konci.
 
-## `select()`: vıber ståpcov
+## `select()`: vÃ½ber stÄºpcov
 
-Táto funkcia nám ump¾òuje vybra» si podmno¾inu dát, ktorou sa chceme zaobera». Reálne dáta èasto obsahujú obrovskı poèet premenıch. Na¹e dáta iba 19, ale pre objasnenie princípu to staèí:
+TÃ¡to funkcia nÃ¡m umpÅ¾Åˆuje vybraÅ¥ si podmnoÅ¾inu dÃ¡t, ktorou sa chceme zaoberaÅ¥. ReÃ¡lne dÃ¡ta Äasto obsahujÃº obrovskÃ½ poÄet premenÃ½ch. NaÅ¡e dÃ¡ta iba 19, ale pre objasnenie princÃ­pu to staÄÃ­:
 
 ```{r}
 select(flights, year, month, day)
 select(flights, year:day)
 select(flights, - (year:day))
 ```
-## `mutate()`: vytvorenie novıch ståpcov
+## `mutate()`: vytvorenie novÃ½ch stÄºpcov
 
 ```{r}
 flights_sml <- select(flights, 
@@ -149,7 +149,7 @@ mutate(flights_sml,
   speed = distance / air_time * 60
 )
 ```
-Mô¾eme sa odkazova» na práve vytvorené premenné:
+MÃ´Å¾eme sa odkazovaÅ¥ na prÃ¡ve vytvorenÃ© premennÃ©:
 
 ```{r}
 mutate(flights_sml,
@@ -159,7 +159,7 @@ mutate(flights_sml,
 )
 ```
 
-### `transmute()`: ponecha» iba nové ståpce
+### `transmute()`: ponechaÅ¥ iba novÃ© stÄºpce
 
 ```{r}
 transmute(flights,
@@ -170,16 +170,16 @@ transmute(flights,
 ```
 
 
-### Operácie v `mutate()`
+### OperÃ¡cie v `mutate()`
 
-- Aritmetické operácie: `+ - * / ^`. Vektorizované, recyklácia argumentov, sumárne funkcie `sum(x), mean(x)`.
-- Modulárna aritmetika '%/%` celoèíselné delenie, `%%` modulo.
+- AritmetickÃ© operÃ¡cie: `+ - * / ^`. VektorizovanÃ©, recyklÃ¡cia argumentov, sumÃ¡rne funkcie `sum(x), mean(x)`.
+- ModulÃ¡rna aritmetika '%/%` celoÄÃ­selnÃ© delenie, `%%` modulo.
 
 ```{r}
 7 * (20 %/% 7) + 20 %% 7 == 20
 ```
 
-- Odkaz na predchádzajúcu a nasledujúcu hodnotu: `lag(x), lead(x)`.
+- Odkaz na predchÃ¡dzajÃºcu a nasledujÃºcu hodnotu: `lag(x), lead(x)`.
 
 ```{r}
 x <- 1:10
@@ -188,7 +188,7 @@ lag(x)
 lead(x)
 ```
 
-- Kumulatívne hodnoty: `cumsum(x) cumprod(x) cummean(x) cummin(x) cummax(x)`
+- KumulatÃ­vne hodnoty: `cumsum(x) cumprod(x) cummean(x) cummin(x) cummax(x)`
 
 ```{r}
 x <- 1:10
@@ -208,31 +208,31 @@ y <- c(0,2,3,4,6)
 cume_dist(y)
 ```
 
-## `summarize()`: sumarizácia tabuµky do jedného riadku
+## `summarize()`: sumarizÃ¡cia tabuÄ¾ky do jednÃ©ho riadku
 
 ```{r}
 summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
 ```
 
-## `group_by()`: rozdeli» tabuµku podµa hodnôt ståpcov
+## `group_by()`: rozdeliÅ¥ tabuÄ¾ku podÄ¾a hodnÃ´t stÄºpcov
 
-Toto je skutoène silná operácia. Princíp: *rozdeµ - zosumarizuj - skombinuj*.
+Toto je skutoÄne silnÃ¡ operÃ¡cia. PrincÃ­p: *rozdeÄ¾ - zosumarizuj - skombinuj*.
 
-Priemerné oneskorenia podµa dní
+PriemernÃ© oneskorenia podÄ¾a dnÃ­
 ```{r}
 by_day <- group_by(flights, year, month, day)
 summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
 ```
 
-## `%>%': "pipe", pepojenie vstupu a vıstupu
+## `%>%': "pipe", pepojenie vstupu a vÃ½stupu
 
-Ak robíme nieko2ko operácií za sebou, musíme vytvára» mno¾stvo doèasnıch objektov:
+Ak robÃ­me nieko2ko operÃ¡ciÃ­ za sebou, musÃ­me vytvÃ¡raÅ¥ mnoÅ¾stvo doÄasnÃ½ch objektov:
 
-Ako závisí oneskorenie od då¾ky letu?
+Ako zÃ¡visÃ­ oneskorenie od dÄºÅ¾ky letu?
 
-1.  Zoskupíme lety podµa cieµa
-2.  Zosumarizujeme: poèet letov, priemerná vzdialenos», priemerné me¹kanie
-3.  Odfiltrujeme miesta s malım poètom letov a Honolulu, ktoré má anomálnu vzdialenos».
+1.  ZoskupÃ­me lety podÄ¾a cieÄ¾a
+2.  Zosumarizujeme: poÄet letov, priemernÃ¡ vzdialenosÅ¥, priemernÃ© meÅ¡kanie
+3.  Odfiltrujeme miesta s malÃ½m poÄtom letov a Honolulu, ktorÃ© mÃ¡ anomÃ¡lnu vzdialenosÅ¥.
 
 ```{r}
 by_dest <- group_by(flights, dest)
@@ -248,7 +248,7 @@ ggplot(data = delay, mapping = aes(x = dist, y = delay)) +
   geom_smooth(se = FALSE)
 ```
 
-A teraz to isté s pou¾itím mágie:
+A teraz to istÃ© s pouÅ¾itÃ­m mÃ¡gie:
 
 ```{r}
 delays <- flights %>% 
@@ -261,17 +261,17 @@ delays <- flights %>%
   filter(count > 20, dest != "HNL")
 ```
 
-`x %>% f %>% g` znamená g(f(x)). Je to teda jednoduch¹í zápis a získavame preh2adnej¹í kód.
+`x %>% f %>% g` znamenÃ¡ g(f(x)). Je to teda jednoduchÅ¡Ã­ zÃ¡pis a zÃ­skavame preh2adnejÅ¡Ã­ kÃ³d.
 
-To ale nie je jediná vıhoda: `%>%` nás oslobodzuje od nutnosti vytvára» medzivısledky, a tak sa namiesto tabuliek vytvárajú funkcionálne objekty a aktuálne operácie sa vykonajú a¾ v poslednej chvíli. Teda v optimálnom prípade sa namiesto niekoµkıch cyklov cez dáta vykoná iba jeden.
+To ale nie je jedinÃ¡ vÃ½hoda: `%>%` nÃ¡s oslobodzuje od nutnosti vytvÃ¡raÅ¥ medzivÃ½sledky, a tak sa namiesto tabuliek vytvÃ¡rajÃº funkcionÃ¡lne objekty a aktuÃ¡lne operÃ¡cie sa vykonajÃº aÅ¾ v poslednej chvÃ­li. Teda v optimÃ¡lnom prÃ­pade sa namiesto niekoÄ¾kÃ½ch cyklov cez dÃ¡ta vykonÃ¡ iba jeden.
 
-## Sumarizaèné funkcie
+## SumarizaÄnÃ© funkcie
 
 * Miery polohy: `mean(x), median(x)`
-* Logické filtrovanie: `x[x > 10]`
+* LogickÃ© filtrovanie: `x[x > 10]`
 * Miery rozptylu: `sd(x), IQR(x), mad(x)`
 * Poradia: `rank(x), quantile(x,p), min(x), max(x)`
-* Miery pozície: `first(x), last(x), nth(x, 3)`
-* Poèty: `n(), sum(!is.na(x)), n_distinct(x)`
+* Miery pozÃ­cie: `first(x), last(x), nth(x, 3)`
+* PoÄty: `n(), sum(!is.na(x)), n_distinct(x)`
 
 

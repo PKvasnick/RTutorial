@@ -65,7 +65,7 @@ Dátové súbory si nemusíte sťahovať, môžete ich importovať priamo z GitH
 
 Použijeme balíky `tidyverse`, tak ako v minulej prednáške.
 
-```{r}
+```{r message=FALSE warning=FALSE}
 library(tidyverse)
 ```
 
@@ -129,9 +129,9 @@ sod3.data
 No a teraz si poďme nakresliť, čo máme, a hneď sa aj naučíme zopár nových __geomov__.
 
 ```{r}
-ggplot(data = sod3.data) +
-  geom_boxplot(mapping = aes(x = Group, y = LogRat, color = Group)) +
-  geom_jitter(mapping = aes(x = Group, y = LogRat, color = Group))
+ggplot(data = sod3.data, mapping = aes(x = Group, y = LogRat, color = Group)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.1)
 ```
 
 Použili sme dve zobrazenia tých istých dát, ako vidno, stačí na to __+__ a pridať ďalšiu vrstvu.
@@ -217,7 +217,9 @@ Contrast.Name KONTROLA  7-NI  L-NAME
 ")
 cmat = as.matrix(read.table(textConnection(Input), header=TRUE, row.names=1))
 cmat
+```
 
+```{r}
 library(multcomp)
 
 G <- glht(sod3.fit, linfct = mcp(Group = cmat))
@@ -237,3 +239,9 @@ __Úloha__ V repozitári nájdete dáta o mamografickej štúdii z http://datahu
 V adresári `data` v repozitári kurzu nájdete súbor `Expresie_dospele.xlsx`.
 
 __Úloha__: Použite rovnaký postup ako pri textových dátach: Využite nástroj pre import dát v Rstudiu na vytvorenie kódu pre import dát z Excelu a použite ho v notebooku.
+
+```{r}
+library(readxl)
+Expresie_dospele <- read_excel("../data/Expresie_dospele.xlsx", 
+    range = "C20:F53", col_names = c("Location", "Group", "Cycle", "C"))
+```
