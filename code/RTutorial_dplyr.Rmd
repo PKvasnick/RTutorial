@@ -39,7 +39,8 @@ library(nycflights13)
 ```{r}
 flights
 ```
-Toto nie je R `data.frame`, ale `tibble`, trocha od2ahčená a zmodernizovaná verzia tabuľky vytvorený pre `tidyverse`. Rozdiely nás zatiaě nebudú zaujímať.
+Toto nie je R `data.frame`, ale `tibble`, trocha od2ahčená a zmodernizovaná verzia tabuľky vytvorený pre `tidyverse`. Rozdiely nás zatiaľ nebudú zaujímať.
+
 
 ## `filter()`: Výber podmnožiny riadkov na základe hodnôt stĺpcov
 
@@ -57,13 +58,15 @@ Keď spustíte tento kód, výsledok je nová tabuľka. `dplyr` nikdy nemení p�
 jan1 <- filter(flights, month == 1, day == 1)
 ```
 
-R buď vytlačí výslednú hodnotu posledného príkazu, alebo ju priradí. Ak chcete oboje, dajte príkaz do zátvoriek. Ak nechcete ani jedno, ukončite bodkočiarkou:
+R buď vytlačí výslednú hodnotu posledného príkazu, alebo ju priradí. 
+* Ak chcete oboje, dajte príkaz do zátvoriek. 
+* Ak nechcete ani jedno, ukončite bodkočiarkou:
 
 ```{r}
 (dec25 <- filter(flights, month == 12, day == 25))
 ```
 
-Provnania v R: štandardný súbor: `< <= == != >= >`. Častá chyba našastie dáva chybovú hlášku:
+Provnania v R: štandardný súbor: `< <= == != >= >`. Častá chyba našťastie dáva chybovú hlášku:
 
 ```{r}
 filter(flights, month = 1)
@@ -114,6 +117,8 @@ df <- tibble(x = c(1, NA, 3))
 filter(df, x > 1)
 filter(df, is.na(x) | x > 1)
 ```
+
+
 ## `arrange()` utriedenie dát podľa hodnôt jedného alebo viacerých stĺpcov
 
 ```{r}
