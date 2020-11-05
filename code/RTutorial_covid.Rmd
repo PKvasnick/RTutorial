@@ -1,0 +1,31 @@
+---
+title: "COVID19 notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(COVID19)
+```
+
+```{r}
+covid_SVK <- covid19(
+  country = "SVK",
+  start = "2020-09-01",
+  verbose = FALSE
+)
+covid_SVK
+```
+
+```{r}
+covid_SVK %>% 
+  mutate(daily_tests = c(0, diff(tests))) %>% # diff dá rozdiel medzi po sebe idúcimi dňami, na začiatok dopĺňame nulu.
+ggplot(mapping = aes(x = date, y = daily_tests)) +
+  geom_point() +
+  stat_smooth(method = 'loess') +
+  labs(
+    title = "Denný počet testov na COVID-19 od 1. septembra"
+  )
+```
+
+
