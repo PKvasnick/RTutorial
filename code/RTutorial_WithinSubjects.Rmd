@@ -3,39 +3,39 @@ title: "RTutorial: Within subjects plot"
 output: html_notebook
 ---
 
-## Úvod
+## Ãšvod
 
-V tomto notebooku, ako u¾ viackrát na na¹ich predná¹kach, sa sna¾ím ukáza», ¾e __¹tatistika nie je v¹etko__. ®iadne rafinované testy nenahradia dobrı graf, z ktorého je záver jasnı aj bez toho, aby ste kontrolovali èo je ¹tatisticky vıznamené a èo nie, a zaoberali sa kopou zbytoèností typu èi va¹e dáta majú alebo nemajú normálne rozdelenie a èi to je dôle¾ité.
+V tomto notebooku sa snaÅ¾Ã­m ukÃ¡zaÅ¥, Å¾e __Å¡tatistika nie je vÅ¡etko__. Å½iadne rafinovanÃ© testy nenahradia dobrÃ½ graf, z ktorÃ©ho je zÃ¡ver jasnÃ½ aj bez toho, aby ste kontrolovali Äo je Å¡tatisticky vÃ½znamenÃ© a Äo nie, a zaoberali sa kopou zbytoÄnostÃ­ typu Äi vaÅ¡e dÃ¡ta majÃº alebo nemajÃº normÃ¡lne rozdelenie a Äi to je dÃ´leÅ¾itÃ©.
 
-Zároveò si precvièíme veci z minulej predná¹ky, `dplyr`, `tidyr` a `ggplot2`.
+ZÃ¡roveÅˆ si precviÄÃ­me veci z minulej prednÃ¡Å¡ky, `dplyr`, `tidyr` a `ggplot2`.
 
-Tento notebook som vyrobil podµa blogu https://mvuorre.github.io/post/2017/within-subject-scatter/, aj keï niektoré veci robíme elegantnej¹ie a niekde robíme veci navy¹e.
+Tento notebook som vyrobil podÄ¾a blogu https://mvuorre.github.io/post/2017/within-subject-scatter/, aj keÄ niektorÃ© veci robÃ­me elegantnejÅ¡ie a niekde robÃ­me veci navyÅ¡e.
 
 ## Zadanie
 
-Ganis and Kievit (2015) po¾iadali 54 dobrovoµníkov, aby (v niekoµkıch experimentoch) porovnali dva vzájomne pootoèené trojrozmerné objekty, a usúdili, èi sa jedná o rovnakı objekt alebo nie.
+Ganis and Kievit (2015) poÅ¾iadali 54 dobrovoÄ¾nÃ­kov, aby (v niekoÄ¾kÃ½ch experimentoch) porovnali dva vzÃ¡jomne pootoÄenÃ© trojrozmernÃ© objekty, a usÃºdili, Äi sa jednÃ¡ o rovnakÃ½ objekt alebo nie.
 
 ![Jeden objekt alebo dva?](../pics/Fig01_web.jpg)
 
-Autori v ¹túdii pou¾ili 4 rôzne uhly natoèenia objektov (0, 50, 100 a 150 stupòov), my si ale vezmeme iba dáta s natoèením 50 stupòov, ktoré naèítame priamo z .csv súboru. 
+Autori v Å¡tÃºdii pouÅ¾ili 4 rÃ´zne uhly natoÄenia objektov (0, 50, 100 a 150 stupÅˆov), my si ale vezmeme iba dÃ¡ta s natoÄenÃ­m 50 stupÅˆov, ktorÃ© naÄÃ­tame priamo z .csv sÃºboru. 
 
-Zaèneme ¹tandardnou úvodnou mantrou.
+ZaÄneme Å¡tandardnou Ãºvodnou mantrou.
 
 ```{r}
 library(tidyverse)
 ```
 
-a naèítame dáta:
+a naÄÃ­tame dÃ¡ta:
 
 ```{r}
 d <- read_csv("https://mvuorre.github.io/data/ganis-kievit-2015.csv")
 d
 ```
-Ak vám naèítanie z Internetu nefunguje, súbor nájdete aj v repozitári tohto kurzu, `RTutorial/data/ganis-kievit-2015.csv`.
+Ak vÃ¡m naÄÃ­tanie z Internetu nefunguje, sÃºbor nÃ¡jdete aj v repozitÃ¡ri tohto kurzu, `RTutorial/data/ganis-kievit-2015.csv`.
 
-Ståpce, ktoré nás zaujímajú, sú `Subject` (identifikácia úèastníka), `angle` (uhol pootoèenia), `correct.incorrect` (správna / nesprávna odpoveï), `rt` (reakènı èas). Chceme iba pootoèenia 0 a 50 stupòov, a mô¾eme si vhodne premenova» ståpce, aby sa s nimi dobre pracovalo.
+StÄºpce, ktorÃ© nÃ¡s zaujÃ­majÃº, sÃº `Subject` (identifikÃ¡cia ÃºÄastnÃ­ka), `angle` (uhol pootoÄenia), `correct.incorrect` (sprÃ¡vna / nesprÃ¡vna odpoveÄ), `rt` (reakÄnÃ½ Äas). Chceme iba pootoÄenia 0 a 50 stupÅˆov, a mÃ´Å¾eme si vhodne premenovaÅ¥ stÄºpce, aby sa s nimi dobre pracovalo.
 
-Pou¾ijeme variantu príkazu `dplyr::mutate`, ktorá nepridáva ståpce k existujúcim, ale zriadi novú tabu2ku a ståpce pridá do nej: `dplyr::transmute`. Okrem toho si uká¾eme, naèo slú¾i obrátené priradenie `->`.
+PouÅ¾ijeme variantu prÃ­kazu `dplyr::mutate`, ktorÃ¡ nepridÃ¡va stÄºpce k existujÃºcim, ale zriadi novÃº tabu2ku a stÄºpce pridÃ¡ do nej: `dplyr::transmute`. Okrem toho si ukÃ¡Å¾eme, naÄo slÃºÅ¾i obrÃ¡tenÃ© priradenie `->`.
 
 ```{r}
 d %>%
@@ -50,16 +50,16 @@ transmute(
 d
 ```
 
-No a aké to máme dáta?
+No a akÃ© to mÃ¡me dÃ¡ta?
 ```{r}
 summary(d)
 ```
 
-## Priemery pre úèastníkov
+## Priemery pre ÃºÄastnÃ­kov
 
-Pre prvı graf nám staèia priemerné èasy úèastníkov podµa natoèenia. Hypotéza je, ¾e priemernı èas bude dlh¹í pri pootoèenıch objektoch u v¹etkıch úèastníkov.
+Pre prvÃ½ graf nÃ¡m staÄia priemernÃ© Äasy ÃºÄastnÃ­kov podÄ¾a natoÄenia. HypotÃ©za je, Å¾e priemernÃ½ Äas bude dlhÅ¡Ã­ pri pootoÄenÃ½ch objektoch u vÅ¡etkÃ½ch ÃºÄastnÃ­kov.
 
-Potrebujeme zoskupi» dáta podµa úèastníka a uhlu, a pre ka¾dú skupinu vypoèíta» priemernı reakènı èas. Prípadné chıbajúce dáta v skupinách ignorujeme. 
+Potrebujeme zoskupiÅ¥ dÃ¡ta podÄ¾a ÃºÄastnÃ­ka a uhlu, a pre kaÅ¾dÃº skupinu vypoÄÃ­taÅ¥ priemernÃ½ reakÄnÃ½ Äas. PrÃ­padnÃ© chÃ½bajÃºce dÃ¡ta v skupinÃ¡ch ignorujeme. 
 
 ```{r}
 group_by(d, id, angle) %>%
@@ -67,9 +67,9 @@ group_by(d, id, angle) %>%
 subject_means
 ```
 
-Poïme si to nakresli». Chceme (pre zmenu) ståpcovı graf, a cezeò nakreslíme priemery pre jednotlivıch úèastníkov v danej skupine. 
+PoÄme si to nakresliÅ¥. Chceme (pre zmenu) stÄºpcovÃ½ graf, a cezeÅˆ nakreslÃ­me priemery pre jednotlivÃ½ch ÃºÄastnÃ­kov v danej skupine. 
 
-A aby sme ukázali, ¾e doká¾eme kresli» aj ståpce s errorbarmi, tak pridáme aj tie. __Ak niekoho nachytám, ¾e to fakt pou¾íva, podpálim mu laptop.__
+A aby sme ukÃ¡zali, Å¾e dokÃ¡Å¾eme kresliÅ¥ aj stÄºpce s errorbarmi, tak pridÃ¡me aj tie. __Ak niekoho nachytÃ¡m, Å¾e to fakt pouÅ¾Ã­va, podpÃ¡lim mu laptop.__
 
 ```{r}
 ggplot(subject_means, aes(x = angle, y = rt)) +
@@ -89,7 +89,7 @@ ggplot(subject_means, aes(x = angle, y = rt)) +
   scale_y_continuous(limits = c(0, max(d$rt, na.rm = T)), expand = c(0, 0))
 ```
 
-Museli sme prida» novı parameter, `stat`, aby sme zmenili ¹tandardnı spôsob vytvárania ståpcovıch grafov, ktorı je `count`, èi¾e poèet prípadov. Ka¾dá geometria (`geom_XXX`) má ¹tandardne priradenú metódu `stat`, a platí to aj naopak, tak¾e predchádzajúci graf mô¾eme úplne dobre nakresli» aj takto:
+Museli sme pridaÅ¥ novÃ½ parameter, `stat`, aby sme zmenili Å¡tandardnÃ½ spÃ´sob vytvÃ¡rania stÄºpcovÃ½ch grafov, ktorÃ½ je `count`, ÄiÅ¾e poÄet prÃ­padov. KaÅ¾dÃ¡ geometria (`geom_XXX`) mÃ¡ Å¡tandardne priradenÃº metÃ³du `stat`, a platÃ­ to aj naopak, takÅ¾e predchÃ¡dzajÃºci graf mÃ´Å¾eme Ãºplne dobre nakresliÅ¥ aj takto:
 
 ```{r}
 ggplot(subject_means, aes(x = angle, y = rt)) +
@@ -108,17 +108,17 @@ ggplot(subject_means, aes(x = angle, y = rt)) +
   geom_point(position = position_jitter(h = 0, w = 5)) +
   scale_y_continuous(limits = c(0, max(d$rt, na.rm = T)), expand = c(0, 0))
 ```
-E¹te raz mô¾eme nakresli» to isté, tak ako sme sa u¾ uèili. 
+EÅ¡te raz mÃ´Å¾eme nakresliÅ¥ to istÃ©, tak ako sme sa uÅ¾ uÄili. 
 
 ```{r}
 ggplot(subject_means, aes(x = angle, y = rt, group = as.factor(angle), colour = as.factor(angle))) +
-    geom_boxplot(outlier.shape = NA) + # lebo nakreslíme v¹etky dáta neskôr
+    geom_boxplot(outlier.shape = NA) + # lebo nakreslÃ­me vÅ¡etky dÃ¡ta neskÃ´r
     geom_point(position = position_jitter(h = 0, w = 5)) +
     scale_y_continuous(limits = c(0, max(d$rt, na.rm = T)),
     expand = c(0, 0))
 ```
 
-Nakreslili sme si dáta veµakrát, ale tie obrázky sú vcelku naniè. Oblaky sú veµké vïaka variabilite reakèného èasu medzi úèastníkmi, a my chceme vidie» variáciu u jednotlivıch úèastníkov. Mohli by sme pospája» jednotlivé body a pozera», èi spojnice smerujú preva¾ne hore alebo dole, ale to nie je veµmi u¾itoèné, ak máme veµa èiar. 
+Nakreslili sme si dÃ¡ta veÄ¾akrÃ¡t, ale tie obrÃ¡zky sÃº vcelku naniÄ. Oblaky sÃº veÄ¾kÃ© vÄaka variabilite reakÄnÃ©ho Äasu medzi ÃºÄastnÃ­kmi, a my chceme vidieÅ¥ variÃ¡ciu u jednotlivÃ½ch ÃºÄastnÃ­kov. Mohli by sme pospÃ¡jaÅ¥ jednotlivÃ© body a pozeraÅ¥, Äi spojnice smerujÃº prevaÅ¾ne hore alebo dole, ale to nie je veÄ¾mi uÅ¾itoÄnÃ©, ak mÃ¡me veÄ¾a Äiar. 
 
 ```{r}
 ggplot(subject_means, aes(x = angle, y = rt, group = id, colour = id)) +
@@ -128,8 +128,8 @@ ggplot(subject_means, aes(x = angle, y = rt, group = id, colour = id)) +
 
 ## Zobrazenie zmien u jednotlivcov
 
-Poïme vymyslie» nieèo lep¹ie. Pre ka¾dého úèastníka máme reakèné èasy $t_0$ a $t_{50}$. Poïme ich vykresli» proti sebe. 
-Na to si potrebujeme upravi» dáta z úzkeho do ¹irokého formátu: potrebujeme, aby reakènı èas pre 0 stupòov a 50 stupòov boli v osobitnıch ståpcoch. Pou¾ijeme funkciu `dplyr::spread`, a dáme ståpcom zmysluplné mená.
+PoÄme vymyslieÅ¥ nieÄo lepÅ¡ie. Pre kaÅ¾dÃ©ho ÃºÄastnÃ­ka mÃ¡me reakÄnÃ© Äasy $t_0$ a $t_{50}$. PoÄme ich vykresliÅ¥ proti sebe. 
+Na to si potrebujeme upraviÅ¥ dÃ¡ta z Ãºzkeho do Å¡irokÃ©ho formÃ¡tu: potrebujeme, aby reakÄnÃ½ Äas pre 0 stupÅˆov a 50 stupÅˆov boli v osobitnÃ½ch stÄºpcoch. PouÅ¾ijeme funkciu `dplyr::spread`, a dÃ¡me stÄºpcom zmysluplnÃ© menÃ¡.
 
 ```{r}
 subject_means_wide <- spread(subject_means, key = angle, value = rt, sep = "_") %>%
@@ -137,19 +137,19 @@ subject_means_wide <- spread(subject_means, key = angle, value = rt, sep = "_") 
 subject_means_wide 
 ```
 
-A teraz poïme kresli».
+A teraz poÄme kresliÅ¥.
 
 ```{r}
 ggplot(subject_means_wide, aes(x = mean_rt_0deg, y = mean_rt_50deg)) +
     geom_point()
 ```
 
-To je u¾ skoro ono, dáta sú správne, ale celı graf zatiaµ nehovorí, èo sa má poveda»:
+To je uÅ¾ skoro ono, dÃ¡ta sÃº sprÃ¡vne, ale celÃ½ graf zatiaÄ¾ nehovorÃ­, Äo sa mÃ¡ povedaÅ¥:
 
-1. Aspekt musí by» 1:1
-2. Osi musia ma» rovnakú ¹kálu (prvı príkaz ¹kálu vypoèíta pomocou min a max, aby sme ju mohli pou¾i» pre obe osi)
-3. Treba nakresli» èiaru y = x (geom_abline)
-4. Treba upravi» popisy osí.
+1. Aspekt musÃ­ byÅ¥ 1:1
+2. Osi musia maÅ¥ rovnakÃº Å¡kÃ¡lu (prvÃ½ prÃ­kaz Å¡kÃ¡lu vypoÄÃ­ta pomocou min a max, aby sme ju mohli pouÅ¾iÅ¥ pre obe osi)
+3. Treba nakresliÅ¥ Äiaru y = x (geom_abline)
+4. Treba upraviÅ¥ popisy osÃ­.
 
 ```{r}
 lims <- c(min(d$rt, na.rm = T), max(d$rt, na.rm = T))
@@ -162,13 +162,13 @@ wsplot <-
     theme(aspect.ratio = 1)
 wsplot
 ```
-Tento graf u¾ ukazuje to, èo chceme vidie».
-Vidíme, ¾e efekt predå¾enia èasu je *robustnı*, v¹etky body le¾ia nad priamkou, tak¾e ani náhodou nepotrebujeme ¾iadny ¹tatistickı test, aby sme presvedèivo ukázali efekt vzájomného pootoèenia útvarov na reakènı èas. 
-V¹imnite si, ¾e nepotrebujeme ¾iadne dodatoèné èiary, spájajúce body, ani farby èi veµkosti bodov. Nepotrebujeme ani fitova» lineárny èi inı model - graf ukazuje v¹etko, èo potrebujeme vidie». 
+Tento graf uÅ¾ ukazuje to, Äo chceme vidieÅ¥.
+VidÃ­me, Å¾e efekt predÄºÅ¾enia Äasu je *robustnÃ½*, vÅ¡etky body leÅ¾ia nad priamkou, takÅ¾e ani nÃ¡hodou nepotrebujeme Å¾iadny Å¡tatistickÃ½ test, aby sme presvedÄivo ukÃ¡zali efekt vzÃ¡jomnÃ©ho pootoÄenia Ãºtvarov na reakÄnÃ½ Äas. 
+VÅ¡imnite si, Å¾e nepotrebujeme Å¾iadne dodatoÄnÃ© Äiary, spÃ¡jajÃºce body, ani farby Äi veÄ¾kosti bodov. Nepotrebujeme ani fitovaÅ¥ lineÃ¡rny Äi inÃ½ model - graf ukazuje vÅ¡etko, Äo potrebujeme vidieÅ¥. 
 
-## Závereèné vylep¹enia
+## ZÃ¡vereÄnÃ© vylepÅ¡enia
 
-Poïme ho vylep¹i»: Keï¾e máme niekoµko meraní pre ka¾dého úèastníka, vieme získa» variabilitu jeho reakènıch èasov. Tak¾e k súhrnu pridáme ¹tandardné chyby:
+PoÄme ho vylepÅ¡iÅ¥: KeÄÅ¾e mÃ¡me niekoÄ¾ko meranÃ­ pre kaÅ¾dÃ©ho ÃºÄastnÃ­ka, vieme zÃ­skaÅ¥ variabilitu jeho reakÄnÃ½ch Äasov. TakÅ¾e k sÃºhrnu pridÃ¡me Å¡tandardnÃ© chyby:
 
 ```{r}
 subject_summaries <- group_by(d, id, angle) %>%
@@ -176,10 +176,10 @@ subject_summaries <- group_by(d, id, angle) %>%
               se = sd(rt, na.rm = T) / sqrt(n()))
 subject_summaries
 ```
-Teraz potrebujeme urobi» rovnakı krok ako predtım, da» dáta do ¹irokého formátu, ale potrebujeme to urobi» pre dva ståpce súèasne. To `dplyr::spread` nevie. Musíme preto pou¾i» inı postup:
-1. Spojíme ståpce `mean` a `se` do jedného pomocou `dplyr::gather`, vytvoríme kµúè `val_type` a hodnoty oznaèíme `val`.
-2. Z `angle` a `val_type` vyrobíme spoloènı k2úè `rt`.
-3. A¾ teraz pou¾ijeme `dplyr::spread` a pomocou kµúèa `rt` rozdelíme ståpec `val` na ¹tyri ståpce `rt_mean_0`, `rt_mean_50`, `rt_se_0`, rt_se_50`.
+Teraz potrebujeme urobiÅ¥ rovnakÃ½ krok ako predtÃ½m, daÅ¥ dÃ¡ta do Å¡irokÃ©ho formÃ¡tu, ale potrebujeme to urobiÅ¥ pre dva stÄºpce sÃºÄasne. To `dplyr::spread` nevie. MusÃ­me preto pouÅ¾iÅ¥ inÃ½ postup:
+1. SpojÃ­me stÄºpce `mean` a `se` do jednÃ©ho pomocou `dplyr::gather`, vytvorÃ­me kÄ¾ÃºÄ `val_type` a hodnoty oznaÄÃ­me `val`.
+2. Z `angle` a `val_type` vyrobÃ­me spoloÄnÃ½ k2ÃºÄ `rt`.
+3. AÅ¾ teraz pouÅ¾ijeme `dplyr::spread` a pomocou kÄ¾ÃºÄa `rt` rozdelÃ­me stÄºpec `val` na Å¡tyri stÄºpce `rt_mean_0`, `rt_mean_50`, `rt_se_0`, rt_se_50`.
 
 ```{r}
 means_and_errors <- gather(subject_summaries, key = "val_type", value = "val", mean, se) %>%
@@ -187,9 +187,22 @@ means_and_errors <- gather(subject_summaries, key = "val_type", value = "val", m
   spread(key = rt, value = val, sep = "_")
 means_and_errors
 ```
-__Úloha__: Prejdite si postup po jednotlivıch krokoch a uistite sa, ¾e rozumiete, èo sa deje. Odma¾te najprv posledné dve èasti príkazu (unite a spread) a potom iba poslednú èas» (spread).
+__Ãšloha__: Prejdite si postup po jednotlivÃ½ch krokoch a uistite sa, Å¾e rozumiete, Äo sa deje. OdmaÅ¾te najprv poslednÃ© dve Äasti prÃ­kazu (unite a spread) a potom iba poslednÃº ÄasÅ¥ (spread).
 
-No a teraz nám u¾ ostáva iba celú tú slávu nakresli»:
+**Prekvapenie** Toto bol trocha podvod, bolo to iba cviÄenie na `gather/spread`. V skutoÄnosti mÃ¡te inÅ¡talovanÃº novÅ¡iu verziu `tidyr`, ktorÃ¡ mÃ¡ okrem `gather/spread` dve novÃ© metÃ³dy `pivot_longer / pivot_wider`, ktorÃ© dokÃ¡Å¾u v jednom kroku urobiÅ¥, Äo potrebujeme, a majÃº pomerne jasnÃº syntax:
+
+```{r}
+means_and_errors_new <- 
+  transmute(subject_summaries, # Toto je len kozmetika, aby sem mali rovnakÃ© nÃ¡zvy u stÄºpcov
+            id = id,
+            angle = angle,
+            rt_mean = mean,
+            rt_se = se) %>%
+  pivot_wider(names_from = angle, values_from = c("rt_mean", "rt_se")) # <-- toto je podstatnÃ©
+means_and_errors_new
+```
+
+No a teraz nÃ¡m uÅ¾ ostÃ¡va iba celÃº tÃº slÃ¡vu nakresliÅ¥:
 
 ```{r}
 ggplot(means_and_errors, aes(x=rt_mean_0, y=rt_mean_50)) +
@@ -202,16 +215,16 @@ ggplot(means_and_errors, aes(x=rt_mean_0, y=rt_mean_50)) +
     theme(aspect.ratio=1)
 ```
 
-__Úloha__. Nepotrebovali sme niè modelova», ale ako by ste z tejto situácie dostali kompaktnı záver o predå¾ení reakènej doby? (Skúste prelo¾i» bodmi priamku.)
+__PrÃ­klad__. Nepotrebovali sme niÄ modelovaÅ¥, ale ako by ste z tejto situÃ¡cie dostali kompaktnÃ½ zÃ¡ver o predÄºÅ¾enÃ­ reakÄnej doby? (SkÃºste preloÅ¾iÅ¥ bodmi priamku.)
 
 ```{r}
-fit_rt <- lm(mean_rt_50deg-mean_rt_0deg ~ mean_rt_0deg,, data = subject_means_wide)
+fit_rt <- lm(rt_mean_50-rt_mean_0 ~ rt_mean_0, data = means_and_errors)
 summary(fit_rt)
 plot(fit_rt)
 ```
 
 
 
-## Literatúra:
+## LiteratÃºra:
 
 Ganis, G., & Kievit, R. (2015). A New Set of Three-Dimensional Shapes for Investigating Mental Rotation Processes: Validation Data and Stimulus Set. Journal of Open Psychology Data, 3(1). https://doi.org/10.5334/jopd.ai
