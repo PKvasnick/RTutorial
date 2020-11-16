@@ -218,7 +218,7 @@ ggplot(means_and_errors, aes(x=rt_mean_0, y=rt_mean_50)) +
 __Príklad__. Nepotrebovali sme nič modelovať, ale ako by ste z tejto situácie dostali kompaktný záver o predĺžení reakčnej doby? (Skúste preložiť bodmi priamku.)
 
 ```{r}
-fit_rt <- lm(rt_mean_50-rt_mean_0 ~ rt_mean_0, data = means_and_errors)
+fit_rt <- lm(rt_mean_50-rt_mean_0 ~ rt_mean_0 + 0, data = means_and_errors)
 summary(fit_rt)
 plot(fit_rt)
 ```

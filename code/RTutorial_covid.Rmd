@@ -37,3 +37,17 @@ ggplot(mapping = aes(x = date, y = daily_confirmed)) +
     title = "Denný počet potvrdených prípadov COVID-19 od 1. septembra"
   )
 ```
+```{r}
+covid_SVK %>%
+  mutate(
+    weekly.confirmed = confirmed - lag(confirmed, n=7),
+    R0 = weekly.confirmed / lag(weekly.confirmed, n=5)
+    ) %>%
+  ggplot(mapping=aes(x=date, y=R0, color = (R0 > 1.0))) + 
+  geom_point() + 
+  stat_smooth(method ="loess") + 
+  labs(
+    title = "Reprodukčný faktor Přemka Podlahy"
+  )
+  
+```

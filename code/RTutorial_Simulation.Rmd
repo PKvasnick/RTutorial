@@ -40,7 +40,7 @@ library(tidyverse)
 
 ```{r}
 df <- data.frame(
-  x = seq(from = -3, to = 5, length.out = 100),
+  x = seq(from = -3, to = 5, length.out = 100), # nezmysel
   values = rnorm(1000, mean = 1, sd = 2)
 )
 ggplot(df, aes(x = values)) + 
@@ -70,7 +70,7 @@ ggplot(dfe, aes(x = values)) +
                    breaks = seq(0.0, 5.0, by = 0.5), 
                    colour = "black", 
                    fill = "white") +
-  stat_function(fun = dexp, args = list(rate = 1.0/mean(df$values)))
+  stat_function(fun = dexp, args = list(rate = 1.0/mean(dfe$values)))
 ```
 
 ## t-test a rozdelenie pravdepodobnosti pre hladinu významnosti
@@ -147,6 +147,10 @@ sample(c(1,2,3),10,replace = T)
 ```{r}
 replicate(10, mean(sample(c(1,2,3),10, replace = T)))
 ```
+
+* Nakreslite histogram
+
+* Spočítajte, aká by mala byť štandardná odchýlka priemeru z deisatich náhodných číslic (1,2,3).
 
 
 ```{r}
