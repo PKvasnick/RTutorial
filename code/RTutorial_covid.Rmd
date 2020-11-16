@@ -27,5 +27,13 @@ ggplot(mapping = aes(x = date, y = daily_tests)) +
     title = "Denný počet testov na COVID-19 od 1. septembra"
   )
 ```
-
-
+```{r}
+covid_SVK %>% 
+  mutate(daily_confirmed = c(0, diff(confirmed))) %>% # diff dá rozdiel medzi po sebe idúcimi dňami, na začiatok dopĺňame nulu.
+ggplot(mapping = aes(x = date, y = daily_confirmed)) +
+  geom_point() +
+  stat_smooth(method = 'loess') +
+  labs(
+    title = "Denný počet potvrdených prípadov COVID-19 od 1. septembra"
+  )
+```
