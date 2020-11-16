@@ -39,7 +39,10 @@ library(tidyverse)
 ```
 
 ```{r}
-df <- data.frame(values = vec)
+df <- data.frame(
+  x = seq(from = -3, to = 5, length.out = 100),
+  values = rnorm(1000, mean = 1, sd = 2)
+)
 ggplot(df, aes(x = values)) + 
   geom_histogram(aes(y =..density..),
                    breaks = seq(-3, 5, by = 1), 
@@ -70,9 +73,6 @@ ggplot(dfe, aes(x = values)) +
   stat_function(fun = dexp, args = list(rate = 1.0/mean(df$values)))
 ```
 
-
-! Doplniť jednoduchý príklad na bootstrap pre jeden parameter
-
 ## t-test a rozdelenie pravdepodobnosti pre hladinu významnosti
 
 ## Jednoduché porovnanie: t-test
@@ -87,21 +87,29 @@ simulation <- data.frame(group = rbinom(n,1,0.5)) %>%
 simulation
 ggplot(data = simulation, aes(x = as.factor(group), y = value, color = as.factor(group))) +
   geom_boxplot() +
-  geom_jitter(width = 0.5)
+  geom_jitter(width = 0.3)
 ```
 
 ```{r}
 observed_diff <- diff(by(simulation$value, simulation$group, mean))
 observed_diff
 ```
+To vyzerá trocha magicky, poďme si to rozobrať po krokoch.
+
+Predovšetkým, co je `by`? Je to funkcia z `base R`, ktorá robí to, čo v dplyr `group_by + summarize`:
+```{r}
+observed_diff <- by(simulation$value, simulation$group, mean)
+observed_diff
+```
+
 `diff` robí diferencie prvkov vektora; tu vidíte šikovné použitie pre získanie rozdielu priemerov jediným príkazom. To je veľmi užitočné, pretože nám to nesmierne zrýchli výpočty: ak chceme, aby R počítalo rýchlo, musíme sa vyhýbať otvoreným cyklom.
 
 ```{r}
-diff(c(1,2,3,4,5))
-```
-```{r}
+observed_diff <- diff(observed_diff)
 observed_diff
 ```
+
+_*Poznámka*_ Tu vidíte jednu zo záludností _*base R*_: `observed_diff` sčistajasna zmenilo typ z `list` na `numeric`, teda musíte stále dávať pozor na typ výsledku, ktorý dostanete. 
 
 Je tento rozdiel štatisticky významný? Predstavme si, že nepoznáme t-test, alebo sa nám nezdá vhodné ho použiť, a nepoznáme ani neparametrické testy (napríklad Wilcoxonov-Mann-Whitneyho U-test).
 
@@ -124,10 +132,11 @@ alebo Mann-Whitneyho U-test:
 ```{r}
 wilcox.test(value ~ group, data = simulation)
 ```
-My urobíme niečo iné: 
+
+My dnes chceme robiť niečo iné: 
 Skúsim z dát, ktoré máme, vyrobiť veľké množstvo podobných dát, a z nich spočítať rozdelenie testovacej štatistikcy. Konkrétne, pre testovanie rozdielu skupín vyjdeme z predpokladu nulovej hypotézy, že totiž dáta v skupinách sú rovnocenné. Takže repliky dát vytvoríme tak, že náhodne zamiešame hodnoty v stĺpci simulation$group.
 
-Základná funkcia, ktorú potrebujeme, je `sample`, ktorá nám zo vstupného vektora náhodne vyberie požadovaný počet vzoriek, s opakovaním alebo bez. 
+Základná funkcia, ktorú potrebujeme, je `sample`, ktorá nám zo vstupného vektora náhodne vyberie požadovaný počet vzoriek, s opakovaním alebo bez podľa hodnoty parametra `replace`:
 
 ```{r}
 sample(c(1,2,3),10,replace = T)
@@ -141,7 +150,10 @@ replicate(10, mean(sample(c(1,2,3),10, replace = T)))
 
 
 ```{r}
-dist <- replicate(2000, diff(by(simulation$value, sample(simulation$group, length(simulation$group), replace = FALSE), mean)))
+dist <- replicate(
+  2000, 
+  diff(by(simulation$value, sample(simulation$group, length(simulation$group), replace = FALSE), mean))
+  )
 df_dist <- data.frame(d = dist)
 ggplot(df_dist, aes(x = d)) +
   geom_histogram(aes(y = ..density..),
@@ -225,6 +237,15 @@ Máme dva problémy, s jedným sme sa stretli pred chvíľou a druhý je nový.
 
 1. Takéto porovnanie samozrejme vôbec dobre nefunguje. Má zmysel porovnávať dĺžku rúk jedného človeka, ale nie u skupiny ľudí. 
 2. Tieto dáta nemajú normálne rozdelenie. 
+
+```{r}
+ggplot(data = Data, aes(x = Length)) +
+  geom_histogram(aes(y = ..density.., color = Hand), 
+                 breaks = seq(from = 13, to = 22, by = 1),
+                 fill = "white", 
+                 alpha = 0.5) + 
+  facet_grid(Hand ~ .)
+```
 
 ```{r}
 group_fit <- lm(Length ~ Hand, data = Data)
@@ -341,6 +362,7 @@ Tak, a teraz sa už nemusíme starať, aké majú naše dáta rozdelenie. Naše 
 
 ## Interval spo2ahlivosti pre rozdiel stredných hodnôt
 
+Máme p-čko, ale to je zistenie o našom experimente a nie o stave sveta. Chceli by sme prezentovať skôr náš odhad, o koľko je jedna ruka dlhšia ako druhá, než že je málo pravdepodobné, že by naše dáta vznikli, keby ruky boli rovnako dlhé. Chceme teda číslo a jeho neurčitosť.
 Pre určenie intervalu spoľahlivosti pre rozdiel dĺžok ľavej a pravej ruky potrebujeme nejako varírovať dáta okolo nameraného rozdielu. Urobíme toto: 
 Vezmeme reziduály z lineárneho modelu, náhodne ich premiešame a pridáme k predpovediam modelu. Takto môžeme generovať repliky dát a zakaždým spočítame veľkosť rozdielu medzi ľavou a pravou rukou. 
 
@@ -383,15 +405,25 @@ summary(pair_pfit)
 
 ## Balíček `boot`: Intervaly spoľahlivosti
 
+Máme dáta o výsledkoch LSAT - _*Law school admission test*_ a GPA - _*Grade point averate*_ pre skupinu študentov. Zaujíma nás, ako prospech na strednej škole, GPA,  koreluje s úspešnosťou vstupného testu na právnickú fakultu - LSAT.
+
 ```{r}
 library(boot)
 data <- data.frame(LSAT = c(576, 635,558, 578, 666, 580, 555, 661, 651, 605, 653, 575, 545, 572, 594),
              GPA  = c(3.39,3.3,2.81,3.03,3.44,3.07,3.0,3.43,3.36,3.13,3.12,2.74,2.76,2.88,2.96))
+ggplot(data = data, mapping = aes(x = LSAT, y = GPA)) + 
+  geom_point() + 
+  stat_smooth(method = 'lm')
+```
+
+Našim výstupom je korelačný koeficient. A pretože korelačné koeficienty sú záludné, chceme spočítať interval spoľahlivosti preň čo najpresnejšie. 
+
+```{r}
 rho_orig <- corr(data)
 rho_orig
 rho_boot <- boot(data, corr, R = 10000)
 rho_ci <- boot.ci(rho_boot, type = "perc")
 rho_ci
-
 ```
 
+Dám na toto nejakú chytrú domácu úlohu. 
