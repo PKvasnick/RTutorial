@@ -253,6 +253,16 @@ ggplot(data = Data, aes(x = Length)) +
                  alpha = 0.5) + 
   facet_grid(Hand ~ .)
 ```
+```{r}
+Data %>% pivot_wider(names_from = Hand, values_from = Length) %>%
+  mutate(Diff = Right - Left)  -> DataDiff
+DataDiff %>%
+  ggplot(mapping = aes(x = Diff)) +
+  geom_histogram(mapping = aes(y = ..density..),
+                 fill = "white", 
+                 colour = "black") + 
+  stat_function(fun = dnorm, args = list(mean = mean(DataDiff$Diff), sd = sd(DataDiff$Diff)))
+```
 
 ```{r}
 group_fit <- lm(Length ~ Hand, data = Data)
@@ -262,7 +272,7 @@ plot(group_fit)
 
 ```{r}
 ggplot(Data, aes(sample = Length, group = Hand, colour = Hand)) + 
-  geom_qq() 
+  geom_qq()
 ```
 
 Aj tak by sme radi porovnali stredné hodnoty. Čo môžeme urobiť?
@@ -326,8 +336,10 @@ Môžeme použiť aj párový test:
 ```{r}
 paired_test <- t.test(Data_w$Hand_Right, Data_w$Hand_Left, paired = T)
 orig_t <- paired_test$statistic
+pv <- paired_test$p.value
 paired_test
 orig_t
+pv
 ```
 
 Teda rozdiel medzi ľavou a pravou rukou je štatisticky významný. Len si nie sme istí, či majú rozdiely správne rozdelenie, tak sa radšej ubezpečíme, že to je tak. 
@@ -426,11 +438,9 @@ ggplot(data = data, mapping = aes(x = LSAT, y = GPA)) +
 Našim výstupom je korelačný koeficient. A pretože korelačné koeficienty sú záludné, chceme spočítať interval spoľahlivosti preň čo najpresnejšie. 
 
 ```{r}
-rho_orig <- corr(data)
+rho_orig <- cor(data$GPA, data$LSAT)
 rho_orig
 rho_boot <- boot(data, corr, R = 10000)
 rho_ci <- boot.ci(rho_boot, type = "perc")
 rho_ci
 ```
-
-Dám na toto nejakú chytrú domácu úlohu. 
