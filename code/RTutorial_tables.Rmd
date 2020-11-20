@@ -1,0 +1,230 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Tabuľky v RStudiu
+
+K tomuto prehľadu ma čiastočne inšpirovali Karolínine ťažkosti so zobrazovaním tabuliek v RStudiu. 
+
+### rmarkdown::paget_table
+
+Keď si dáte v RStudiu zobraziť `data.frame` alebo `tibble`, uvid9te známy výpis:
+
+```{r}
+mtcars
+```
+"Pod kapotou" použije RStudio nasledujúcu metódu:
+
+```{r, layout="l-body-outset"}
+library(rmarkdown)
+paged_table(mtcars, options = list(rows.print = 15))
+```
+Tuto sú parametre, ktoré môžete použiť vo funkcii `rmarkdown::paged_table`. 
+
+| Option           | Description                                    |
+|------------------|------------------------------------------------|
+| `rows.print`     | Maximum rows to print per page.                |
+| `max.print`      | Maximum rows in the table (defaults to 1000).  |
+| `cols.print`     | Maximum columns in the table (defaults to 10). |
+| `rownames.print` | Print row names as part of the table.          |
+
+Zároveň to je príklad Markdownovej tabuľky.
+
+
+## 'gt' a 'gtsummary'
+
+Tieto dva balíky poskytujú nástroje na vytváranie tabuliek priamo z výstupov štatistických funkcií. 
+
+Nasledujúci príklad fituje model prežitia, fituje zovšeobecnený lineárny model metódou `glm` (General Linear Model) - budeme hovoriť neskôr, teraz chceme ukázať, že vieme vytvoriť aj pomerne zložitú tabuľku a ako to urobiť.
+
+```{r}
+library(gtsummary)
+library(survival)
+
+# build glm table
+mod1 <- glm(response ~ trt + age + grade, trial, family = binomial)
+t1 <- tbl_regression(mod1, exponentiate = TRUE)
+
+# build survival model table
+t2 <-
+  coxph(Surv(ttdeath, death) ~ trt + grade + age, trial) %>%
+  tbl_regression(exponentiate = TRUE)
+
+# merge tables 
+tbl_merge(
+  tbls = list(t1, t2),
+  tab_spanner = c("**Tumor Response**", "**Time to Death**")
+)
+```
+
+Všimneme si podporu "pipe" operátora `%>%` a možnosť spájať viac tabuliek do jednej. 
+
+Balík `gtsummary` využíva funkcie balíka `gt`. `gt` umožňuje precízne definovať formáty jednotlivých stĺpcov. Používame tu balík `glue`, ktorý má podobnú funkcionalitu ako `string.format` v Pythone - dosádza za parametre v lomených zátvorkách v znakovom reťazci hodnoty z lokálneho prostredia. 
+
+```{r}
+library(gt)
+library(tidyverse)
+library(glue)
+
+# Define the start and end dates for the data range
+start_date <- "2010-06-07"
+end_date <- "2010-06-14"
+
+# Create a gt table based on preprocessed
+# `sp500` table data
+sp500 %>%
+  dplyr::filter(date >= start_date & date <= end_date) %>%
+  dplyr::select(-adj_close) %>%
+  gt() %>%
+  tab_header(
+    title = "S&P 500",
+    subtitle = glue::glue("{start_date} to {end_date}")
+  ) %>%
+  fmt_date(
+    columns = vars(date),
+    date_style = 3
+  ) %>%
+  fmt_currency(
+    columns = vars(open, high, low, close),
+    currency = "USD"
+  ) %>%
+  fmt_number(
+    columns = vars(volume),
+    suffixing = TRUE
+  )
+```
+```{r}
+pozdrav <- "Ahojte"
+name <- "dievčatá"
+glue::glue("{pozdrav}, {name}!")
+```
+
+## Formátovanie výstupu zo štatistických funkcií
+
+Veľa sme hovorili o "čistých" či "tidy" dátach, teda o tom, ako správne usporiadať dáta pre použitie v štatistických funkciách R. Na druhej strane nemôžeme to isté očakávať od výstupov funkcií - tie síce obsahujú veľa užitočných údajov, ale nie vo formáte, ktorý by sme vedeli ovplyvniť:
+
+```{r}
+lmfit <- lm(mpg ~ wt, mtcars)
+lmfit
+```
+
+Objekt `lmfit` síce obsahuje kompletné informácie o výsledku fitu lineárneho modelu, ale zobrazuje len minimum z nich. Viac údajov dostaneme zo `summary`
+
+```{r}
+summary(lmfit)
+```
+
+Lenže toto je blok textu, z ktorého sa jednotlivé čísla vyberajú zle. Pravdaže,  my sa k nnim môžeme ľahko dostať, ak sa pozrieme, aké údaje obsahuje objekt lmfit - stačí použiť "Environment" vpravo hore. Napríklad
+
+```{r}
+lmfit$residuals
+```
+
+To je ale `list`, čiže vektor s pomenovanými položkami, a treba porozmýšľať, ako ho použiť. 
+
+Tu prichádza na scénu balík `broom`. Je to taký švajčiarsky nôž, ktorý s veľkou pravdepodobnosťou bude vedieť, ako naložiť s výstupom vašej procedúry. Napríklad vie, ako si poradiť s výstupom `lm`:
+
+```{r}
+library(broom)
+tidy(lmfit)
+```
+
+Všetky koeficienty máme v jedinej tabuľke (`tibble`), a dá sa s tým pekne pracovať.
+To ale nie je všetko. Potrebovali by sme aj predpovede modelu a reziduály. Na to slúži ďalšia metóda:
+
+```{r}
+augment(lmfit)
+```
+Takže si môžeme nakresliť predpovede modelu a histogram reziduálov:
+
+```{r}
+ggplot(data = augment(lmfit)) +
+  geom_point(mapping = aes(x = wt, y = mpg)) + 
+  geom_line(mapping = aes(x = wt, y = .fitted))
+```
+
+```{r}
+ggplot(data = augment(lmfit)) + 
+  geom_histogram(aes(x = .std.resid, y = ..density..),
+                 fill = 'white',
+                 colour = 'black'
+  ) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1))
+```
+
+Nakoniec tretia procedúra nám zhrnie celkový výsledok fitu:
+
+```{r}
+glance(lmfit)
+```
+
+To isté funguje aj pre iné funkcie, napríklad t-test:
+
+```{r}
+set.seed(12345)
+n = 25
+simulation <- data.frame(group = rbinom(n,1,0.5)) %>%
+  mutate(value = 1 + 1.5*group + rnorm(n,0,3))
+simulation
+ggplot(data = simulation, aes(x = as.factor(group), y = value, color = as.factor(group))) +
+  geom_boxplot() +
+  geom_jitter(width = 0.3)
+```
+```{r}
+ttest <- t.test(simulation$value ~ simulation$group)
+ttest
+```
+
+```{r}
+tidy(ttest)
+```
+
+```{r}
+#augment(ttest)
+```
+```{r}
+glance(ttest)
+```
+
+
+### Domáca úloha
+Nájdite v predchádzajúcich prednáškach výsledky niektorej funkcie (napríklad `lm`) a vyskúšajte na nej metódy balíka `broom`.
+
+
+## Využitie
+
+```{r}
+library(datasets)
+anscombe
+```
+```{r}
+Sim <- data.frame(
+  x = rep(1:10, 2),
+  group = rbinom(20, 1, 0.5)
+)
+Sim <- Sim %>% 
+  mutate( y = 0.5 * x * group + rnorm(20, 0, 1),
+          group = as.factor(group)
+  )
+Sim
+ggplot(data = Sim, mapping = aes(x = x, y = y, colour = group)) + 
+  geom_point() + 
+  stat_smooth(method = "lm")
+```
+Takže tu by sme chceli dve regresie podľa skupín. Ako to urobíme?
+Dá sa to samozrejme krvavo, lebo máme iba dve skupiny. Ale dá sa to aj takto:
+
+```{r}
+Sim %>%
+  group_by(group) %>%
+  do(fitresult = tidy(lm(y ~ x, data = .))) %>% 
+  unnest(fitresult)
+```
+Podobne sa dá naložiť aj s výsledkom `augment`.
+
+### Domáca úloha
+Ako vidíte, má zmysel preusporiadať si dáta do správneho tvaru, lebo vieme urobiť veľa regresií a prehľadne si usporiadať ich výsledky.
+- Usporiadajte dataset `anscombe` do čistého tvaru (Nápoveď: použite metódu `tidyr::pivot_longer`)
+- Urobte tabuľku s výsledkami lineárnej regresie jednotlivých datasetov.
+

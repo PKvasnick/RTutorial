@@ -1,6 +1,9 @@
 ---
 title: "RTutorial: Simulation"
-output: html_notebook
+output: 
+  html_notebook: 
+    highlight: tango
+    theme: paper
 ---
 
 ## Úvod
