@@ -444,3 +444,49 @@ rho_boot <- boot(data, corr, R = 10000)
 rho_ci <- boot.ci(rho_boot, type = "perc")
 rho_ci
 ```
+## Ešte jedna aplikácia: Počítanie chýb funkcií náhodných premenných
+
+Máme funkciu $f(x_1, x_2, ..)$, kde $x_1, x_2,..$ s[ vzorky náhodných premenných $X_1 \sim N{\mu_1, \sigma_1}, X_2 \sim N[\mu_2, \sigma_2]], ...$. Chceme varianciu a prípadne vychýlenie hodnoty funkcie $f(x_1, x_2, ...)$.
+
+Motivácia: Výpočet funkcií hodnôt získaných meraním. Typicky poznáme chyby meraných parametrov, a potrebujeme určiť chybu výrazu, ktorý z nich počítame. Na to spravidla používame linearizáciu, t.j. napíšeme $X_1 = \mu_1 + z_1 \sigma_1,\quad X_2 = \mu_2 + z_2 \sigma_2, ...$, kde $z_i \sim N[0,1]$, rozvinieme do Taylorovho radu podĺa $z_i$ a za predpokladu malých chýb $\sigma_i \ll \mu_i$ zanedbáme všetky členy s vyššími mocninami $\sigma_i$.
+$$
+f(\mu_1 + z_1 \sigma_1, \mu_2 + z_2 \sigma_2, ...) \approx f(\mu_1, \mu_2, ..) + \frac{\partial{f}}{\partial{\mu_1}}z_1 \sigma_1 + \frac{\partial{f}}{\partial{\mu_2}}z_2 \sigma_2 + ...
+$$
+a to je lineárna kombinácia gaussovských náhodných premenných, je teda sama gaussovskou náhodnou premennou a jej variancia je 
+
+$$
+\sigma_f^2 = \left(\frac{\partial{f}}{\partial{\mu_1}}\sigma_1\right)^2 + \left(\frac{\partial{f}}{\partial{\mu_2}}\sigma_2\right)^2 + ...
+$$
+
+tak ako ste sa učili kedysi dávno na praktikách. 
+
+Niekedy môže byť otravné robiť zložité parciálne derivácie, niekedy môžeme mať silno nelineárny výraz a chceli by sme poznať jeho štatistické vlastnosti - napríklad či prítomnosť chýb nespôsobuje vychýlenie odhadu.
+
+### Príklad
+
+Uvažujem podiel diferencií 
+
+$$
+d = \frac{T_2 - T_1}{x_2 - x_1} 
+$$
+
+a predstavte si, že sme hodnoty získali meraním (napríklad $T_i$ sú
+kinetické energie $\alpha$-častíc pri vzdialenosti $x_i$ zdroja od detektora a počítame energetické straty 
+
+$$
+f(T) = - \frac{dT}{dx}
+$$
+$T_i$ určujeme z píku spektra, hodnoty sú okolo 5 MeV s presnosťou 0,1%, $x_i$ meriame posuvným meradlom, hodnoty sú desiatky milimetrov s presnosťou 0.2 mm. Vezmime hodnoty 
+
+$$
+T_1 = 5300\enspace MeV \\
+T_2 = 5400\enspace MeV \\
+x_1 = 34\enspace mm \\
+x_2 = 39\enspace mm
+$$
+
+a spočítajme chybu. 
+Návod:
+1. Napšíte funkciu, ktorá spočíta podiel diferencií
+2. Použite funkciu `replicate`, aby ste vypočítali veľa hodnôt funkcie pre náhodné hodnoty parametrov
+3. Nakreslite histogram a spočítajte strednú hodnotu (to bude váš odhad vychýlenia) a štandardnú odchýlku - tá bude vašim odhadom chyby.

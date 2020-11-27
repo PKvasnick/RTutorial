@@ -7,7 +7,7 @@ output: html_notebook
 
 K tomuto prehľadu ma čiastočne inšpirovali Karolínine ťažkosti so zobrazovaním tabuliek v RStudiu. 
 
-### rmarkdown::paget_table
+### rmarkdown::paged_table
 
 Keď si dáte v RStudiu zobraziť `data.frame` alebo `tibble`, uvid9te známy výpis:
 
