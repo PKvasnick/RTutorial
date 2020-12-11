@@ -1,0 +1,190 @@
+---
+title: "Anscombe data analysis"
+output: html_notebook
+---
+
+## O čom je notebook o Anscombových dátach?
+
+Počnúc od samotného tvaru dát cez súčasné spočítanie 4 regresií až po analýzu regresnej diagnostiky je toto poučný príklad, ktorý by bolo škoda obísť. 
+
+Niektoré veci tu urobím za vás, ale prosím, naštudujte si kód a skúste ho použiť na iných dátach. 
+
+Nepotrebujeme iné knižnice než `tidyverse` a o trocha nižšie `broom`.
+
+```{r}
+library(tidyverse)
+```
+
+## Dataset `anscombe`
+
+Je súčasťou bežnej distribúcie R. Nemusíte nič inštalovať.
+
+```{r}
+anscombe
+```
+
+Prvá vec, ktorú potrebujeme u týchto dát vyriešiť, je ich "nečisté" usporiadanie. Chceme všetkými 4 setmi preložiť priamku. To síce môžeme urobiť manuálne - X1, y1, potom X2, y2 atd, ale tak by sme sa nenaučili, čo robiť, keby tých x-ov a y-ov bolo 20.
+
+Na riešenie použijeme funkciu `tidyr::pivot_longer`. Jej použitie je dosť ťažké, pretože to je mocný nástroj, ktorý dokáže veľa vecí, a musíte chvíľu študovať, aby ste zistili, ako dokáže práve tú vašu. To som urobil aj ja.
+
+```{r}
+anscombe %>% 
+  pivot_longer(everything(),     # Operáciu chceme vykonať nad všetkými stĺpcami
+   names_pattern = "(.)(.)",     # Rozbijeme názov stĺpca na dve časti - x1 na x a 1.
+
+   names_to = c(".value", "set") # prvá časť sa použije na priradenie do príslušného stĺpca 
+                                 # s hodnotami - x alebo y, druhá do stĺpca "set"
+ ) -> ans_long
+ans_long
+```
+
+Teraz už nasledujú štandardné operácie:
+
+```{r}
+ans_long %>%
+  group_by(set) %>%
+  summarize(
+    count = n(),
+    mean.x = mean(x),
+    sd.x = sd(x),
+    mean.y = mean(y),
+    sd.y = sd(y), 
+    rho = cov(x,y),
+    .groups = "drop"
+  ) 
+```
+Teda tie sety majú temer totožné štatistiky `x` a `y`, ba dokonca aj korelácie medzi nimi sú rovnaké.
+
+## Regresie
+Poďme urobiť regresie.
+Chceme všetky regresie počítať naraz. Už sme sa naučili, že na to potrebujeme dve veci:
+
+ - Funkciu `dplyr::summarize()`, ktorá operuje nad skupinami, vytvorenými `group_by`. Zmena: to isté sme na minulej prednáške robili pomocou `dplyr::do()`, ale táto funkcia je zastaraná, pretože je syntakticky nedôsledná.
+ 
+ - Funkciu `broom::tidy`, ktorá z výstupu `lm` vytvorí data.frame (presnejšie, tibble), aby sme ich mohli pospájať do spoločnej tabuľky.
+
+
+```{r}
+library(broom)
+ans_long %>% 
+  group_by(set) %>%
+  summarize(tidy(lm(y~x)))
+```
+Ako vidíte, aj parametre regresií sú prakticky rovnaké. 
+
+**Úloha**: Ako by šlo upraviť tabuľku tak, aby sme pri porovnávaní nemuseli zakaždým preskakovať ob riadok?
+
+**Technika** Takéto hromadné spracovanie vieme dosiahnuť dvoma spôsobmi, a teraz si ich zrekaptilujeme a ukážeme ešte tretí:
+
+1. `dplyr::summarize()`
+Ak do summarize namiesto priradenia stĺpcov uvedieme funkciu, funkcia sa pokúsi upratniť funkciu na skupiny a nejako poskladať dohromady vzniknuté vektory či tabuľky.
+
+```{r}
+library(broom)
+ans_long %>% 
+  group_by(set) %>%
+  summarize(tidy(lm(y~x)))
+```
+
+2. `dplyr::do()`
+Toto je odchádzajúca verzia. Táto funkcia sa od všetkých ostatných v dplyr odlišuje tým,že nepreberá implicitne svoj prvý argument z pipy `%>%`, ale odovzdáva ho ako `.`.
+
+```{r}
+library(broom)
+ans_long %>% 
+  group_by(set) %>%
+  do(tidy(lm(y~x, data = .)))
+```
+3. `dplyr::group_modify()`
+Toto je generická verzia pre operáciu typu _*tabuľka -> sumarizačná tabuľka*_, ak je sumarizačná operácia netriviálna. Napriek tomu tento typ funkcií má čudnú syntax a tá sa prenáša do výsledku: funkciu zadávate ako formulu, a na vstupné dáta sa odkazuje ako `.x`.
+```{r}
+library(broom)
+ans_long %>% 
+  group_by(set) %>%
+  group_modify(~tidy(lm(.x$y~.x$x)))
+```
+Kon
+
+
+No a poďme si teraz dáta nakresliť - to je zase štandardná operácia.
+
+```{r}
+ggplot(data = ans_long, mapping=aes(x=x, y=y, color=set)) + 
+  facet_wrap(~set) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  theme_bw()
+```
+
+Vidíme, že s výnimkou prvého súboru sú všetky ostatné dáta patologické. Poďme preštudovať, ako sa to prejavuje na regresnej diagnostike. 
+
+Môžeme urobiť `plot.lm`, ale to nám nedáva možnosť detailného porovnania. 
+Ale zaujíma nás technika:
+
+- zoskupíme obvyklým spôsobom podľa datasetu
+
+- použijeme `dplyr::group_walk()`, čo je varianta používaná pre vedľajší efekt - nevracia dataframe.
+
+```{r}
+ans_long %>% 
+  group_by(set) %>%
+  group_walk(~plot(lm(.x$y ~ .x$x)))
+```
+
+Najprv si vytvoríme augmentované dáta:
+
+```{r}
+ans_long %>% 
+  group_by(set) %>%
+  do(augment(lm(y~x, data = .), se.fit = TRUE, interval = "confidence")) -> ans_augm
+ans_augm
+```
+
+A krelsíme:
+
+```{r}
+ggplot(data = ans_augm, mapping = aes(x=.fitted, y=.resid, label = x, color = set)) + 
+  facet_wrap(~set) + 
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 0) +
+  theme_bw() 
+```
+Vidno, že reziduály poskytujú dobrý obraz o kvalite lineárneho modelu dát. 
+
+
+
+```{r}
+ggplot(data = ans_augm, mapping = aes(x=.hat, y=.std.resid, color = .cooksd)) + 
+  facet_wrap(~set) + 
+  geom_point() + 
+  geom_abline(intercept = 0, slope = 0) +
+  theme_bw() 
+```
+Cookova vzdialenosť dobre identifikuje odľahlé hodnoty. 
+
+Ako sa kreslia konfidenčné pásy okolo regresných kriviek?
+
+```{r}
+ggplot(data = ans_augm) + 
+  facet_wrap(~set) + 
+  geom_ribbon(mapping = aes(x=x, ymin = .lower, ymax = .upper, fill = set), alpha = 0.2) +
+  geom_point(mapping = aes(x=x, y=y, color = set)) +
+  geom_line(mapping = aes(x=x, y=.fitted, color = set), size = 1) +
+  theme_bw() 
+```
+```{r}
+ggplot(data = ans_augm) + 
+  facet_wrap(~set) + 
+  geom_point(mapping = aes(x=.fitted, y=sqrt(abs(.std.resid)), color = set)) +
+  geom_abline(intercept = 0, slope = 0) + 
+  theme_bw() 
+```
+```{r}
+ggplot(data = ans_augm, mapping = aes(sample = .resid)) + 
+  facet_wrap(~set) + 
+  geom_qq() + 
+  geom_qq_line()
+```
+
+
+
