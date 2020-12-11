@@ -43,9 +43,9 @@ covid_SVK %>%
     weekly.confirmed = confirmed - lag(confirmed, n=7),
     R0 = weekly.confirmed / lag(weekly.confirmed, n=5)
     ) %>%
-  ggplot(mapping=aes(x=date, y=R0, color = (R0 > 1.0))) + 
-  geom_point() + 
-  stat_smooth(method ="loess") + 
+  ggplot(mapping=aes(x=date, y=R0)) + 
+  geom_point(mapping = aes(color = (R0<1.0))) + 
+  stat_smooth(method ="loess", mapping = aes(x=date, y = R0)) + 
   labs(
     title = "Reprodukčný faktor Přemka Podlahy"
   )
