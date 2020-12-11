@@ -68,7 +68,9 @@ Chceme všetky regresie počítať naraz. Už sme sa naučili, že na to potrebu
 library(broom)
 ans_long %>% 
   group_by(set) %>%
-  summarize(tidy(lm(y~x)))
+  summarize(tidy(lm(y~x)),
+            .groups = "drop") %>%
+  arrange(term)
 ```
 Ako vidíte, aj parametre regresií sú prakticky rovnaké. 
 
@@ -103,7 +105,7 @@ ans_long %>%
   group_by(set) %>%
   group_modify(~tidy(lm(.x$y~.x$x)))
 ```
-Kon
+
 
 
 No a poďme si teraz dáta nakresliť - to je zase štandardná operácia.
