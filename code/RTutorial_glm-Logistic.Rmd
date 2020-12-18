@@ -1,0 +1,79 @@
+---
+title: "Logistická regresia"
+output: html_notebook
+---
+
+## Logistická regresia
+
+Predstavte si, že závislá premenná vo vašich dátach je 0 alebo 1, podľa toho, či za daných okolnosti - reprezentovaných hodnotami prediktorov $x$ nastal alebo nenastal určitý jav. Poissonovské dáta, o ktorých sme hovorili v predchádzajúcom tutoriáli, predstavujú sumár takýchto dát. "Bežný" lineárny model opäť nebude dobre fungovať, pretože uňho nemáte záruku, že bude dobre opisovať nuly a jednotky. 
+
+**Logistická regresia** - chceme odhadovať pravdepodobnosť, že nastane nejaký jav pre určitú kombináciu hodnôt prediktorov $\mathbf{x}$. Generatívny model tu je nasledujúci:
+$$
+P(Y_i = 1|\mathbf{x_i}) = Bernouilli(p(\mathbf{x_i})) \\
+\ln{\frac{p(\mathbf{x_i})}{1-p(\mathbf{x_i})}} = \mathbf{\beta}^T\mathbf{x_i} = \beta^{(0)} + \beta_1 x^{(1)}_1 + \dots + \beta_m x^{(m)}_i
+$$
+teda modelujeme logaritmus šancí (_*log odds*_), že pri daných $\mathbf{x_i}$ nastane udalosť $Y$. 
+
+Ako ľahko vidno, predpovede modelu budú 
+$$
+E(Y|\mathbf{x_i}) = \frac{e^{\mathbf{\beta^Tx_i}}}{1-e^{\mathbf{\beta^Tx_i}}}
+$$
+teda pravdepodobnosti, že pri danom $\mathbf{x}$ nastane udalosť $Y$.
+
+## Príklad: 
+
+```{r}
+df <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+df
+```
+
+Vysvetlivky: 
+
+- gre - Výsledok GRE testu
+
+- gpa - Grade Point Average - priemerný prospech
+
+- rank - poradie "college" v rebríčku
+
+Chceme modelovať `admit`, aby sme vedeli predpovedať, s akou pravdepodobnosťou bude daný študent prijatý. 
+
+```{r}
+summary(df)
+```
+Ako sa pozerať na takéto dáta? Pre faktory môžeme vytvoriť tabuľku, pre spojité preditkory môžeme kresliť podmienené priemery. 
+
+```{r}
+xtabs(~admit + rank, data = df)
+```
+```{r}
+library(tidyverse)
+ggplot(data = df, mapping = aes(x = rank
+                                , color = admit)) + 
+  geom_histogram() + 
+  facet_grid(admit~.)
+```
+```{r}
+df$rank <- as.factor(df$rank)
+logit <- glm(admit ~ gre+gpa+rank,data=df,family="binomial")
+summary(logit)
+```
+### Interpretácia 
+
+1. Zvýšenie GRE o 1 zvýši logaritmus šance na prijatie o 0.002, a príslušná hodnota p ukazuje, že je marginálne signifikantným faktorom prijatia.
+
+2. Zvýšenie GPA o 1 zvýši logaritmus šance na prijatie o 0.80 a príslušná hodnota p ukazuje, že je marginálne signifikantným faktorom prijatia.
+
+3. Interpretácia ranku je trocha odlišná: prechod z college s rankom 1 na college s rankom 2 znižuje log-šance na prijatie o -0.67 a podobne pre ďalšie prechody.
+
+4. Rozdiel medzi základnou a reziduálnou devianciou nám hovorí, že model celkom dobre funguje.
+
+## Predikcia
+
+Máme uchádzača s GRE 790, GPA=3.0, a rankom 1. Aká je pravdepodobnosť, že bude prijatý?
+
+```{r}
+x <- data.frame(gre=790, gpa=3.8, rank=as.factor(1))
+p <- predict(logit,x)
+p
+```
+

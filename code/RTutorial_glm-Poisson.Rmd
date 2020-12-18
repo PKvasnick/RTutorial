@@ -1,0 +1,73 @@
+---
+title: "Poissonovská regresia"
+output: html_notebook
+---
+
+Nové balíky: vcd (visualizing categorial data)
+
+## Poissonovská regresia
+
+Predstavte si, že závislá premenná vo vašich dátach predstavuje diskrétne počty udalostí. V takom prípade "bežný" lineárny model nebude dobre fungovať, pretože uňho nemáte záruku, že bude dobre opisovať diskrétne nezáporné hodnoty. Existuje niekoľko spôsobov, ako pristupovať k analýze takýchto dát, a v dnešnej prednáške si preberieme niekoľko z nich:
+
+**Poissonovská regresia** - hľadáme intenzity Poissonovských procesov v tvare lineárnej kombinácie faktorov modelu (nezávislých premenných), ktoré by najlepšie vystihli naše dáta. Podobnejšie, predpokladáme, že generatívny model pre naše dáta má tvar
+$$
+P(Y_i = N_i|\mathbf{x}) = \frac{\lambda(\mathbf{x})^{N_i}}{N_i!}e^{-\lambda(\mathbf{x_i})} \\
+\ln{\lambda(\mathbf{x_i})} = \mathbf{\beta}^T\mathbf{x_i} = \beta^{(0)} + \beta_1 x^{(1)}_1 + \dots + \beta_m x^{(m)}_i
+$$
+To, že dáta sú generované z Poissonovskej intenzity, nám zaručuje, že budú celočíselné, a lineárny model pre logaritmus intenzity zase zaručuje, že intenzita bude nezáporná. 
+
+Ľahko sa dá ukázať, že predpovede modelu sú
+
+$$
+E(Y_i|\mathbf{x_i}) = \lambda(\mathbf{x_i})
+$$
+Pri takomto modeli vieme ľahko napísať vierohodnosť pre pozorované dáta a nájsť koeficienty $\mathbf{\beta}$ minimalizáciou logaritmu vierhodnosti.
+
+Začneme jednoduchým príkladom:
+
+## Dataset `Horsekicks` 
+
+```{r}
+library(vcd)
+library(broom)
+```
+
+Dataset _*Horsekicks*_ - úmrtia spôsobené kopnutím koňom alebo mulom v 10 zboroch pruskej armády počas 200 rokov (von Bortkiewicz, 1898)
+
+```{r}
+data("HorseKicks")
+HorseKicks
+```
+
+Dáta sú vlastne kontingenčná tabuľka. Tak ju môžeme aj analyzovať, napríklad pomocou funkcie `goodfit` z balíka `vcd` (Visualization of Categorial Data):
+
+```{r}
+gf <- goodfit(HorseKicks)
+summary(gf)
+plot(gf)
+```
+Vidíme, že dáta dobre vyhovujú Poissonovskému modelu. Čo ale potrebujeme, je Poissonovská intenzita. Balíček `broom` nám tu nepomôže, musíme pozrieť do tabu `Environment` a ľahko zistíme, že k odhadu Poissonovskej intenzity sa ľahko dostaneme takto:
+
+```{r}
+gf$par$lambda
+```
+
+A teda repliku dát môžeme vytvoriť takto:
+
+```{r}
+library(tidyverse)
+kicks <- rpois(200, gf$par$lambda)
+kicktab <- table(kicks)
+gf1 <- goodfit(kicktab)
+summary(gf1)
+plot(gf1)
+gf1$par$lambda
+```
+a teraz si už ľahko viete analyzovať vlastnosti odhadu parametra $\lambda$.
+
+## Zložitejší príklad
+
+
+
+
+

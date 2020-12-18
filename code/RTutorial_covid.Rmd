@@ -46,6 +46,7 @@ covid_SVK %>%
   ggplot(mapping=aes(x=date, y=R0)) + 
   geom_point(mapping = aes(color = (R0<1.0))) + 
   stat_smooth(method ="loess", mapping = aes(x=date, y = R0)) + 
+  geom_abline(slope = 0, intercept = 1.0) +
   labs(
     title = "Reprodukčný faktor Přemka Podlahy"
   )
