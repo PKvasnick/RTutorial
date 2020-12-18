@@ -45,17 +45,23 @@ Ako sa pozerať na takéto dáta? Pre faktory môžeme vytvoriť tabuľku, pre s
 ```{r}
 xtabs(~admit + rank, data = df)
 ```
+
+```{r}
+goodfit(xtabs(~admit + rank, data = df))
+```
+
+
 ```{r}
 library(tidyverse)
-ggplot(data = df, mapping = aes(x = rank
-                                , color = admit)) + 
-  geom_histogram() + 
+ggplot(data = df, mapping = aes(x = as.numeric(rank), color = admit)) + 
+  geom_histogram(binwidth = 0.5) + 
   facet_grid(admit~.)
 ```
 ```{r}
 df$rank <- as.factor(df$rank)
 logit <- glm(admit ~ gre+gpa+rank,data=df,family="binomial")
 summary(logit)
+plot(logit)
 ```
 ### Interpretácia 
 
@@ -75,5 +81,19 @@ Máme uchádzača s GRE 790, GPA=3.0, a rankom 1. Aká je pravdepodobnosť, že 
 x <- data.frame(gre=790, gpa=3.8, rank=as.factor(1))
 p <- predict(logit,x)
 p
+```
+
+```{r}
+tidy(logit)
+augment(logit)
+```
+
+```{r}
+df_aug <- augment(logit) %>%
+  mutate(
+    p_est = exp(.fitted)/(1 + exp(.fitted))
+  ) %>%
+  select(admit, gre, gpa, rank, p_est)
+df_aug
 ```
 

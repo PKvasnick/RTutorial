@@ -58,6 +58,7 @@ A teda repliku dát môžeme vytvoriť takto:
 library(tidyverse)
 kicks <- rpois(200, gf$par$lambda)
 kicktab <- table(kicks)
+kicktab
 gf1 <- goodfit(kicktab)
 summary(gf1)
 plot(gf1)
