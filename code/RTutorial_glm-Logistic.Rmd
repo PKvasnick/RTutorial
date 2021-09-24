@@ -47,15 +47,9 @@ xtabs(~admit + rank, data = df)
 ```
 
 ```{r}
-goodfit(xtabs(~admit + rank, data = df))
-```
-
-
-```{r}
 library(tidyverse)
-ggplot(data = df, mapping = aes(x = as.numeric(rank), color = admit)) + 
-  geom_histogram(binwidth = 0.5) + 
-  facet_grid(admit~.)
+ggplot(data = df, mapping = aes(x = gre, color = as.factor(admit))) + 
+  geom_histogram(fill = "white", alpha = 0.6, position = "identity")
 ```
 ```{r}
 df$rank <- as.factor(df$rank)
@@ -84,6 +78,7 @@ p
 ```
 
 ```{r}
+library(broom)
 tidy(logit)
 augment(logit)
 ```
@@ -95,5 +90,126 @@ df_aug <- augment(logit) %>%
   ) %>%
   select(admit, gre, gpa, rank, p_est)
 df_aug
+```
+
+```{r}
+ggplot(data = df_aug, mapping = aes(x = p_est, color = as.factor(admit))) + 
+  geom_histogram(fill = "white", alpha = 0.5, position = "identity")
+```
+```{r}
+library(pROC)
+aug_logit <- augment(logit) %>% mutate(p_est = exp(.fitted)/(1+exp(.fitted)))
+logit_roc = roc(aug_logit$admit ~ aug_logit$p_est, plot = TRUE, print.auc = TRUE)
+```
+
+Toto nevyzerá veľmi dobre. Skúsme iné dáta.
+
+```{r}
+library(ISLR)
+```
+
+
+```{r}
+as_tibble(Default)
+```
+
+```{r}
+set.seed(42)
+default_idx = sample(nrow(Default), 5000)
+default_trn = Default[default_idx, ]
+default_tst = Default[-default_idx, ]
+```
+
+
+```{r}
+model_glm = glm(default ~ balance, data = default_trn, family = "binomial")
+summary(model_glm)
+```
+```{r}
+coef(model_glm)
+```
+
+```{r}
+head(predict(model_glm, type = "response"))
+```
+
+```{r}
+model_glm_pred = ifelse(predict(model_glm, type = "link") > 0, "Yes", "No")
+```
+
+```{r}
+calc_class_err = function(actual, predicted) {
+  mean(actual != predicted)
+}
+```
+
+```{r}
+calc_class_err(actual = default_trn$default, predicted = model_glm_pred)
+```
+
+```{r}
+train_tab = table(predicted = model_glm_pred, actual = default_trn$default)
+library(caret)
+train_con_mat = confusionMatrix(train_tab, positive = "Yes")
+c(train_con_mat$overall["Accuracy"], 
+  train_con_mat$byClass["Sensitivity"], 
+  train_con_mat$byClass["Specificity"])
+```
+
+```{r}
+get_logistic_error = function(mod, data, res = "y", pos = 1, neg = 0, cut = 0.5) {
+  probs = predict(mod, newdata = data, type = "response")
+  preds = ifelse(probs > cut, pos, neg)
+  calc_class_err(actual = data[, res], predicted = preds)
+}
+```
+
+```{r}
+get_logistic_error(model_glm, data = default_trn, 
+                   res = "default", pos = "Yes", neg = "No", cut = 0.5)
+```
+```{r}
+default_trn %>% mutate(pred = predict(model_glm, data = default_trn, type = "response")) %>%
+  ggplot(mapping = aes(x = pred, color = default)) +
+  geom_density(fill = "white")
+```
+
+
+```{r}
+plot(default01 ~ balance, data = default_trn %>% mutate(default01 = ifelse(default=="Yes", 1, 0)), 
+     col = "darkorange", pch = "|", ylim = c(-0.2, 1),
+     main = "Using Logistic Regression for Classification")
+abline(h = 0, lty = 3)
+abline(h = 1, lty = 3)
+abline(h = 0.5, lty = 2)
+curve(predict(model_glm, data.frame(balance = x), type = "response"), 
+      add = TRUE, lwd = 3, col = "dodgerblue")
+abline(v = -coef(model_glm)[1] / coef(model_glm)[2], lwd = 2)
+```
+```{r}
+model_1 = glm(default ~ 1, data = default_trn, family = "binomial")
+model_2 = glm(default ~ ., data = default_trn, family = "binomial")
+model_3 = glm(default ~ . ^ 2 + I(balance ^ 2),
+              data = default_trn, family = "binomial")
+```
+
+```{r}
+model_list = list(model_1, model_2, model_3)
+train_errors = sapply(model_list, get_logistic_error, data = default_trn, 
+                      res = "default", pos = "Yes", neg = "No", cut = 0.5)
+test_errors  = sapply(model_list, get_logistic_error, data = default_tst, 
+                      res = "default", pos = "Yes", neg = "No", cut = 0.5)
+train_errors
+test_errors
+```
+```{r}
+summary(model_1)
+summary(model_2)
+summary(model_3)
+```
+```{r}
+library(pROC)
+test_prob = predict(model_glm, newdata = default_tst, type = "response")
+test_roc = roc(default_tst$default ~ test_prob, plot = TRUE, print.auc = TRUE)
 ```
 
