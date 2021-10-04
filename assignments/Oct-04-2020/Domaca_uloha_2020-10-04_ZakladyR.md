@@ -1,4 +1,4 @@
-## Domáca úloha 16/10/2020 - funkcie
+## Domáca úloha 4/10/2021 - funkcie
 
 - Napíšte funkciu s nasledujúcou signatúrou
 
@@ -12,6 +12,13 @@
   $$
   n \choose k
   $$
+  *Návod*: Skúste implementáciu urobiť tak, aby ste nemuseli počítať faktoriály - to je veľmi neefektívne.
+
+- Predstavte si, že v `R` nemáme funkciu `sqrt` a napíšte funkciu, ktorá vráti odhad odmocniny x. Môžete využiť napríklad iteratívny vzťah
+$$
+a_{n+1} = \frac{1}{2}\left(a_n + \frac{x}{a_n}\right)
+$$
+​	Tento vzťah pochádza z riešenia rovnice $x-a^2=0$ Newtonovou metódou a iterácie dobre konvergujú. Odhadnite presnosť výsledku.
 
 - Napíšte funkciu s nasledujúcou signatúrou
 
@@ -44,6 +51,5 @@ U každej funkcie ilustrujte na rozumnom počte príkladov, že vaša implement�
 
 
 
-**Riešenia poprosím do budúceho piatku 23. októbra vo forme `.Rmd` súboru.**
-
+**Riešenia poprosím do víkendu pred budúcim cvičením, teda do 15. októbra vo forme odkazu na `.Rmd` súbor.**
 
