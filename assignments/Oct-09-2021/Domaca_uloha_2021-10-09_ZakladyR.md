@@ -51,5 +51,5 @@ U každej funkcie ilustrujte na rozumnom počte príkladov, že vaša implement�
 
 
 
-**Riešenia poprosím do víkendu pred budúcim cvičením, teda do 15. októbra vo forme odkazu na `.Rmd` súbor.**
+**Riešenia poprosím do víkendu pred budúcim cvičením, teda do 15. októbra vo forme odkazu na `.Rmd` súbor vo vašom GitHub repozitári.**
 
