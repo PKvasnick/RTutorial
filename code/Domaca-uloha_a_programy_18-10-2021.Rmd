@@ -1,0 +1,339 @@
+---
+title: "Uloha 1 R Notebook"
+output: html_notebook
+---
+Napíšte funkciu s nasledujúcou signatúrou
+
+combin <- function(n,k)
+{
+	...
+}
+ktorá vracia kombinačné číslo $$ n \choose k $$ Návod: Skúste implementáciu urobiť tak, aby ste nemuseli počítať faktoriály - to je veľmi neefektívne.
+
+```{r}
+combin <- function(n,k)
+{
+ combin = 1
+ for(i in 1:k)
+   combin <- combin * (n-i+1)/i
+ return(combin)
+}
+
+combin(7,2)
+combin(5,9)
+```
+
+Predstavte si, že v R nemáme funkciu sqrt a napíšte funkciu, ktorá vráti odhad odmocniny x. Môžete využiť napríklad iteratívny vzťah $$ a_{n+1} = \frac{1}{2}\left(a_n + \frac{x}{a_n}\right) $$​ Tento vzťah pochádza z riešenia rovnice $x-a^2=0$ Newtonovou metódou a iterácie dobre konvergujú. Odhadnite presnosť výsledku.
+
+```{r}
+odmocnina <- function(n)
+{
+a <- 2
+min <- 1e-10
+repeat
+  {
+  if (abs((a^2)-n) < min)
+     break
+  else a <- 0.5*((n/a)+a)
+  }
+return(a)
+}
+
+odmocnina(4)
+odmocnina(16)
+odmocnina(144)
+```
+
+Napíšte funkciu s nasledujúcou signatúrou
+
+integ <- function(f, a, b)
+{
+	...    
+}
+ktorá vypočíta odhad určitého integrálu $$ \int_a^b f(x)dx $$ a jeho chybu - teda vracia dve hodnoty. Toto sa v R robí tak, že vrátite zoznam r, pričom r$integral bude hodnota a r$error jej chyba.
+
+```{r}
+integ <- function(f, a, b)
+{
+  f <- function(x) {sin(x)*x^2}   #{x^3} 
+  return(integrate(f, a, b)) 
+}
+
+integ(sin(x)*x^2,5,7)
+integ(sin(x)*x^2,5,8)
+```
+
+Napíšte funkciu so signatúrou
+
+clear.dia <- function(s)
+{
+  ...
+}
+ktorá nahradí znaky s diakritikou v textovom reťazci príslušnými znakmi bez diakritiky, teda napríklad Čučoriedka -> Cucoriedka
+
+```{r}
+clear.dia <- function(s)
+{
+  dict <- vector(mode = "list", length = 8)
+  names(dict) <- c("á", "é", "í", "š", "č", "ť", "ž", "ý")
+  dict[["á"]] = "a"
+  dict[["é"]] = "e"
+  dict[["í"]] = "i"
+  dict[["š"]] = "s"
+  dict[["č"]] = "c"
+  dict[["ť"]] = "t"
+  dict[["ž"]] = "z"
+  dict[["ý"]] = "y"
+  for(i in 1:length(dict)) {
+    s <- sub(names(dict)[i], dict[i], s)
+  }
+  return(s)
+}
+
+clear.dia("čučoriedka")
+clear.dia("žltočierny")
+```
+Návod: Najjednoduchšie je použiť prekladový "slovník" fpre náhradu znakov.
+
+Úlohu s integráciou ste odbyli tým, že ste do svojej funkcie zabalili štandardnú funkciu R. Žiadalo sa niečo naprogramovať vlastnými silami, hoci aj jednoduché. 
+
+```{r}
+simpson.int <- function(f, a, b)
+{
+n = 10
+h = (b-a)/n
+x <- seq(from = a, to = b, length.out = n+1)
+integral <- 0.5*f(a) + 0.5*f(b)
+for(i in 2:n)
+  integral <- integral + f(x[i])
+
+return(h * integral)
+}
+
+f <- function(x)
+{
+  return(x*x)
+}
+
+print(simpson.int(f, 0, 1))
+
+```
+## Opakovanie
+
+Tabuľky - data.frame
+```{r}
+x <- data.frame(
+  v1 = c(1,2,3,4),
+  v2 = as.integer(c(0,0,1,1)),
+  v3 = c("a","b","a","b")
+)
+x
+```
+```{r}
+x$v1
+x$v4 <- c("Peter", "Pavol", "Andrej", "Metod")
+x
+```
+
+## Programujeme
+Treba si trocha zašpiniť ruky s R, s peknučkým rozprávaním sa nikam nedostaneme. 
+
+1. Vypísať všetky prvočísla menšie alebo rovné n. 
+Postup: Erastothenovo sito. Pracujeme nad logickým poľom o veľkosti n a postupne vyškrtávame násobky prvočísel. 
+```{r}
+print.primes <- function(n) {
+  primes <- rep(TRUE, n)
+  primes[1] <- FALSE
+  for(k in 2:n) {
+    if (!primes[k]) next
+    else {
+      m <- k*k
+      while (m<=n) {
+        primes[m] <- FALSE
+        m <- m + k
+      }
+    }
+  }
+  for(k in 1:n)
+    if(primes[k])
+      print(k)
+  return("Koniec")  
+}
+print.primes(100)
+```
+```{r}
+gcd <- function(a, b)
+{
+  while (b != 0) {
+      new.b <- a %% b
+      a <- b
+      b <- new.b
+  }
+  return(a)
+}
+gcd(1234567890, 987654321)
+```
+```{r}
+factors <- function(n)
+{
+  k <- 2
+  v <- c()
+  while (n>1) {
+    if (n %% k == 0) {
+      v <- c(v, k)
+      n <- n %/% k
+    } else 
+      k <- k+1
+  }
+  return(v)
+}
+factors(123456789)
+```
+
+```{r}
+v <- c(1,2,3,55,4,5)
+
+remove <- function(v, k)
+{
+  return(c(v[1:(k-1)], v[(k+1):length(v)]))
+}
+remove(v,4)
+
+```
+```{r}
+u <- c(1,2,3,2,3,4,3,4,5)
+
+my.unique <- function(v)
+{
+  u <- c()
+  for(x in v) {
+    if (x %in% u) 
+      next
+    else
+      u <- c(u,x)
+  }
+  return(u)
+}
+my.unique(u)
+```
+```{r}
+binary <- function(n)
+{
+  bin <- c()
+  while(n>0){
+    bin <- c(bin, n %% 2)
+    n <- n %/% 2
+  }
+  return(rev(bin))
+}
+binary(37)
+
+```
+
+Bublinkové triedenie
+
+```{r}
+v <- seq(from = 1, to = 10, by = 1)
+v <- sample(v, size = 10, replace = TRUE)
+
+for(i in 1:length(v)) {
+  n_shuffles = 0
+  for(j in 1:(length(v)-i))
+    if (v[j] > v[j+1]) {
+      u <- v[j]
+      v[j] <- v[j+1]
+      v[j+1] <- u
+      n_shuffles <- n_shuffles + 1
+    }
+  if(n_shuffles == 0) break
+}
+v
+```
+Triedenie opakovaným výberom minima
+
+```{r}
+v <- seq(from = 1, to = 10, by = 1)
+v <- sample(v, size = 20, replace = TRUE)
+print(v)
+
+for(i in 1:(length(v)-1)) {
+  pmin = i
+  for(j in (i+1):length(v)) {
+    if(v[j] < v[pmin])
+      pmin <- j
+  }
+  if( pmin != i) {
+    u <- v[i]
+    v[i] <- v[pmin]
+    v[pmin] <- u
+  }
+  print(pmin)
+  print(v)
+}
+v
+
+```
+
+Triedenie použitím R
+
+```{r}
+v = seq(from = 10, to = 1, by = -1)
+sort(v)
+```
+Binárne vyhľadávanie
+
+```{r}
+v <- seq(from = 1, to = 10, by = 1)
+v <- sample(v, size = 10, replace = TRUE)
+v <- sort(v)
+
+print(v)
+
+bin.search <- function(vec, val)
+{
+  l <- 1
+  if(vec[l] == val) return(l)
+  p <- length(vec)
+  if(vec[p] == val) return(p)
+  while(p-l>1){
+    m <- (l+p) %/% 2
+    if(vec[m] == val)
+      return(m)
+    else if(vec[m] < val)
+      l <- m
+    else
+      p <- m
+  }
+  return(-1)
+}
+
+bin.search(v, 6)
+```
+Bootstrap
+
+```{r}
+v <- seq(from = 1, to = 12)
+m <- matrix(v, nrow = 3, ncol = 4, byrow = TRUE)
+t(m)
+m %*% t(m)
+u <- c(1,2,3,4)
+m %*% u
+apply(m, 1, sum)
+```
+
+```{r}
+l <- 20
+v <- seq(from = -10, to = 10, length.out = l)
+
+N <- 1000
+M <- matrix(nrow = N, ncol = l)
+for(i in 1:N)
+  M[i,] <- sample(v, size = l, replace = TRUE)
+
+means <- rowMeans(M)
+
+hist(means, breaks = 20)
+```
+
+
+

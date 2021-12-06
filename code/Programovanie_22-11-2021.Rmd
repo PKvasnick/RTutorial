@@ -1,0 +1,143 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Simulácia: pokračovanie
+
+### V minulom dieli ste videli...
+
+Ukazovali sme si, ako možno zostrojiť rozdelenie štatistiky len na základe pozorovaných dát a bez nejakých predpokladov o rozdelení dát.
+
+```{r}
+# Vygenerujeme si dáta: 20 hodnôt s rovnomerným rozdelením v intervale (0, 10):
+v <- runif(20,0,10)
+
+print(v)
+
+summary(v)
+
+# Vygenerujeme z vektora v Nrep vzoriek o veľkosti 20 (výber s opakovaním) a uložíme ich do matice M
+Nrep <- 1000
+n <- length(v)
+M <- matrix(nrow = Nrep, ncol = n) # je jedno, čo dáme za ncol
+
+# Funkcia pre vzorkovanie z v, ktorou budeme plníť riadky matice M
+samp <- function(x) 
+{
+  return(sample(v, size = n, replace = TRUE))
+}
+
+M <- t(apply(M, 1, samp)) # musíme transponovať!
+
+means <- apply(M, 1, mean)
+print("Priemery:")
+hist(means, breaks = 20)
+print(paste("Priemer priemerov: ", mean(means)))
+print(paste("SD priemerov:", sd(means)))
+quantile(means, c(0.025, 0.975))
+```
+### Exponenciálne rozdelenie
+
+```{r}
+# Vygenerujeme si dáta: 20 hodnôt s exponenciálnym rozdelením s intenzitou 1:
+n = 30
+v <- rexp(n, 1)
+
+plot(v)
+hist(v, breaks = 10)
+
+summary(v)
+
+# Vygenerujeme z vektora v Nrep vzoriek o veľkosti 20 (výber s opakovaním) a uložíme ich do matice M
+Nrep <- 1000
+M <- matrix(nrow = Nrep, ncol = n)
+
+# Funkcia pre vzorkovanie z v, ktorou budeme plníť riadky matice M
+samp <- function(x) 
+{
+  return(sample(v, size = n, replace = TRUE))
+}
+
+M <- t(apply(M, 1, samp))
+
+means = apply(M, 1, mean)
+print("Priemery:")
+hist(means, breaks = 20)
+print(paste("Pôvodný priemer:", mean(v)))
+print(paste("Priemer priemerov: ", mean(means)))
+print(paste("SD priemerov:", sd(means)))
+quantile(means, c(0.025, 0.975))
+
+```
+## t-test
+Na t-test máme v R funkciu ... t.test:
+```{r}
+u = rnorm(20, 1, 1)
+summary(u)
+v = rnorm(20, 1, 1)
+summary(v)
+test.result <- t.test(u,v, var.equal = TRUE)
+test.result
+test.result$p.value
+```
+**Aké je rozdelenie hodnôt p?**
+
+Technický detail: funkcia t.test nám dáva výsledok v hlúpom tvare. Ako z necho získať dáta tak, aby sme ich mohli dať do tabuľky alebo matice?
+
+```{r}
+library(broom)
+
+glance(t.test(u,v))
+```
+
+
+```{r}
+n = 20 # dĺžka vektora
+Nrep <- 1000
+
+base.test = tidy(t.test(u,v))
+
+Res <- matrix(nrow = Nrep, ncol = ncol(base.test))
+
+for(r in 1:Nrep){
+  u <- rnorm(n, 1, 1)
+  v <- rnorm(n, 1, 1)
+  Res[r, ]=t(tidy(t.test(u,v)))
+}
+colnames(Res) <- colnames(base.test)
+
+hist(as.numeric(Res[ ,"p.value"]), breaks = 20)
+```
+
+```{r}
+Nrep <- 3000
+n <- 20
+mu1 <- 1
+mu2 <- 3
+sig <- 1
+u <- rexp(n, mu1)
+hist(u)
+v <- rexp(n, mu2)
+hist(v)
+base.test <- glance(t.test(u,v))
+nc <- ncol(base.test)
+
+M <- matrix(nrow = Nrep, ncol = nc)
+
+for(r in 1:Nrep) {
+  u <- rexp(n, mu1)
+  v <- rexp(n, mu2)
+  res <- glance(t.test(u, v, var.equal = TRUE))
+  M[r, ] <- t(res)
+}
+colnames(M) <- colnames(base.test)
+M.frame <- data.frame(M)
+M.frame$p.value <- as.numeric(M.frame$p.value)
+hist(as.numeric(M.frame$p.value))
+n_nonsig <- sum(M.frame$p.value > 0.05)
+1 - n_nonsig / Nrep
+```
+
+
+

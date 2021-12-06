@@ -1,6 +1,8 @@
 ---
-title: "Vizualizácia v R: 1. časť"
-output: html_notebook
+title: 'Vizualizácia v R: 1. časť'
+output:
+  html_document:
+    df_print: paged
 ---
 
 Už sme kreslili grafy príkazmi *plot* a *lines*. To je štandardná funkcionalita R, ale nie je úplne pohodlná na používanie. 
@@ -20,7 +22,6 @@ Neznepokojujeme sa výstrahami o konfliktoch. *tidyverse* predefinuje niektoré 
 Dátový súbor __mpg__ je súčasťou balíka *ggplot2*, teda plným menom __ggplot2::mpg__, keby sme sa obávali konfliktu názvov. Dátový súbor obsahuje merania spotreby automobilov, vykonané americkou *Environment Protection Agency* (EPA) na 234 typoch automobilov v rokoch 1999-2008. 
 
 ```{r}
-help(mpg)
 head(mpg)
 ```
 
@@ -31,6 +32,12 @@ ggplot(data = mpg) +
   geom_point(mapping = aes(x = displ, y = hwy)) + 
   theme_bw()
 ```
+```{r}
+ggplot(data = mpg) +
+  geom_histogram(mapping = aes(x = displ)) +
+  theme_bw()
+```
+
 Vidím negatívnu závislosť medzi objemom motora a dojazdom. Teda autá s väčším motorom prejd na 1 galón menšiu vzdialenosť ako menšie autá. 
 
 __ggplot()__ vytvorí súradnicový systém a prázdny graf. 
@@ -49,13 +56,38 @@ __Úlohy__
 
 1. Spustite `ggplot(data = mpg)` bez `geom_xxxx()`. Čo vidíte?
 
-2. Koľko stĺpcov a riadkov má súbor __mtcars__?
+2. Koľko stĺpcov a riadkov má súbor __mpg__?
+
+```{r}
+ncol(mpg)
+nrow(mpg)
+```
+
 
 3. Aký význam má stĺpec __mpg$drv__?
 
+```{r}
+help(mpg)
+```
+
+
 4. Nakreslite graf __hwy__ v závislosti od __cyl__.
 
+```{r}
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(x = as.factor(cyl), y = hwy, color = as.factor(cyl))) +
+  theme_bw()
+```
+
+
 5. Nakreslite graf __class__ v závislosti od __drv__. Je to užitočný graf?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = class)) + 
+  theme_bw()
+```
+
 
 6. Nakreslite graf bez __theme_bw()__.
 

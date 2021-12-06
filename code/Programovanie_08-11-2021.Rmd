@@ -1,0 +1,267 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Triedenie
+
+### Bublinkové triedenie - Bubble sort
+
+Nechávame veľké hodnoty "prebublávať" smerom ku koncu reťazca: Opakovane prechádzame reťazcom a navzájom vymeníme dvojice susedov, ak je prvok s nižším indexom väčší ako nasledujúci prvok. 
+Ukončenie: Keď pri niektorom prechode reťazcom nedôjde ani k jednej výmene.
+Náročnosť $n^2$.
+
+```{r}
+n <- 10
+v <- 1:n
+v <- sample(v, size = n, replace = TRUE)
+v
+
+for(i in 1:(n-1)) {
+  n_vymen <- 0
+  for(j in 1:(n-i))
+    if(v[j] > v[j+1]) {
+      u <- v[j]
+      v[j] <- v[j+1]
+      v[j+1] <- u
+      n_vymen <- n_vymen+1
+    }
+  print(v)
+  print(n_vymen)
+  if(n_vymen == 0) break
+}
+print("Výsledok:")
+print(v)
+```
+
+### Opakované vyhľadávanie minima
+
+Postupujeme od prvku s najmenším indexom a zamieňame ho za minimálnu hodnotu zo zostávajúcej časti zoznamu. 
+Náročnosť: $n^2$
+
+```{r}
+n <- 10
+v <- 1:n
+v <- sample(v, size = n, replace = TRUE)
+v
+for(i in 1:(n-1)) {
+  pmin = i
+  for(j in i:n) {
+    if(v[pmin] > v[j]) {
+      pmin = j
+    }
+  }
+  if(pmin != i) {
+    u <- v[pmin]
+    v[pmin] <- v[i]
+    v[i] <- u
+  }
+}
+print(v)
+```
+
+## Binárne vyhľadávanie
+... a generovanie náhodných výberov zo základného súboru:
+sample(x, size, replace, probs) vyberie z vektora/zoznamu x náhodne n vzoriek, bez opakovania ak je replace FALSE, inak s opakovaním, a vektor probs môže obsahovať pravdepodobnosť výberu pre každú vzroku. 
+Binárne vyhľadávanie:
+Existuje viac variantov, nasledujúci kód je pre hľadanie hodnoty v utriedenom vektore. 
+1. Presvedčíme sa, že hľadaná hodnota nie je rovná prvej ani poslednej hodnote vektora v. Ak je, našli sme a končíme. Ak je menšia ako najmenšia alebo väčšia ako najväčšia hodnota v zozname, nenašli sme, vrátime -1 a končíme. 
+2. Označíme l prvý a p posledný index poľa v. Vyberieme index m uprostred poľa, a
+- ak m[v] je rovné hľadanej hodnote, vrátime m a skončili sme.
+- ak je v[m] menšie ako hľadaná hodnota, priradíme l = v
+- ak je v[m] väčšie ako hľadaná hodnota, priradíme p = v
+3. Opakujeme krok 2, kým je p - l väčšie ako 1.
+4. Ak v[m] nie je rovné hľadanej hodnote, hodnota sa v poli nenachádza. 
+
+```{r}
+n <- 20
+v <- 1:n
+v <- sample(v, size = n, replace = TRUE)
+v <- sort(v)
+v
+
+bin.search <- function(vec, val)
+{
+  n <- length(vec)
+  l <- 1
+  p <- n
+  if(vec[l] == val)
+    return(l)
+  if(vec[p] == val)
+    return(p)
+  while(p - l > 1) {
+    m <- (p+l) %/% 2
+    if(vec[m] == val)
+      return(m)
+    else if(vec[m] < val)
+      l <- m
+    else
+      p <- m
+  }
+  return(-1)
+}
+
+bin.search(v, 6)
+```
+
+Ďalšími variáciami je vyhľadanie (najmenšej a najväčšej) pozície v utriedenom poli, kam sa má vložiť nová hodnota.
+
+Inou variáciou je riešenie algebraických rovníc. Na tomto poli je metóda polenia intervalu robustnou, aj keď nie zvlášť rýchlou metódou. 
+
+### Rovnica x = cos(x)
+```{r}
+l <- 0
+p <- pi/2
+eps <- 1.0e-12
+
+while(p-l>eps){
+  m <- (p+l)/2
+  if(m - cos(m) < 0)
+    l <- m
+  else
+    p <- m
+}
+m-cos(m)
+m
+```
+```{r}
+my_sqrt <- function(x)
+{
+  l <- 0
+  p <- x
+  eps <- 1.0e-10
+  iter <- 0
+  while (p-l > eps) {
+    m <- (l+p)/2
+    if(m*m - x < 0)
+      l <- m
+    else
+      p <- m
+    iter <- iter + 1
+    print(paste(iter, l, m, p))
+  }
+  return(m)
+}
+
+val <- 50
+my_sqrt(val)
+sqrt(val)
+```
+
+
+## Matice 
+
+Ideme robiť niečo poriadne, čo sa týka štatistiky. Naučíme sa simulovať veľké bloky dát a analyzovať ich. 
+
+Začneme tým, že si zriadime maticku a na jej riadky aplikujeme funkciu.
+
+```{r}
+my_func <- function(x)
+{
+  return(mean(x))
+}
+
+m <- matrix(1:12, nrow=3, ncol=4, byrow=TRUE)
+m
+apply(m, 1, my_func)
+```
+```{r}
+N <- matrix(1:16, nrow = 4, ncol = 4,  byrow = TRUE)
+N # povodna
+t(N) # transponovana
+N.frame <- data.frame(N)
+colnames(N.frame) <- c("A", "B", "C", "D")
+N.frame
+```
+
+#### Náhodné generátory v R
+
+r(akronym rozdelenia): runif rnorm rpois, rexp, rgamma...
+
+- Rovnomerné rozdelenie: runif(počet, min, max)
+- hist(x) je rýchly spôsob vykreslenia histogramu vektora x
+
+```{r}
+v <- runif(1000, 0,10) # rovnomerne rozdelenie n, min, max
+hist(v, breaks = 11)
+```
+
+- Normálne rozdelenie: rnorm(počet, stredná hodnota, štandardná odchýlka)
+```{r}
+v <- rnorm(1000,0,1)   # Gaussovo rozdelenie, n, str. hodn, std. odch.
+hist(v)
+```
+
+- Poissonovo rozdelenie: rpois(počet, intenzita)
+```{r}
+v <- rpois(1000,5)     # Poissonovo rozdelenie, n, str. pocet udal.
+v
+summary(v)
+hist(v)
+boxplot(v)
+
+```
+
+```{r}
+v <- rexp(1000,1)
+hist(v)
+n <- 5
+mu <- 1.0
+Nrep <- 10000
+M <- matrix(nrow = Nrep, ncol = n)
+
+for(r in 1:Nrep){
+  M[r, ] <- rexp(n, mu)
+}
+means <- apply(M, 1, mean)
+hist(means)
+std.low <- mean(means) - 2*sd(means)
+std.high <- mean(means) + 2*sd(means)
+c(std.low, std.high)
+quantile(means, c(0.025, 0.975))
+```
+
+
+### Odhad rozdelenia výberového priemeru metódou bootstrap
+
+```{r}
+v <- runif(20,0,10)
+print("Povodne v:")
+v
+print(paste("Priemer:", mean(v)))
+print(paste("SD:",sd(v)))
+
+Nrep <- 1000
+n <- length(v)
+M <- matrix(nrow = Nrep, ncol = n)
+
+samp <- function(x) 
+{
+  return(sample(v, size = n, replace = TRUE))
+}
+
+M <- t(apply(M, 1, samp))
+
+means <- apply(M, 1, mean)
+print("Priemery:")
+hist(means, breaks = 20)
+print(paste("Priemer priemerov: ", mean(means)))
+print(paste("SD priemerov:", sd(means)))
+quantile(means, c(0.025, 0.975))
+```
+```{r}
+n <- 30
+mu <- 1
+v <- rexp(n, mu)
+hist(v)
+Nrep <- 10000
+M <- matrix(nrow = Nrep, ncol = n)
+
+for(row in 1:Nrep){
+  M[row, ] <- sample(v, n, replace = TRUE)
+}
+means <- apply(M, 1, mean)
+hist(means)
+quantile(means, c(0.025, 0.975))
+```
+

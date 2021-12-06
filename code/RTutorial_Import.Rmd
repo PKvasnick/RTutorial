@@ -3,6 +3,7 @@ title: "Import"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 Dnes sa pokúsime dostať do R nejaké dáta a upraviť ich do použiteľnej podoby.
@@ -65,7 +66,7 @@ Dátové súbory si nemusíte sťahovať, môžete ich importovať priamo z GitH
 
 Použijeme balíky `tidyverse`, tak ako v minulej prednáške.
 
-```{r message=FALSE warning=FALSE}
+```{r message=FALSE}
 library(tidyverse)
 ```
 
