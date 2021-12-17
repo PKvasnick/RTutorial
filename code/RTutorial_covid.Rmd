@@ -3,15 +3,18 @@ title: "COVID19 notebook"
 output: html_notebook
 ---
 
-```{r}
+Balík `covid19` je základné rozhranie R pre prístup k celosvetovým pandemickým dátam 
+
+```{r warning = FALSE}
 library(tidyverse)
 library(COVID19)
 ```
 
+
 ```{r}
 covid_SVK <- covid19(
   country = "SVK",
-  start = "2020-09-01",
+  start = "2021-09-01",
   verbose = FALSE
 )
 covid_SVK
@@ -37,6 +40,13 @@ ggplot(mapping = aes(x = date, y = daily_confirmed)) +
     title = "Denný počet potvrdených prípadov COVID-19 od 1. septembra"
   )
 ```
+
+Vašou úlohou je zobraziť vývoj reprodukčného čísla R. Jednoduchý odhad R, tzv. _*reprodukčné číslo Přemka Podlahy*_, sa vypočíta ako podiel týždenných súčtov nových prípadov pre aktuálny deň  a pre 5 dní späť, teda symbolicky 
+$$
+R \approx \frac{\sum_{d = dnes - 1}^{dnes-7}novozistených_d}{\sum_{d = dnes - 6}^{dnes-12}novozistených_d}
+$$
+Logika je takáto:  Priemerný človek je nákazlivý 4.8 dňa,, a sčítaním po týždňoch eliminujeme silnú týždennú periodicitu testovania. Takýto odhad koreluje s podrobným odhadom R na 98%, a jeho autorom nie je Přemek Podlaha, ale Robert Koch Institut. 
+
 ```{r}
 covid_SVK %>%
   mutate(

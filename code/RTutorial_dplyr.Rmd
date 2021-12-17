@@ -69,7 +69,7 @@ R buď vytlačí výslednú hodnotu posledného príkazu, alebo ju priradí.
 Provnania v R: štandardný súbor: `< <= == != >= >`. Častá chyba našťastie dáva chybovú hlášku:
 
 ```{r}
-filter(flights, month = 1)
+filter(flights, month == 1)
 ```
 
 Pre čísla s pohyblivou desatinnou čiarkou používame namiesto `==` funkciu `near()`:

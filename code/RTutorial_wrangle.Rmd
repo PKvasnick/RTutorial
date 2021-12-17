@@ -1,6 +1,8 @@
 ---
 title: "TidyR"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 ### Ćistenie a úprava dát v R
@@ -67,6 +69,13 @@ table1 %>%
   count(year, wt = cases)
 ```
 
+```{r}
+table1 %>%
+  group_by(year) %>%
+  summarize(n = sum(cases))
+```
+
+
 3. Nakresliť vývoj incidencie v čase
 
 (Toto je len pre efekt. `ggplot2` v skutočnosti nepodporuje `%>%`. Namiesto toho sme použili identifikátor `.`, ktorý označuje výslednú hodnotu posledného príkazu.)
@@ -80,6 +89,18 @@ table1 %>%
   geom_point(mapping = aes(x = year, y = rate, color = country)) +
   geom_line(mapping = aes(x = year, y = rate, color = country))
 ```
+
+
+```{r}
+table1 %>% 
+  mutate(rate = cases / population * 10000) %>%
+ggplot() +
+  geom_point(mapping = aes(x = year, y = rate, color = country), size = 5) +
+  theme_bw()
+  
+```
+
+
 ## Čistenie dát: funkcie *tidyr::gather()* a *tidyr::spread()*
 
 Nie vždy dostanete čisté dáta. Dáta sú často organizované nie tak, aby sa ľahko spracúvali, ale napríklad aby sa ľahko vkladali. 
@@ -128,6 +149,18 @@ table4b %>%
   gather(`1999`, `2000`, key = 'year', value = 'population') -> tidy4b
 left_join(tidy4a, tidy4b)
 ```
+```{r}
+tidy4a$population <- tidy4b$population
+tidy4a
+```
+
+Novodobé náhrady za funkcie gather a spread sú funkcie *pivot_longer* a *pivot_wider*, ktoré sú podstatne univerzálnejšie a majú konzistentné rozhranie:
+
+```{r}
+table4a %>% 
+  pivot_longer(c(`1999`,`2000`), names_to = "year", values_to = "incidence")
+```
+
 
 ### Rozšírenie riadkov
 
@@ -139,6 +172,11 @@ table2
 Tu máme počet prípadov a počet obyvateľov na rôznych riadkoch, hoci sa logicky jedná o jeden záznam (jeden rok, jedna krajina).
 
 Aby sme poruchu vyliečili, musíme zo stĺpcov `type` a `count` vytvoriť dva nové stĺpce `cases` a `population`, do ktorých roztriedime hodnoty zo stĺpca `count` pod2a hodnoty v stĺpci `type` pre riadky, ktoré majú inak všetky hodnoty rovnaké. 
+
+```{r}
+table2
+```
+
 
 ```{r}
 table2 %>%

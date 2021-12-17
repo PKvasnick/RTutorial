@@ -118,10 +118,22 @@ mpg %>%
 ```
 Teraz nejdem vysvetľovať, ako to funguje, ale zo samého kódu je jasné, čo robí. Vyskúšajte si to pre ďalšie typy áut či iné premenné.
 
+```{r}
+mpg %>%
+  select(model, displ, cyl, class, hwy) %>%
+  filter(class == "compact")
+```
 
 __Úlohy__ 
 
 1. Skúste priradiť __class__ veľkosti symbolov v grafe (size = class). Funguje? Je to dobrý nápad?
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class), size = 3) +
+  theme_bw()
+```
+
 
 2. Ďalšie estetiky, ktorým môžete priradiť __class__ sú sýtosť (__alpha__) zafarbenia bodov a tvar (__shape__) bodov. Vyskšajte a posúďte.
 
@@ -138,9 +150,21 @@ __Úlohy__
 
 1. Ktoré zo stĺpcov __mpg__ sú spojité, a ktoré kategoriálne? Ako to spoľahlivo zistíme?
 
+```{r}
+unique(mpg$cyl)
+```
+
+
 2. Ako sa správa priradenie premennej veľkosti, farbe a tvaru (colour, size, shape) pre spojité a kategoriálne premenné? Preskúmajte.
 
 3. Čo sa stane, ak priradíte estetiku niečomu inému ako dátovému stĺpcu, napríklad __color = displ < 5__?
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(aes(x = log10(displ), y = hwy, color = displ>5))
+  + theme_bw()
+```
+
 
 ### Čo keď to nefunguje?
 
