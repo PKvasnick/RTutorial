@@ -28,7 +28,7 @@ library(tidyverse)
 a načítame dáta:
 
 ```{r}
-d <- read_csv("https://mvuorre.github.io/data/ganis-kievit-2015.csv")
+d <- read_csv("../data/ganis-kievit-2015.csv")
 d
 ```
 Ak vám načítanie z Internetu nefunguje, súbor nájdete aj v repozitári tohto kurzu, `RTutorial/data/ganis-kievit-2015.csv`.
@@ -62,8 +62,9 @@ Pre prvý graf nám stačia priemerné časy účastníkov podľa natočenia. Hy
 Potrebujeme zoskupiť dáta podľa účastníka a uhlu, a pre každú skupinu vypočítať priemerný reakčný čas. Prípadné chýbajúce dáta v skupinách ignorujeme. 
 
 ```{r}
-group_by(d, id, angle) %>%
-    summarize(rt = mean(rt, na.rm = T)) -> subject_means
+d %>% 
+  group_by(id, angle) %>%
+  summarize(rt = mean(rt, na.rm = T)) -> subject_means
 subject_means
 ```
 
@@ -159,7 +160,10 @@ wsplot <-
     geom_abline() +
     scale_x_continuous("0 degrees", limits = lims) +
     scale_y_continuous("50 degrees", limits = lims) +
+    theme_bw() +
     theme(aspect.ratio = 1)
+
+
 wsplot
 ```
 Tento graf už ukazuje to, čo chceme vidieť.
