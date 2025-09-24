@@ -103,6 +103,46 @@ bin.search <- function(vec, val)
 
 bin.search(v, 6)
 ```
+O(n) medián:
+
+```{r}
+n <- 100
+v <- 1:n
+v <- sample(v, size = n, replace = TRUE)
+v
+
+kth.value <- function(vec, k)
+{
+  n <- length(vec)
+  if(n == 1)
+    return(vec[1])
+  
+  pivot <- sample(vec, 1)
+  l <- 1
+  p <- n
+  lows <- vec[vec < pivot]
+  pivots <- vec[vec == pivot]
+  highs <- vec[vec > pivot]
+  if(k <= length(lows))
+    return(kth.value(lows, k))
+  else if(k <= length(lows) + length(pivots))
+    return(pivots[1])
+  else
+    return(kth.value(highs, k - length(lows) - length(pivots)))
+}
+
+index <- length(v) %/% 2 + 1
+c(index, length(v) + 1 - index)
+0.5 * (kth.value(v, index) + kth.value(v, length(v) + 1 - index))
+print(sort(v))
+```
+
+```{r}
+v = 13
+v %/% 3
+v %% 3
+```
+
 
 Ďalšími variáciami je vyhľadanie (najmenšej a najväčšej) pozície v utriedenom poli, kam sa má vložiť nová hodnota.
 

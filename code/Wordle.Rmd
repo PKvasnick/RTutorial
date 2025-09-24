@@ -1,0 +1,108 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(words)
+library(dplyr)
+```
+```{r}
+words %>%
+  filter(
+    word_length == 5
+  ) %>% 
+  write.csv("words.csv")
+```
+
+
+
+```{r}
+wordle_test <- function(guess, true.word)
+{
+  result = rep(0,5)
+  for(i in 1:5){
+    letter1 = substr(guess, i, i)
+    if(grepl(letter1, true.word, fixed = TRUE)) {
+      result[i] = 1
+      if(substr(true.word, i, i) == letter1)
+        result[i] = 2
+    }
+  }
+  return(result)
+}
+
+
+
+wordle_test("scary", "slump")
+```
+
+
+```{r}
+words %>% 
+  filter(
+    word_length == 5,
+    substr(word, 2,2) == "o",
+    substr(word, 3,3) == "r",
+    substr(word, 5,5) == "e",
+    grepl("e", word, fixed = TRUE),
+    !grepl("a", word, fixed = TRUE),
+    !grepl("l", word, fixed = TRUE),
+    !grepl("s", word, fixed = TRUE),
+    !grepl("c", word, fixed = TRUE),
+    !grepl("h", word, fixed = TRUE),
+    !grepl("d", word, fixed = TRUE),
+    !grepl("u", word, fixed = TRUE),
+    !grepl("v", word, fixed = TRUE)
+  ) 
+```
+
+
+
+Princíp:
+- urob imitáciu hry
+- postupne vyberaj každé slovo za cieľové, a nájdi slovo v zozname, pre ktoré sa výsledn zoznam najviac skráti - t.j. pre ktoré bude priemerná dĺžka zoznamu najkratšia.
+
+
+```{r}
+best_word <- function(word_list)
+{
+  for(guessword in word_list){
+    
+  }
+}
+```
+
+
+```{r}
+position = 1
+words %>% 
+  filter(
+    word_length == 5
+  ) %>%
+  mutate(
+    pos_letter = substr(word, position, position)
+  ) %>%
+  group_by(pos_letter) %>%
+  summarize(
+    count = n()
+  ) %>%
+  arrange(desc(count))
+
+
+
+```
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r}
+grepl("c", "kocka", fixed = TRUE)
+```
+,
+
